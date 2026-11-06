@@ -1,0 +1,23 @@
+seed: 42
+seeds_for_variance: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+paths:
+  train: dataset/raw/KDDTrain+.csv
+  test: dataset/raw/KDDTest+.csv
+  results: results
+  models: models/final
+cv:
+  n_splits: 5
+  iid_repeats: 3
+tuning:
+  n_trials: 100            # SAME for every model (fairness)
+  n_startup_trials: 20     # first 20 trials are random search (course Week 8 workflow)
+  quick_mode_trials: 30    # use for a first dry run; still identical across models
+selection:
+  k_options: [10, 15, 20, 25, 30, "all"]
+  corr_threshold: 0.95
+  mi_sample_size: 30000
+evaluation:
+  primary_metric: f1_macro
+  noninferiority_margin: 0.01
+  bootstrap_iterations: 10000
+  alpha: 0.05

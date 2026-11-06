@@ -7,9 +7,14 @@ __pycache__/
 
 # Environments
 .venv/
+.python/
 venv/
 ENV/
 env/
+
+# MLflow & Experiments
+mlruns/
+results/optuna.db-journal
 
 # Jupyter Notebook Checkpoints
 .ipynb_checkpoints
