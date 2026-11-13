@@ -22,3 +22,16 @@ results/optuna.db-journal
 # IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary and OS artifacts
+*.tmp
+*.joblib.tmp*
+.DS_Store
+Thumbs.db
