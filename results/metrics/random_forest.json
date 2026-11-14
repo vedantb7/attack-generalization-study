@@ -1,0 +1,63 @@
+{
+    "model": "Random Forest Classifier",
+    "hyperparameters": {
+        "n_estimators": 100,
+        "max_depth": null,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1,
+        "max_features": "sqrt",
+        "class_weight": "balanced",
+        "random_state": 42
+    },
+    "accuracy": 0.785876,
+    "precision": 0.968626,
+    "recall": 0.644744,
+    "f1_score": 0.774175,
+    "macro_f1": 0.7853,
+    "confusion_matrix": [
+        [
+            9442,
+            268
+        ],
+        [
+            4559,
+            8274
+        ]
+    ],
+    "training_time_seconds": 2.167,
+    "attack_category_recall": {
+        "DoS": {
+            "total_samples": 7458,
+            "detected": 6148,
+            "missed": 1310,
+            "recall": 0.8243
+        },
+        "Probe": {
+            "total_samples": 2421,
+            "detected": 1948,
+            "missed": 473,
+            "recall": 0.8046
+        },
+        "R2L": {
+            "total_samples": 2887,
+            "detected": 170,
+            "missed": 2717,
+            "recall": 0.0589
+        },
+        "U2R": {
+            "total_samples": 67,
+            "detected": 8,
+            "missed": 59,
+            "recall": 0.1194
+        }
+    },
+    "seen_vs_unseen_recall": {
+        "seen_recall": 0.7691,
+        "seen_total": 9083,
+        "seen_detected": 6986,
+        "unseen_recall": 0.3435,
+        "unseen_total": 3750,
+        "unseen_detected": 1288,
+        "generalization_drop_percentage_points": 42.57
+    }
+}
