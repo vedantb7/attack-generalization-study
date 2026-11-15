@@ -59,5 +59,8 @@
         "unseen_total": 3750,
         "unseen_detected": 1288,
         "generalization_drop_percentage_points": 42.57
-    }
+    },
+    "false_positive_rate": 0.0276,
+    "false_negative_rate": 0.355256,
+    "evaluation_dataset": "NSL-KDD official test set (KDDTest+.csv), 22,543 records (9,710 Normal, 12,833 Attack)"
 }

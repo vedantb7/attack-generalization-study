@@ -217,11 +217,76 @@ python -m unittest tests/test_data_pipeline.py -v
   - Strict anti-leakage preprocessor module with persistence utilities (`src/preprocessing.py`, `notebooks/02_preprocessing.ipynb`, `models/preprocessor.joblib`).
   - Majority-Class Baseline Classifier establishing performance floor (`notebooks/03_majority_baseline.ipynb`, `results/metrics/majority_baseline.json`):
     - Accuracy: **$43.07\%$** | Precision: **$0.00$** | Recall: **$0.00$** | F1-Score: **$0.00$**
+  - Random Forest Classifier non-linear benchmark (`notebooks/06_random_forest.ipynb`, `models/random_forest.joblib`, `results/metrics/random_forest.json`):
+    - Accuracy: **$78.59\%$** | Precision: **$96.86\%$** | Recall: **$64.47\%$** | Macro-F1: **$0.7853$**
+    - Seen Attack Recall: **$76.91\%$** | Unseen Attack Recall: **$34.35\%$** (Generalization Drop: **$42.57$ pp**)
   - Automated test suite with 15 passing tests (`tests/test_data_pipeline.py`).
   - Complete project methodology, formal proposal, and references documentation (`docs/`).
 - [ ] **Work in Progress / Next Steps:**
   - Logistic Regression regularized benchmark with $L_1$/$L_2$ cross-validation (`notebooks/04_logistic_regression.ipynb`).
   - Decision Tree classifier with cost-complexity pruning (`notebooks/05_decision_tree.ipynb`).
-  - Random Forest non-linear ensemble (`notebooks/06_random_forest.ipynb`).
-  - Stratified evaluation across known vs. 17 unseen attack types (`notebooks/07_evaluation_comparison.ipynb`, `src/evaluation.py`).
+  - Comparative evaluation and statistical hypothesis testing across model complexities (`notebooks/07_evaluation_comparison.ipynb`, `src/evaluation.py`).
   - Interactive web results dashboard (`website/`).
+
+---
+
+## 8. Random Forest Classifier Benchmark
+
+**Notebook:** [`notebooks/06_random_forest.ipynb`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/notebooks/06_random_forest.ipynb)  
+**Lead:** Vedant  
+
+### Model Objective & Role
+Random Forest serves as the complex, high-capacity non-linear model in this study. It aggregates 100 deep decision trees via bootstrap aggregation and random feature subspace sampling (`max_features='sqrt'`). It establishes how effectively an ensemble modeling complex non-linear feature interactions performs on known training signatures versus novel unseen attacks.
+
+### Feature Representation
+All 41 original predictor features are used (Basic, Content, Time-Traffic, Host-Traffic), transformed via the shared preprocessor into **122 processed features** (84 one-hot encoded categorical indicators, 38 standard-scaled numerical features). Target labels and the 21-model historical consensus metadata `difficulty_level` are strictly excluded.
+
+### Hyperparameters & Validation Procedure
+Hyperparameters were evaluated on an isolated 80/20 stratified validation split of `KDDTrain+` (100,778 train-sub, 25,195 val-sub). All unconstrained tree configurations achieved saturation on in-distribution data ($\approx 99.9\%$ Macro-F1). Guided by the operational objective of penalizing false negatives on under-represented attacks, **`class_weight='balanced'`** was selected. Validation evidence showed that leaf regularization (`min_samples_leaf=4`) degraded rare attack recall, while balanced class weights maintained $99.93\%$ precision on benign validation traffic.
+
+**Final Hyperparameters:**
+`n_estimators=100`, `criterion='gini'`, `max_depth=None`, `min_samples_split=2`, `min_samples_leaf=1`, `max_features='sqrt'`, `class_weight='balanced'`, `bootstrap=True`, `random_state=42`, `n_jobs=-1`.
+
+### Official Test Performance (`KDDTest+`, 22,543 records)
+- **Accuracy:** $78.59\%$ ($17,716 / 22,543$)
+- **Attack Precision:** $96.86\%$ ($8,274 / 8,542$)
+- **Attack Recall:** $64.47\%$ ($8,274 / 12,833$)
+- **Attack F1-Score:** $0.7742$
+- **Macro-Averaged F1:** $0.7853$
+- **Confusion Matrix:** $\text{TN}=9,442, \text{FP}=268, \text{FN}=4,559, \text{TP}=8,274$
+- **Attack Category Breakdown:**
+  - DoS Recall: **$82.43\%$** ($6,148 / 7,458$)
+  - Probe Recall: **$80.46\%$** ($1,948 / 2,421$)
+  - R2L Recall: **$5.89\%$** ($170 / 2,887$)
+  - U2R Recall: **$11.94\%$** ($8 / 67$)
+
+### Seen vs. Unseen Attack Generalization Gap
+- **22 Seen Training Attacks:** $76.91\%$ recall ($6,986 / 9,083$)
+- **17 Unseen Test Attacks:** $34.35\%$ recall ($1,288 / 3,750$)
+- **Generalization Degradation:** **$42.57\text{ percentage points}$**
+
+### Saved Artifacts & Reproducibility
+- Serialized Model: `models/random_forest.joblib`
+- Final Metrics: `results/metrics/random_forest.json`
+- Initial Diagnostic Metrics: `results/metrics/random_forest_initial.json`
+- Test Predictions: `results/predictions/random_forest_predictions.csv` (22,543 rows)
+
+```python
+import joblib
+from src.data_loader import load_nsl_kdd
+from src.preprocessing import split_features_target
+
+_, test_df = load_nsl_kdd()
+X_test_raw, y_test = split_features_target(test_df)
+preprocessor = joblib.load("models/preprocessor.joblib")
+rf = joblib.load("models/random_forest.joblib")
+
+X_test = preprocessor.transform(X_test_raw)
+y_pred = rf.predict(X_test)
+```
+
+### Methodological Limitations & Research Boundary
+- **Diagnostic Test Inspection:** The official test set was evaluated during an initial diagnostic run before final hyperparameter selection; hence it was not a blind holdout.
+- **Benchmark Scope:** Evaluated on the synthetic NSL-KDD benchmark; not a claim of genuine real-world zero-day exploit detection.
+- **Hypothesis Scope:** Random Forest alone demonstrates its own seen vs. unseen generalization gap ($42.57$ pp). Whether simpler models (Logistic Regression, Decision Trees) exhibit a smaller gap is strictly evaluated in `notebooks/07_evaluation_comparison.ipynb`.
+
