@@ -41,7 +41,8 @@ COLUMNS = [
 ]
 HEADER = ",".join(COLUMNS).encode("ascii")
 
-DATASET_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DATASET_DIR = PROJECT_ROOT / "dataset"
 DEFAULT_FILES = [DATASET_DIR / "KDDTrain+.csv", DATASET_DIR / "KDDTest+.csv"]
 
 

@@ -33,5 +33,6 @@ htmlcov/
 # Temporary and OS artifacts
 *.tmp
 *.joblib.tmp*
+artifact_hashes_pre.txt
 .DS_Store
 Thumbs.db

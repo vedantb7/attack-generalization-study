@@ -138,7 +138,7 @@ def test_compute_metrics_hand_values():
 
 
 def test_header_script_idempotent(tmp_path):
-    spec = importlib.util.spec_from_file_location("add_headers", PROJECT_ROOT / "dataset" / "add_headers.py")
+    spec = importlib.util.spec_from_file_location("add_headers", PROJECT_ROOT / "scripts" / "add_headers.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     work = tmp_path / "data"

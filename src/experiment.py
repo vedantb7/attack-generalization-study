@@ -52,8 +52,8 @@ SCALARS_DIR = PROJECT_ROOT / CFG["artifacts"]["scalars_dir"]
 SPLIT_DIR = PROJECT_ROOT / "results" / "splits"
 TUNING_DIR = PROJECT_ROOT / "results" / "tuning"
 FIG_DIR = PROJECT_ROOT / "results" / "figures"
-TRAIN_PATH = PROJECT_ROOT / "dataset" / "KDDTrain+.csv"
-TEST_PATH = PROJECT_ROOT / "dataset" / "KDDTest+.csv"
+TRAIN_PATH = PROJECT_ROOT / "dataset" / "raw" / "KDDTrain+.csv"
+TEST_PATH = PROJECT_ROOT / "dataset" / "raw" / "KDDTest+.csv"
 
 
 # --------------------------------------------------------------------------
