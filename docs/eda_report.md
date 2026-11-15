@@ -1,5 +1,7 @@
 # 🛡️ NSL-KDD Network Intrusion Detection: Comprehensive EDA Report & Inferences
 
+> **Superseded:** the revamped EDA findings and preprocessing decisions are in [`docs/dataset_notes.md`](dataset_notes.md) (Part B). This report documents the earlier EDA and is kept for history.
+
 **Document Version:** 1.0.0  
 **Dataset Reference:** NSL-KDD Benchmark Dataset (Tavallaee et al., 2009)  
 **Associated Notebook:** [`notebooks/01_data_exploration.ipynb`](file:///home/dhruvv_w/Documents/instrusion_detection/notebooks/01_data_exploration.ipynb)  

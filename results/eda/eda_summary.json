@@ -1,0 +1,220 @@
+{
+  "structure": {
+    "train_rows": 125973,
+    "test_rows": 22543,
+    "same_columns": true,
+    "same_dtypes": true,
+    "numeric_stored_as_string": []
+  },
+  "quality": {
+    "missing_train": 0,
+    "missing_test": 0,
+    "inf_train": 0,
+    "inf_test": 0,
+    "dup_rows_train": 0,
+    "dup_rows_test": 0,
+    "dup_features_train": 16,
+    "conflicting_feature_vectors_train": 7,
+    "train_test_feature_overlap": 654,
+    "rates_outside_0_1": 0,
+    "negative_values": 0,
+    "binary_outside_0_1": {
+      "su_attempted": 59
+    }
+  },
+  "constant": [
+    "num_outbound_cmds"
+  ],
+  "near_constant_0.995": [
+    "num_outbound_cmds",
+    "is_host_login",
+    "urgent",
+    "land",
+    "num_shells",
+    "su_attempted",
+    "num_failed_logins",
+    "root_shell",
+    "num_file_creations",
+    "num_access_files"
+  ],
+  "su_attempted_2": {
+    "train": 59,
+    "test": 2,
+    "attack_share": 0.0,
+    "root_shell_share": 1.0
+  },
+  "target": {
+    "train_attack_pct": 46.54,
+    "test_attack_pct": 56.93,
+    "train_5class": {
+      "Normal": 67343,
+      "DoS": 45927,
+      "Probe": 11656,
+      "R2L": 995,
+      "U2R": 52
+    },
+    "test_5class": {
+      "Normal": 9710,
+      "DoS": 7458,
+      "R2L": 2887,
+      "Probe": 2421,
+      "U2R": 67
+    },
+    "novel_attack_types": [
+      "apache2",
+      "httptunnel",
+      "mailbomb",
+      "mscan",
+      "named",
+      "processtable",
+      "ps",
+      "saint",
+      "sendmail",
+      "snmpgetattack",
+      "snmpguess",
+      "sqlattack",
+      "udpstorm",
+      "worm",
+      "xlock",
+      "xsnoop",
+      "xterm"
+    ],
+    "novel_rows_test": 3750,
+    "novel_share_of_test_attacks_pct": 29.22,
+    "attack_types_lt_20_train": 9
+  },
+  "skew_top": {
+    "is_host_login": 354.9,
+    "dst_bytes": 290.1,
+    "num_compromised": 250.1,
+    "num_root": 236.9,
+    "src_bytes": 190.7,
+    "urgent": 149.9,
+    "land": 71.0,
+    "num_shells": 59.6,
+    "num_file_creations": 55.7,
+    "num_failed_logins": 53.8
+  },
+  "outlier_features_attack_enriched": 11,
+  "outlier_features_total": 24,
+  "categorical": {
+    "cardinality_train": {
+      "protocol_type": 3,
+      "service": 70,
+      "flag": 11
+    },
+    "unseen_test_levels": {
+      "protocol_type": [],
+      "service": [],
+      "flag": []
+    },
+    "train_only_services": [
+      "aol",
+      "harvest",
+      "http_2784",
+      "http_8001",
+      "red_i",
+      "tftp_u",
+      "urh_i"
+    ],
+    "services_lt_50_rows": 9
+  },
+  "mi_top10": {
+    "src_bytes": 0.564,
+    "service": 0.465,
+    "dst_bytes": 0.44,
+    "diff_srv_rate": 0.363,
+    "flag": 0.361,
+    "same_srv_rate": 0.355,
+    "dst_host_srv_count": 0.332,
+    "dst_host_same_srv_rate": 0.302,
+    "logged_in": 0.284,
+    "dst_host_diff_srv_rate": 0.284
+  },
+  "mi_zero": [
+    "land",
+    "is_guest_login",
+    "is_host_login",
+    "root_shell",
+    "num_file_creations",
+    "num_failed_logins",
+    "su_attempted"
+  ],
+  "max_univariate_auc": {
+    "feature": "dst_bytes",
+    "auc": 0.9
+  },
+  "difficulty_auc_train": 0.763,
+  "corr_pairs_gt_0.95": [
+    [
+      "num_compromised",
+      "num_root",
+      0.9988
+    ],
+    [
+      "serror_rate",
+      "srv_serror_rate",
+      0.9933
+    ],
+    [
+      "rerror_rate",
+      "srv_rerror_rate",
+      0.989
+    ],
+    [
+      "srv_serror_rate",
+      "dst_host_srv_serror_rate",
+      0.9863
+    ],
+    [
+      "dst_host_serror_rate",
+      "dst_host_srv_serror_rate",
+      0.9851
+    ],
+    [
+      "serror_rate",
+      "dst_host_srv_serror_rate",
+      0.9811
+    ],
+    [
+      "serror_rate",
+      "dst_host_serror_rate",
+      0.9794
+    ],
+    [
+      "srv_serror_rate",
+      "dst_host_serror_rate",
+      0.9776
+    ],
+    [
+      "srv_rerror_rate",
+      "dst_host_srv_rerror_rate",
+      0.9702
+    ],
+    [
+      "rerror_rate",
+      "dst_host_srv_rerror_rate",
+      0.9644
+    ]
+  ],
+  "pca_var_2": 37.9,
+  "ks_top5": {
+    "dst_host_rerror_rate": 0.226,
+    "dst_host_serror_rate": 0.203,
+    "dst_host_srv_serror_rate": 0.197,
+    "serror_rate": 0.185,
+    "srv_serror_rate": 0.181
+  },
+  "ks_mean_all": 0.072,
+  "ks_mean_normal_only": 0.044,
+  "dims_after_cleaning": {
+    "train": [
+      125973,
+      40
+    ],
+    "test": [
+      22543,
+      40
+    ]
+  }
+}
