@@ -12,6 +12,7 @@ tuning:
   n_trials: 100            # SAME for every model (fairness)
   n_startup_trials: 20     # first 20 trials are random search (course Week 8 workflow)
   quick_mode_trials: 30    # use for a first dry run; still identical across models
+  quick_mode: true         # true -> every tunable model gets quick_mode_trials (overnight run)
 selection:
   k_options: [10, 15, 20, 25, 30, "all"]
   corr_threshold: 0.95
@@ -21,3 +22,14 @@ evaluation:
   noninferiority_margin: 0.01
   bootstrap_iterations: 10000
   alpha: 0.05
+split:
+  val_size: 0.2            # stratified train_sub / val split of KDDTrain+ (same as RF notebook)
+features:
+  corr_threshold: 0.98     # CorrelationFilter |r| threshold (fit on training folds only)
+  min_frequency: 50        # OneHotEncoder rare-category grouping
+artifacts:
+  models_dir: models       # fitted pipelines, metadata, ONNX
+  scalars_dir: scalars     # fitted preprocessors (scalers/encoders), feature names, label mapping
+mlflow:
+  tracking_uri: "sqlite:///{root}/mlruns/mlflow.db"
+  experiment: nsl-kdd-binary-ids
