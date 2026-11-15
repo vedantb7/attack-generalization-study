@@ -1,7 +1,7 @@
 # NSL-KDD Dataset Notes
 
-**Files:** `dataset/KDDTrain+.csv` (125,973 rows), `dataset/KDDTest+.csv` (22,543 rows). Pristine headerless copies stay in `dataset/raw/`.
-**Header script:** [`dataset/add_headers.py`](../dataset/add_headers.py). It is idempotent and byte-preserving.
+**Files:** `dataset/raw/KDDTrain+.csv` (125,973 rows), `dataset/raw/KDDTest+.csv` (22,543 rows).
+**Header script:** [`scripts/add_headers.py`](../scripts/add_headers.py). It is idempotent and byte-preserving.
 **EDA notebook:** [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb)
 **Sources:** Tavallaee et al., *A Detailed Analysis of the KDD CUP 99 Data Set* (CISDA 2009), which defines NSL-KDD. Stolfo et al., *KDD Cup 1999 task description* (feature definitions). Lee & Stolfo (2000), *A framework for constructing features and models for intrusion detection systems*.
 
@@ -16,7 +16,7 @@ NSL-KDD is a cleaned version of the KDD Cup 1999 data. That data came from the D
 | Item | Value (verified on these files) |
 |---|---|
 | Columns per row | **43** = 41 features + `class` + `difficulty_level` |
-| Header | Added by `dataset/add_headers.py`: the prompt's 42-column schema (`duration` … `class`) plus `difficulty_level` |
+| Header | Added by `scripts/add_headers.py`: the prompt's 42-column schema (`duration` … `class`) plus `difficulty_level` |
 | Delimiter / line endings | Comma / **CR-only (`\r`)**. Both are preserved exactly by the header script. |
 | Train rows / Test rows | 125,973 / 22,543. The commonly cited KDDTest+ has 22,544; this copy has one fewer row. |
 | Missing values / exact duplicates | 0 / 0 in both files |
@@ -233,6 +233,9 @@ Both files have identical 43-column schemas and dtypes: 38 numeric and 3 categor
 - Report the validation→test gap.
 
 ### B.8 EDA summary and preprocessing decisions
+
+> [!NOTE]
+> **Exploratory vs. Production Pipeline:** The 107-feature pipeline described in early exploratory notebooks utilized correlation filtering ($|r| > 0.98$) and infrequent category grouping. For the canonical, controlled benchmark across all models (Logistic Regression, Decision Tree, Random Forest, Majority Baseline), the production framework uses the standard 122-feature `ColumnTransformer` (preserving all non-constant features with full one-hot encoding, as detailed in [`docs/methodology.md`](methodology.md) and `src/controlled_framework.py`), ensuring strict leak-free preprocessing and fair model comparison.
 
 | Stage | Train | Test |
 |---|---|---|

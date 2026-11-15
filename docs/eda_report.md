@@ -4,7 +4,7 @@
 
 **Document Version:** 1.0.0  
 **Dataset Reference:** NSL-KDD Benchmark Dataset (Tavallaee et al., 2009)  
-**Associated Notebook:** [`notebooks/01_data_exploration.ipynb`](file:///home/dhruvv_w/Documents/instrusion_detection/notebooks/01_data_exploration.ipynb)  
+**Associated Notebook:** [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb)  
 **Primary Focus:** Empirical Exploratory Data Analysis, Security Domain Inferences, Structural Quality Audits, and Modeling Implications.
 
 ---
@@ -58,7 +58,7 @@ The **NSL-KDD** dataset is a benchmark dataset for network-based intrusion detec
 
 ## 2. Dataset Architecture & Dimensional Footprint
 
-The NSL-KDD benchmark consists of two canonical files loaded via [`src/data_loader.py`](file:///home/dhruvv_w/Documents/instrusion_detection/src/data_loader.py):
+The NSL-KDD benchmark consists of two canonical files loaded via [`src/data_loader.py`](../src/data_loader.py):
 
 | Dataset Partition | Filename | Row Count | Raw Columns | Derived Columns | Total Columns | Memory Footprint | Split Ratio |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -545,4 +545,4 @@ graph LR
 ```
 
 ---
-*Report generated based on empirical analysis in [`notebooks/01_data_exploration.ipynb`](file:///home/dhruvv_w/Documents/instrusion_detection/notebooks/01_data_exploration.ipynb).*
+*Report generated based on empirical analysis in [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb).*

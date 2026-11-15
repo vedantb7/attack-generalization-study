@@ -2,8 +2,8 @@
 
 **Project:** Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection  
 **Course:** ES 335: Machine Learning (IIT Gandhinagar)  
-**Modules:** [`src/data_loader.py`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/src/data_loader.py), [`src/preprocessing.py`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/src/preprocessing.py)  
-**Notebooks:** [`notebooks/01_data_exploration.ipynb`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/notebooks/01_data_exploration.ipynb), [`notebooks/02_preprocessing.ipynb`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/notebooks/02_preprocessing.ipynb)  
+**Modules:** [`src/data_loader.py`](../src/data_loader.py), [`src/preprocessing.py`](../src/preprocessing.py)  
+**Notebooks:** [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb), [`notebooks/02_preprocessing.ipynb`](../notebooks/02_preprocessing.ipynb)  
 
 ---
 
@@ -141,9 +141,9 @@ X_test_proc = preprocessor.transform(X_test)
 
 ## 8. Random Forest Classifier: Feature Selection, Hyperparameters & Generalization Analysis
 
-**Notebook:** [`notebooks/06_random_forest.ipynb`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/notebooks/06_random_forest.ipynb)  
+**Notebook:** [`notebooks/06_random_forest.ipynb`](../notebooks/06_random_forest.ipynb)  
 **Author:** Vedant (Team: Vedant & Dhruv)  
-**Artifacts:** [`models/random_forest.joblib`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/models/random_forest.joblib), [`results/metrics/random_forest.json`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/results/metrics/random_forest.json), [`results/metrics/random_forest_initial.json`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/results/metrics/random_forest_initial.json), [`results/predictions/random_forest_predictions.csv`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/results/predictions/random_forest_predictions.csv)
+**Artifacts:** [`models/random_forest.joblib`](../models/random_forest.joblib), [`results/metrics/random_forest.json`](../results/metrics/random_forest.json), [`results/metrics/random_forest_initial.json`](../results/metrics/random_forest_initial.json), [`results/predictions/random_forest_predictions.csv`](../results/predictions/random_forest_predictions.csv)
 
 ### 8.1 Model Role & Objective
 Random Forest serves as the **high-capacity non-linear ensemble benchmark** in this study. By aggregating an ensemble of randomized, deep decision trees through bagging and random subspace projection:
@@ -233,4 +233,122 @@ y_pred = model.predict(X_test_proc)
 1. **Initial Test-Set Diagnostic:** The official test set was evaluated during an initial diagnostic baseline before final hyperparameter selection. While official test results were not used to pick hyperparameters, the test set was not an untouched blind holdout.
 2. **Benchmark Scope:** NSL-KDD results measure benchmark-domain out-of-distribution behavior, not genuine real-world zero-day exploit detection.
 3. **Research Hypothesis Scope:** Random Forest alone **cannot** establish whether simpler models generalize better. That comparative hypothesis is strictly reserved for `notebooks/07_evaluation_comparison.ipynb`.
+
+---
+
+## 9. Unified Controlled Experimental Framework & Fair Multi-Model Comparison
+
+**Module:** [`src/controlled_framework.py`](../src/controlled_framework.py)  
+**Notebook:** [`notebooks/07_evaluation_comparison.ipynb`](../notebooks/07_evaluation_comparison.ipynb)  
+**Artifacts:**
+- Models: `models/logistic_regression_controlled.joblib`, `models/decision_tree_controlled.joblib`, `models/random_forest_controlled.joblib`
+- Metrics: `results/metrics/logistic_regression_controlled.json`, `results/metrics/decision_tree_controlled.json`, `results/metrics/random_forest_controlled.json`, `results/metrics/majority_baseline_controlled.json`, `results/metrics/statistical_comparison.json`
+- Predictions: `results/predictions/*_controlled_predictions.csv` (22,543 records each)
+
+### 9.1 Motivation & Protocol Controls
+An audit of team implementations revealed disparities in feature dimensionality (107 features with correlation dropping vs. 122 canonical features) and missing execution outputs. To ensure absolute scientific fairness, transparency, and reproducibility:
+1. **Identical Inputs:** All models consume the canonical 122-feature standard-scaled representation (`OneHotEncoder(handle_unknown='ignore')` + `StandardScaler()`).
+2. **Zero Validation Leakage:** During 5-fold Stratified Cross-Validation on `KDDTrain+` ($N=100,778$), preprocessors were fitted strictly inside each training fold.
+3. **Equal Optimization Budget:** Exactly 25 Optuna TPE trials per model maximizing CV Macro-F1 (`random_state=42`).
+4. **Strict Evaluation Hygiene:** The official test set (`KDDTest+`, $N=22,543$) was evaluated exactly once at a fixed decision threshold of $0.50$ (zero test-set hyperparameter tuning or threshold snooping).
+5. **Statistical Significance & Uncertainty:** Paired McNemar tests with Edwards continuity correction on all 22,543 test predictions and 1,000-sample percentile bootstrap 95% confidence intervals.
+
+### 9.2 Tuned Model Configurations
+- **Logistic Regression (Controlled):**
+  - $C = 82.05$, `class_weight='balanced'`, `solver='lbfgs'`, `max_iter=500`
+  - Best 5-fold CV Macro-F1: $0.9757 \pm 0.0010$
+- **Decision Tree (Controlled):**
+  - `criterion='gini'`, `max_depth=30`, `min_samples_split=2`, `min_samples_leaf=2`, `max_features=None`, `class_weight='balanced'`
+  - Best 5-fold CV Macro-F1: $0.9979 \pm 0.0002$
+- **Random Forest (Controlled):**
+  - `n_estimators=75`, `max_depth=None`, `min_samples_split=3`, `min_samples_leaf=1`, `max_features='sqrt'`, `class_weight=None`
+  - Best 5-fold CV Macro-F1: $0.9987 \pm 0.0004$
+
+### 9.3 Controlled Test Benchmark Results (`KDDTest+`, $N=22,543$)
+
+| Metric | Majority Baseline | Logistic Regression | Decision Tree | Random Forest |
+|:---|:---:|:---:|:---:|:---:|
+| **Accuracy (%)** | 43.07% | 75.64% | **83.22%** | 76.36% |
+| **Macro-F1 (95% CI)** | 0.3011 | 0.7560 [0.7500, 0.7613] | **0.8322** [0.8272, 0.8370] | 0.7623 [0.7567, 0.7674] |
+| **Attack Recall (%)** | 0.00% | 62.92% | **73.91%** | 60.52% |
+| **Attack Precision (%)** | 0.00% | 91.68% | 95.61% | **96.72%** |
+| **Attack F1** | 0.0000 | 0.7462 | **0.8337** | 0.7446 |
+| **False Positive Rate (FPR)** | 0.00% | 7.55% | 4.48% | **2.71%** |
+| **False Negative Rate (FNR)** | 100.00% | 37.08% | **26.09%** | 39.48% |
+| **DoS Recall (n=7,458)** | 0.00% | 82.22% | **85.43%** | 79.47% |
+| **Probe Recall (n=2,421)** | 0.00% | 78.11% | **83.02%** | 72.86% |
+| **R2L Recall (n=2,887)** | 0.00% | 1.04% | **37.48%** | 2.36% |
+| **U2R Recall (n=67)** | 0.00% | 31.34% | **32.84%** | 11.94% |
+| **Seen Attack Recall (n=9,083)** | 0.00% | 71.52% [70.51, 72.41] | **82.40%** [81.58, 83.15] | 75.91% [75.01, 76.70] |
+| **Unseen Attack Recall (n=3,750)** | 0.00% | 42.08% [40.57, 43.70] | **53.36%** [51.82, 54.96] | 23.25% [21.90, 24.62] |
+| **Generalization Drop (pp)** | 0.00 pp | **29.44 pp** [27.67, 31.27] | **29.04 pp** [27.21, 30.74] | **52.66 pp** [50.99, 54.24] |
+| **Latency (μs / flow)** | 0.04 μs | 1.34 μs | **0.82 μs** | 4.34 μs |
+
+### 9.4 Granular 17 Unseen Attack Types Breakdown
+
+| Attack Signature | Category | Test Samples ($n$) | Logistic Regression | Decision Tree | Random Forest | Primary Behavioral Observation |
+|:---|:---:|:---:|:---:|:---:|:---:|:---|
+| **mscan** | Probe | 996 | 523 (52.51%) | 589 (59.14%) | 344 (34.54%) | Multi-host IP scanning sweep; all models detect over a third of flows |
+| **apache2** | DoS | 737 | 730 (99.05%) | 334 (45.32%) | 195 (26.46%) | Volumetric HTTP flood; linear weights capture high connection rates |
+| **processtable** | DoS | 685 | 7 (1.02%) | 235 (34.31%) | 8 (1.17%) | Slow resource-exhaustion DoS; DT captures lingering connection states |
+| **snmpguess** | R2L | 331 | 2 (0.60%) | 327 (98.79%) | 0 (0.00%) | SNMP community string brute-force; DT isolates via UDP destination port |
+| **saint** | Probe | 319 | 305 (95.61%) | 317 (99.37%) | 314 (98.43%) | Aggressive vulnerability assessment tool; recognized by all models |
+| **mailbomb** | DoS | 293 | 0 (0.00%) | 63 (21.50%) | 0 (0.00%) | Spam-based volume queue flood; LR and RF miss 100% of samples |
+| **snmpgetattack** | R2L | 178 | 1 (0.56%) | 0 (0.00%) | 0 (0.00%) | SNMP reconnaissance; stealthy UDP payload missed by all models |
+| **httptunnel** | R2L | 133 | 4 (3.01%) | 110 (82.71%) | 1 (0.75%) | Payload tunneling over HTTP port 80; DT detects anomalous flow length |
+| **named** | R2L | 17 | 1 (5.88%) | 5 (29.41%) | 2 (11.76%) | DNS zone transfer / cache exploit; moderate detection by DT |
+| **ps** | U2R | 15 | 0 (0.00%) | 9 (60.00%) | 2 (13.33%) | Shell command execution exploit; DT isolates process count indicators |
+| **sendmail** | R2L | 14 | 1 (7.14%) | 1 (7.14%) | 0 (0.00%) | Buffer overflow in SMTP daemon; low-volume payload largely undetected |
+| **xterm** | U2R | 13 | 4 (30.77%) | 4 (30.77%) | 3 (23.08%) | Local display root exploit; recognized via host session patterns |
+| **xlock** | R2L | 9 | 0 (0.00%) | 2 (22.22%) | 0 (0.00%) | X11 screen locker authentication bypass; DT detects 2 of 9 flows |
+| **xsnoop** | R2L | 4 | 0 (0.00%) | 1 (25.00%) | 1 (25.00%) | X11 keystroke sniffer; low volume makes statistical detection difficult |
+| **sqlattack** | U2R | 2 | 0 (0.00%) | 2 (100.00%) | 0 (0.00%) | SQL injection privilege escalation; DT isolates SQL traffic byte ratio |
+| **udpstorm** | DoS | 2 | 0 (0.00%) | 2 (100.00%) | 2 (100.00%) | UDP loop flood; volumetric byte spikes detected by both DT and RF |
+| **worm** | R2L | 2 | 0 (0.00%) | 0 (0.00%) | 0 (0.00%) | Self-propagating worm payload; zero detection across all models |
+| **TOTAL (SUM)** | **ALL UNSEEN** | **3,750** | **1,578 (42.08%)** | **2,001 (53.36%)** | **872 (23.25%)** | **Exact match with aggregate unseen detection metrics** |
+
+### 9.5 Statistical Significance (McNemar's Tests & Paired Bootstrap)
+
+#### A. Full Test Set ($N=22,543$: Overall Classification Concordance)
+- **Logistic Regression vs. Decision Tree:** Disagreements: 3,223 | $\chi^2 = 905.14$, $p < 10^{-198}$ (Decision Tree significantly superior in overall accuracy).
+- **Logistic Regression vs. Random Forest:** Disagreements: 1,919 | $\chi^2 = 13.68$, $p = 0.000217$ (Significantly distinct error distributions; RF achieves higher precision, LR achieves higher recall).
+- **Decision Tree vs. Random Forest:** Disagreements: 2,026 | $\chi^2 = 1,178.20$, $p < 10^{-257}$ (Decision Tree significantly superior overall).
+
+#### B. Unseen Attack Subset ($N=3,750$: Novel Attack Detection Concordance)
+- **Logistic Regression vs. Decision Tree:** Disagreements: 1,605 (LR right/DT wrong: 591, LR wrong/DT right: 1,014) | $\chi^2 = 110.96$, $p < 10^{-25}$ (Decision Tree significantly superior on novel attack detection).
+- **Logistic Regression vs. Random Forest:** Disagreements: 928 (LR right/RF wrong: 817, LR wrong/RF right: 111) | $\chi^2 = 535.59$, $p < 10^{-118}$ (Logistic Regression significantly superior on novel attack detection).
+- **Decision Tree vs. Random Forest:** Disagreements: 1,245 (DT right/RF wrong: 1,187, DT wrong/RF right: 58) | $\chi^2 = 1,022.00$, $p < 10^{-223}$ (Decision Tree significantly superior on novel attack detection).
+
+#### C. Paired Bootstrap Differences (1,000 Replicates with Shared Test Indices)
+- **DT vs. RF:** $\Delta(\text{Macro-F1}) = +0.0699$ [$+0.0662, +0.0739$], $\Delta(\text{Unseen Recall}) = +30.13\text{ pp}$ [$+28.62, +31.75$ pp], $P(\Delta \le 0) = 0.0000$.
+- **LR vs. RF:** $\Delta(\text{Macro-F1}) = -0.0064$ [$-0.0100, -0.0029$], $\Delta(\text{Unseen Recall}) = +18.79\text{ pp}$ [$+17.31, +20.25$ pp], $P(\Delta \le 0) = 0.0000$.
+- **DT vs. LR:** $\Delta(\text{Macro-F1}) = +0.0763$ [$+0.0715, +0.0807$], $\Delta(\text{Unseen Recall}) = +11.34\text{ pp}$ [$+9.25, +13.43$ pp], $P(\Delta \le 0) = 0.0000$.
+
+### 9.6 Bounded Academic Evaluation of the Research Hypothesis
+1. **Does Random Forest Suffer from Signature Memorization?**  
+   Random Forest exhibits clear empirical evidence of signature memorization. While saturating cross-validation ($0.9987$) and achieving $75.91\%$ seen recall, its performance drops by **$52.66$ percentage points** to only $23.25\%$ on unseen attacks. Feature subspace projection (`max_features='sqrt'`) forces trees to split on local, specialized feature combinations that fail when novel attacks appear with altered traffic distributions. However, "memorization" is an empirical interpretation of severe out-of-distribution degradation, not a standalone causal proof; covariance shift in continuous traffic features and class imbalance also contribute.
+2. **Do Simpler Models Generalize Better to Unseen Attacks?**  
+   On this benchmark, yes: both Decision Tree ($53.36\%$ unseen recall, $29.04$ pp drop) and Logistic Regression ($42.08\%$ unseen recall, $29.44$ pp drop) significantly outperformed Random Forest ($23.25\%$ unseen recall, $52.66$ pp drop). Decision Tree's unconstrained splits on global continuous features enabled it to detect substantial unseen DoS and R2L tools (`httptunnel`, `apache2`, `snmpguess`).
+3. **Crucial Methodological Boundaries:**  
+   - *Alert Fatigue:* Simpler models do not provide an uncompromised solution. Logistic Regression produced a $7.55\%$ false positive rate ($733$ false alarms), nearly $3\times$ higher than Random Forest ($2.71\%$, $263$ false alarms).
+   - *Stealth Failure:* On non-volumetric stealth attacks (`mailbomb`, `processtable`, `worm`, `snmpgetattack`), all models experienced severe blind spots.
+   - *No True Zero-Day Claim:* NSL-KDD unseen attacks are historical 1999–2009 variations within a synthetic benchmark; they do not establish operational zero-day protection in modern enterprise networks.
+
+### 9.7 Reproduction & Verification Workflow
+
+All controlled experiments and evaluation figures can be reproduced directly via the command-line scripts:
+
+1. **Run All Controlled Models:**
+   ```bash
+   python scripts/run_all_controlled_models.py
+   ```
+   Executes 5-fold CV hyperparameter tuning via Optuna (25 trials per model), fits final models on full `KDDTrain+`, evaluates once on `KDDTest+`, serializes models to `models/*_controlled.joblib`, writes metrics to `results/metrics/`, and exports predictions to `results/predictions/`.
+
+2. **Build & Execute Comparative Evaluation Notebook:**
+   ```bash
+   python scripts/build_comparison_notebook.py
+   ```
+   Generates and validates `notebooks/07_evaluation_comparison.ipynb`, executing the full statistical significance suite (McNemar tests, bootstrap CIs) and rendering high-resolution figures to `results/figures/evaluation/`.
+
+
 

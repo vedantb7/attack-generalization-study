@@ -96,49 +96,53 @@ flowchart LR
 ```text
 ├── config.yaml                    # Global experiment configuration, seeds, and paths
 ├── dataset/
-│   ├── raw/                       # Canonical raw NSL-KDD CSV files
-│   │   ├── KDDTrain+.csv          # 125,973 training rows
-│   │   └── KDDTest+.csv           # 22,543 testing rows
-│   └── processed/                 # Cached processed data (if generated)
+│   └── raw/                       # Canonical raw NSL-KDD CSV files
+│       ├── KDDTrain+.csv          # 125,973 training rows
+│       └── KDDTest+.csv           # 22,543 testing rows
 ├── docs/                          # Detailed reports and methodology documentation
 │   ├── dataset_notes.md           # Dataset taxonomy & EDA inferences
 │   ├── eda_report.md              # In-depth exploratory data analysis report
-│   ├── methodology.md             # Complete data pipeline & preprocessing protocol
+│   ├── methodology.md             # Complete data pipeline & controlled methodology
 │   ├── project_proposal.md        # Formal research questions & hypothesis specification
 │   ├── references.md              # Academic benchmark literature and citations
 │   └── images/                    # Visualizations generated from EDA
 ├── models/                        # Serialized model and pipeline artifacts
 │   ├── preprocessor.joblib        # Fitted ColumnTransformer (122 features)
-│   ├── decision_tree/             # Decision tree checkpoint directory
-│   ├── logistic_regression/       # Logistic regression checkpoint directory
-│   └── random_forest/             # Random forest checkpoint directory
+│   ├── random_forest.joblib       # Original Random Forest model artifact
+│   ├── logistic_regression_controlled.joblib  # Controlled Logistic Regression
+│   ├── decision_tree_controlled.joblib        # Controlled Decision Tree
+│   └── random_forest_controlled.joblib        # Controlled Random Forest
 ├── notebooks/                     # Exploratory and experimental Jupyter notebooks
 │   ├── 01_data_exploration.ipynb # Completed EDA & statistical distributions
 │   ├── 02_preprocessing.ipynb    # Completed preprocessing exploration & artifact export
 │   ├── 03_majority_baseline.ipynb# Completed zero-rule baseline classifier
-│   ├── 04_logistic_regression.ipynb # [Pending] Logistic Regression implementation
-│   ├── 05_decision_tree.ipynb    # [Pending] Decision Tree implementation
-│   ├── 06_random_forest.ipynb    # [Pending] Random Forest implementation
-│   └── 07_evaluation_comparison.ipynb # [Pending] Multi-model comparative analysis
-├── results/                       # Experimental metrics, plots, and confusion matrices
-│   ├── confusion_matrices/
-│   ├── error_analysis/
-│   ├── metrics/
-│   │   └── majority_baseline.json # Baseline evaluation metrics
-│   └── plots/
+│   ├── 04_logistic_regression.ipynb # Historical exploratory Logistic Regression
+│   ├── 05_decision_tree.ipynb    # Historical exploratory Decision Tree
+│   ├── 06_random_forest.ipynb    # Historical Random Forest implementation
+│   ├── 07_evaluation_comparison.ipynb # Canonical controlled multi-model comparison
+│   └── 08_xgboost.ipynb          # Historical exploratory gradient boosting
+├── results/                       # Experimental metrics, plots, and predictions
+│   ├── figures/evaluation/        # Comparative evaluation plots (ROC, PR, gap, calibration)
+│   ├── metrics/                   # JSON metric summaries for all models
+│   ├── predictions/               # Per-sample test predictions CSVs
+│   ├── splits/                    # Train/validation split index arrays
+│   └── tuning/                    # Optuna hyperparameter optimization logs
+├── scripts/                       # Reproduction and utility scripts
+│   ├── add_headers.py             # Prepend schema headers if needed
+│   ├── build_comparison_notebook.py # Generate comparison notebook & figures
+│   └── run_all_controlled_models.py # End-to-end controlled training & evaluation
 ├── src/                           # Shared reusable production modules
 │   ├── __init__.py
 │   ├── config.py                  # Seed and environment configuration utilities
 │   ├── data_loader.py             # Schema definition, ingestion & label mapping
 │   ├── preprocessing.py          # ColumnTransformer, feature extraction & persistence
-│   ├── features.py                # [Pending] Specialized feature extraction helpers
-│   └── evaluation.py              # [Pending] Evaluation and significance test suite
+│   ├── controlled_framework.py    # Leakage-free controlled training & evaluation framework
+│   ├── features.py                # Exploratory feature extraction helpers
+│   ├── experiment.py              # Exploratory experiment execution runner
+│   └── evaluation.py              # Evaluation metric helpers & plotting
 ├── tests/                         # Automated test suite
-│   └── test_data_pipeline.py      # 15 unittests for data loader and preprocessor
-├── website/                       # Interactive demonstration web interface (Static)
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
+│   ├── test_data_pipeline.py      # 15 unittests for data loader and preprocessor
+│   └── test_features.py           # Feature engineering and cleaning unit tests
 ├── requirements.txt               # Project dependency specifications
 ├── requirements-lock.txt          # Frozen dependency lockfile
 └── README.md                      # Primary project documentation (this file)
@@ -150,10 +154,11 @@ flowchart LR
 
 | Team Member | Core Responsibilities |
 |:---|:---|
-| **Vedant** | Data loading & preprocessing modules (`src/data_loader.py`, `src/preprocessing.py`)<br>Majority-Class baseline classifier (`notebooks/03_majority_baseline.ipynb`)<br>Random Forest classifier implementation & tuning (`notebooks/06_random_forest.ipynb`)<br>Interactive web presentation interface (`website/`) |
+| **Vedant** | Data loading & preprocessing modules (`src/data_loader.py`, `src/preprocessing.py`)<br>Majority-Class baseline classifier (`notebooks/03_majority_baseline.ipynb`)<br>Random Forest classifier implementation & tuning (`notebooks/06_random_forest.ipynb`)<br>Controlled framework architecture & execution (`src/controlled_framework.py`, `scripts/`) |
 | **Dhruv** | Exploratory Data Analysis & statistical reporting (`notebooks/01_data_exploration.ipynb`, `docs/eda_report.md`)<br>Logistic Regression regularized baseline (`notebooks/04_logistic_regression.ipynb`)<br>Decision Tree interpretable classifier (`notebooks/05_decision_tree.ipynb`)<br>Comparative multi-model evaluation & statistical tests (`notebooks/07_evaluation_comparison.ipynb`, `src/evaluation.py`) |
 
-Both team members adhere strictly to the same official data split, feature definitions, and anti-leakage evaluation protocols.
+Both team members adhere strictly to the same official data split, feature definitions, and anti-leakage evaluation protocols.  
+*(Note: A static web UI demonstration was originally scoped under `website/`, but was deferred in favor of the rich, interactive Jupyter evaluation dashboard and standalone SVG/PNG publication figures in `results/figures/evaluation/`.)*
 
 ---
 
@@ -201,10 +206,25 @@ X_test_proc = preprocessor.transform(X_test)    # (22543, 122)
 ```
 
 ### D. Running Automated Tests
-Run the comprehensive 15-test pipeline suite using Python's standard `unittest` or `pytest`:
+Run the comprehensive test suite using Python's standard `unittest` or `pytest`:
 
 ```bash
-python -m unittest tests/test_data_pipeline.py -v
+# Run 15 pipeline and preprocessor unit tests
+python -m unittest discover tests -v
+
+# Run 12 feature extraction unit tests
+pytest tests/test_features.py -v
+```
+
+### E. End-to-End Controlled Benchmark Reproduction
+To reproduce the full controlled benchmark (Logistic Regression, Decision Tree, Random Forest) and generate all comparative evaluation figures:
+
+```bash
+# Train all controlled models with 5-fold CV Optuna tuning, evaluate once on test set:
+python scripts/run_all_controlled_models.py
+
+# Rebuild and run the comparative evaluation notebook & statistical tests:
+python scripts/build_comparison_notebook.py
 ```
 
 ---
@@ -215,24 +235,30 @@ python -m unittest tests/test_data_pipeline.py -v
   - Comprehensive Exploratory Data Analysis (`01_data_exploration.ipynb`, `docs/eda_report.md`, `docs/dataset_notes.md`).
   - Standardized Data Loader module with path independence and attack mapping validation (`src/data_loader.py`).
   - Strict anti-leakage preprocessor module with persistence utilities (`src/preprocessing.py`, `notebooks/02_preprocessing.ipynb`, `models/preprocessor.joblib`).
-  - Majority-Class Baseline Classifier establishing performance floor (`notebooks/03_majority_baseline.ipynb`, `results/metrics/majority_baseline.json`):
-    - Accuracy: **$43.07\%$** | Precision: **$0.00$** | Recall: **$0.00$** | F1-Score: **$0.00$**
+  - Majority-Class Baseline Classifier establishing performance floor (`notebooks/03_majority_baseline.ipynb`, `results/metrics/majority_baseline_controlled.json`):
+    - Accuracy: **$43.07\%$** | Macro-F1: **$0.3011$** | Attack Recall: **$0.00\%$**
   - Random Forest Classifier non-linear benchmark (`notebooks/06_random_forest.ipynb`, `models/random_forest.joblib`, `results/metrics/random_forest.json`):
     - Accuracy: **$78.59\%$** | Precision: **$96.86\%$** | Recall: **$64.47\%$** | Macro-F1: **$0.7853$**
     - Seen Attack Recall: **$76.91\%$** | Unseen Attack Recall: **$34.35\%$** (Generalization Drop: **$42.57$ pp**)
-  - Automated test suite with 15 passing tests (`tests/test_data_pipeline.py`).
+  - **Unified Controlled Multi-Model Framework (`src/controlled_framework.py`, `scripts/run_all_controlled_models.py`):**
+    - 5-fold Stratified CV with fold-level preprocessors (0 leakage), 25 Optuna trials per model.
+    - Logistic Regression Controlled (`models/logistic_regression_controlled.joblib`, $75.64\%$ accuracy, $0.7560$ Macro-F1, $42.08\%$ unseen recall).
+    - Decision Tree Controlled (`models/decision_tree_controlled.joblib`, $83.22\%$ accuracy, $0.8322$ Macro-F1, $53.36\%$ unseen recall).
+    - Random Forest Controlled (`models/random_forest_controlled.joblib`, $76.36\%$ accuracy, $0.7623$ Macro-F1, $23.25\%$ unseen recall).
+  - Multi-Model Comparative Evaluation & Statistical Hypothesis Testing (`notebooks/07_evaluation_comparison.ipynb`, `results/metrics/statistical_comparison.json`):
+    - Paired McNemar significance tests ($\chi^2 = 905.14$, $13.68$, $1178.20$, all $p < 0.001$).
+    - 1,000-sample percentile bootstrap 95% confidence intervals.
+  - Automated test suite with 15 passing tests (`tests/test_data_pipeline.py`) + 12 passing feature tests (`tests/test_features.py`).
   - Complete project methodology, formal proposal, and references documentation (`docs/`).
-- [ ] **Work in Progress / Next Steps:**
-  - Logistic Regression regularized benchmark with $L_1$/$L_2$ cross-validation (`notebooks/04_logistic_regression.ipynb`).
-  - Decision Tree classifier with cost-complexity pruning (`notebooks/05_decision_tree.ipynb`).
-  - Comparative evaluation and statistical hypothesis testing across model complexities (`notebooks/07_evaluation_comparison.ipynb`, `src/evaluation.py`).
-  - Interactive web results dashboard (`website/`).
+- [ ] **Next Steps / Optional Extensions:**
+  - Interactive web results dashboard (deferred extension).
+  - Cost-sensitive threshold tuning on validation data for alert fatigue minimization.
 
 ---
 
 ## 8. Random Forest Classifier Benchmark
 
-**Notebook:** [`notebooks/06_random_forest.ipynb`](file:///run/media/vedant/DISK/Studies/SEM%205/ES%20335/Project/Intrusion%20Detection/notebooks/06_random_forest.ipynb)  
+**Notebook:** [`notebooks/06_random_forest.ipynb`](notebooks/06_random_forest.ipynb)  
 **Lead:** Vedant  
 
 ### Model Objective & Role
@@ -289,4 +315,45 @@ y_pred = rf.predict(X_test)
 - **Diagnostic Test Inspection:** The official test set was evaluated during an initial diagnostic run before final hyperparameter selection; hence it was not a blind holdout.
 - **Benchmark Scope:** Evaluated on the synthetic NSL-KDD benchmark; not a claim of genuine real-world zero-day exploit detection.
 - **Hypothesis Scope:** Random Forest alone demonstrates its own seen vs. unseen generalization gap ($42.57$ pp). Whether simpler models (Logistic Regression, Decision Trees) exhibit a smaller gap is strictly evaluated in `notebooks/07_evaluation_comparison.ipynb`.
+
+---
+
+## 9. Unified Multi-Model Comparison & Statistical Hypothesis Evaluation
+
+**Notebook:** [`notebooks/07_evaluation_comparison.ipynb`](notebooks/07_evaluation_comparison.ipynb)  
+**Experimental Module:** [`src/controlled_framework.py`](src/controlled_framework.py)
+
+### Controlled Benchmark Results (Fixed Threshold = 0.50, `KDDTest+`, $N=22,543$)
+
+| Model | Accuracy (%) | Macro-F1 (95% CI) | Attack Recall (%) | Attack Precision (%) | FPR (%) | Seen Recall (%) | Unseen Recall (%) | Generalization Drop (pp) | Latency (μs) |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Majority Baseline** | 43.07% | 0.3011 | 0.00% | 0.00% | 0.00% | 0.00% | 0.00% | 0.00 pp | 0.04 μs |
+| **Logistic Regression** | 75.64% | 0.7560 [0.7500, 0.7613] | 62.92% | 91.68% | 7.55% | 71.52% | **42.08%** | **29.44 pp** | 1.34 μs |
+| **Decision Tree** | **83.22%** | **0.8322** [0.8272, 0.8370] | **73.91%** | 95.61% | 4.48% | **82.40%** | **53.36%** | **29.04 pp** | **0.82 μs** |
+| **Random Forest** | 76.36% | 0.7623 [0.7567, 0.7674] | 60.52% | **96.72%** | **2.71%** | 75.91% | 23.25% | 52.66 pp | 4.34 μs |
+
+### Statistical Significance (McNemar's Tests)
+- **Overall Classification Concordance ($N=22,543$):**
+  - **LR vs. DT:** Disagreements: 3,223 | $\chi^2 = 905.14$, $p < 10^{-198}$ (Decision Tree significantly superior in overall accuracy).
+  - **LR vs. RF:** Disagreements: 1,919 | $\chi^2 = 13.68$, $p = 0.000217$ (Significantly distinct error profiles; RF achieves higher precision, LR achieves higher recall).
+  - **DT vs. RF:** Disagreements: 2,026 | $\chi^2 = 1,178.20$, $p < 10^{-257}$ (Decision Tree significantly superior overall).
+- **Novel Attack Detection Concordance ($N=3,750$ Unseen Attacks):**
+  - **LR vs. DT:** Disagreements: 1,605 | $\chi^2 = 110.96$, $p < 10^{-25}$ (Decision Tree significantly superior on novel attack detection).
+  - **LR vs. RF:** Disagreements: 928 | $\chi^2 = 535.59$, $p < 10^{-118}$ (Logistic Regression significantly superior on novel attack detection).
+  - **DT vs. RF:** Disagreements: 1,245 | $\chi^2 = 1,022.00$, $p < 10^{-223}$ (Decision Tree significantly superior on novel attack detection).
+
+### Answers to the Central Research Hypothesis
+1. **Does Random Forest memorize signatures?**  
+   **Evidence supports severe out-of-distribution degradation:** Random Forest suffers a massive **$52.66$ percentage point collapse** on novel attacks ($75.91\% \to 23.25\%$). Bagged feature subspacing forces trees to over-rely on specific local training patterns.
+2. **Do simpler models generalize better?**  
+   **Empirically supported on this benchmark:** Both Decision Tree ($29.04$ pp drop, $53.36\%$ unseen recall) and Logistic Regression ($29.44$ pp drop, $42.08\%$ unseen recall) maintain broader decision boundaries, capturing significantly more novel traffic.
+3. **Caveat on Zero-Day Claims & Alert Fatigue:**  
+   Neither simple model provides universal zero-day immunity. On non-volumetric stealth attacks (`mailbomb`, `worm`, `snmpgetattack`), models experienced severe blind spots. In addition, Logistic Regression's higher unseen recall comes with an unacceptable $7.55\%$ false positive rate ($733$ false alarms), vs. $2.71\%$ for Random Forest ($263$ false alarms).
+
+---
+
+## 10. References & Benchmark Literature
+
+For complete literature citations, theoretical papers (Breiman CART and Random Forests, Akiba Optuna, McNemar and Edwards hypothesis testing, Efron Bootstrap), and DARPA/NSL-KDD foundational studies, refer to [`docs/references.md`](docs/references.md).
+
 

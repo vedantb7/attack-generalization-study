@@ -69,6 +69,6 @@ All models will be evaluated under:
 - [x] **Milestone 1:** Exploratory Data Analysis & statistical distributions report (`notebooks/01_data_exploration.ipynb`, `docs/eda_report.md`).
 - [x] **Milestone 2:** Standardized data loading & anti-leakage preprocessing module (`src/data_loader.py`, `src/preprocessing.py`, `tests/test_data_pipeline.py`).
 - [x] **Milestone 3:** Majority-class baseline implementation & benchmark metric storage (`notebooks/03_majority_baseline.ipynb`, `results/metrics/majority_baseline.json`).
-- [ ] **Milestone 4:** Implementation and hyperparameter tuning for Logistic Regression, Decision Tree, and Random Forest (`notebooks/04_...`, `05_...`, `06_...`).
-- [ ] **Milestone 5:** Comparative generalization audit and statistical significance analysis (`notebooks/07_evaluation_comparison.ipynb`).
+- [x] **Milestone 4:** Implementation and hyperparameter tuning for Logistic Regression, Decision Tree, and Random Forest (`notebooks/04_...`, `05_...`, `06_...`, `src/controlled_framework.py`).
+- [x] **Milestone 5:** Comparative generalization audit and statistical significance analysis (`notebooks/07_evaluation_comparison.ipynb`).
 - [ ] **Milestone 6:** Final report, methodology consolidation, and interactive results website (`website/`).

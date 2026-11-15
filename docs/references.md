@@ -39,12 +39,50 @@
 
 ---
 
-## 3. Tooling & Software Frameworks
+## 3. Machine Learning Algorithms & Optimization
 
-6. **Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., et al. (2011).**  
-   *Scikit-learn: Machine Learning in Python.*  
-   *Journal of Machine Learning Research*, 12, pp. 2825–2830.
+6. **Breiman, L., Friedman, J. H., Olshen, R. A., & Stone, C. J. (1984).**  
+   *Classification and Regression Trees.*  
+   Wadsworth & Brooks/Cole Advanced Books & Software, Monterey, CA.  
+   *Significance:* Foundational CART algorithm for greedy recursive binary partitioning, impurity minimization (Gini and entropy), and cost-complexity pruning.
 
-7. **McKinney, W. (2010).**  
-   *Data Structures for Statistical Computing in Python.*  
-   Proceedings of the 9th Python in Science Conference (SciPy 2010), pp. 56–61.
+7. **Breiman, L. (2001).**  
+   *Random Forests.*  
+   *Machine Learning*, 45(1), pp. 5–32.  
+   *Significance:* Introduces bootstrap aggregation with random feature subspace sampling, establishing ensemble variance reduction over single decision trees.
+
+8. **Akiba, T., Sano, S., Yanase, T., Ohta, T., & Koyama, M. (2019).**  
+   *Optuna: A Next-generation Hyperparameter Optimization Framework.*  
+   Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining (KDD '19), pp. 2623–2631.  
+   *Significance:* Tree-structured Parzen Estimator (TPE) Bayesian hyperparameter search used for automated hyperparameter tuning under 5-fold cross-validation.
+
+---
+
+## 4. Statistical Testing & Resampling Methodology
+
+9. **McNemar, Q. (1947).**  
+   *Note on the sampling error of the difference between correlated proportions or percentages.*  
+   *Psychometrika*, 12(2), pp. 153–157.  
+   *Significance:* Non-parametric statistical hypothesis test on paired nominal data used to determine whether classifier disagreements on the official test set are statistically significant.
+
+10. **Edwards, A. L. (1948).**  
+    *Note on the "correction for continuity" in testing the significance of the difference between correlated proportions.*  
+    *Psychometrika*, 13(3), pp. 185–187.  
+    *Significance:* Derives the continuity-corrected McNemar test statistic ($\chi^2 = (|b - c| - 1)^2 / (b + c)$) ensuring conservative $p$-values when discordance counts are small.
+
+11. **Efron, B., & Tibshirani, R. J. (1993).**  
+    *An Introduction to the Bootstrap.*  
+    Monographs on Statistics and Applied Probability 57, Chapman & Hall/CRC, New York.  
+    *Significance:* Resampling methodology used to compute 95% percentile bootstrap confidence intervals (1,000 resamples) for test metrics and unseen attack generalization recall.
+
+---
+
+## 5. Tooling & Software Frameworks
+
+12. **Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., et al. (2011).**  
+    *Scikit-learn: Machine Learning in Python.*  
+    *Journal of Machine Learning Research*, 12, pp. 2825–2830.
+
+13. **McKinney, W. (2010).**  
+    *Data Structures for Statistical Computing in Python.*  
+    Proceedings of the 9th Python in Science Conference (SciPy 2010), pp. 56–61.
