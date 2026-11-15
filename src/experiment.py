@@ -315,6 +315,13 @@ def model_complexity(pipe) -> dict:
         out.update(n_trees=len(est.estimators_),
                    total_leaves=int(sum(t.get_n_leaves() for t in est.estimators_)),
                    max_depth=int(max(t.get_depth() for t in est.estimators_)))
+    if hasattr(est, "get_booster"):  # XGBoost
+        out["n_trees"] = int(est.get_booster().num_boosted_rounds())
+        if est.get_params().get("max_depth") is not None:
+            out["max_depth"] = int(est.get_params()["max_depth"])
+        best_it = getattr(est, "best_iteration", None)  # only set when early stopping was used
+        if best_it is not None:
+            out["best_iteration"] = int(best_it)
     return out
 
 
@@ -382,6 +389,20 @@ def save_artifacts(model_name: str, pipe, params: dict, threshold: float,
     return out
 
 
+def _register_xgboost_onnx() -> bool:
+    """Register onnxmltools' XGBClassifier converter with skl2onnx (idempotent)."""
+    try:
+        from onnxmltools.convert.xgboost.operator_converters.XGBoost import convert_xgboost
+        from skl2onnx import update_registered_converter
+        from skl2onnx.common.shape_calculator import calculate_linear_classifier_output_shapes
+        from xgboost import XGBClassifier
+    except ImportError:
+        return False
+    update_registered_converter(XGBClassifier, "XGBoostXGBClassifier", calculate_linear_classifier_output_shapes,
+                                convert_xgboost, options={"nocl": [True, False], "zipmap": [True, False, "columns"]})
+    return True
+
+
 def export_estimator_onnx(model_name: str, pipe, X_sample: pd.DataFrame) -> Dict[str, str]:
     """Export the final estimator to ONNX and check parity with scikit-learn.
 
@@ -396,6 +417,8 @@ def export_estimator_onnx(model_name: str, pipe, X_sample: pd.DataFrame) -> Dict
     except ImportError:
         return {"onnx_status": "skipped: skl2onnx/onnxruntime not installed"}
     est = pipe[-1]
+    if hasattr(est, "get_booster") and not _register_xgboost_onnx():
+        return {"onnx_status": "skipped: onnxmltools not installed (needed for XGBoost -> ONNX)"}
     Xp = np.asarray(pipe[:-1].transform(X_sample), dtype=np.float32)
     try:
         onx = convert_sklearn(est, initial_types=[("input", FloatTensorType([None, Xp.shape[1]]))],

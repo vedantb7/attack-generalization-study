@@ -99,6 +99,23 @@ def test_fit_is_reproducible(data):
     np.testing.assert_array_equal(probs[0], probs[1])
 
 
+def test_xgboost_pipeline_reproducible_and_complexity(data):
+    xgb = pytest.importorskip("xgboost")
+    from src.experiment import model_complexity
+    _, test, sample = data
+    probs = []
+    for _ in range(2):
+        set_all_seeds(SEED)
+        est = xgb.XGBClassifier(n_estimators=40, max_depth=4, learning_rate=0.2, subsample=0.8,
+                                colsample_bytree=0.8, tree_method="hist", n_jobs=-1, random_state=SEED)
+        pipe = build_pipeline(est, "tree")
+        pipe.fit(sample[FEATURE_COLUMNS], sample["is_intrusion"])
+        probs.append(pipe.predict_proba(test[FEATURE_COLUMNS]))
+    np.testing.assert_array_equal(probs[0], probs[1])
+    comp = model_complexity(pipe)
+    assert comp["n_trees"] == 40 and comp["max_depth"] == 4
+
+
 def test_optuna_seeded_sampler_reproducible():
     import optuna
     optuna.logging.set_verbosity(optuna.logging.WARNING)
