@@ -1,0 +1,216 @@
+{
+  "framework": "ES335 Controlled Statistical Significance & Bootstrap Uncertainty",
+  "evaluation_note": "McNemar tests on full test set evaluate overall 0-1 error concordance. McNemar tests on unseen subset evaluate detection concordance on novel attacks specifically. Paired bootstrap differences evaluate paired test-set distributions across 1,000 resamples.",
+  "mcnemar_tests_full_test_set_n22543": {
+    "logistic_regression_vs_decision_tree": {
+      "contingency_table": {
+        "both_correct": 16294,
+        "m1_correct_m2_wrong": 757,
+        "m1_wrong_m2_correct": 2466,
+        "both_wrong": 3026
+      },
+      "disagreements": 3223,
+      "statistic": 905.1393,
+      "p_value": 0.0,
+      "significant_at_05": true,
+      "significant_at_01": true
+    },
+    "logistic_regression_vs_random_forest": {
+      "contingency_table": {
+        "both_correct": 16173,
+        "m1_correct_m2_wrong": 878,
+        "m1_wrong_m2_correct": 1041,
+        "both_wrong": 4451
+      },
+      "disagreements": 1919,
+      "statistic": 13.6759,
+      "p_value": 0.00021722750335417818,
+      "significant_at_05": true,
+      "significant_at_01": true
+    },
+    "decision_tree_vs_random_forest": {
+      "contingency_table": {
+        "both_correct": 16974,
+        "m1_correct_m2_wrong": 1786,
+        "m1_wrong_m2_correct": 240,
+        "both_wrong": 3543
+      },
+      "disagreements": 2026,
+      "statistic": 1178.196,
+      "p_value": 0.0,
+      "significant_at_05": true,
+      "significant_at_01": true
+    }
+  },
+  "mcnemar_tests_unseen_attacks_n3750": {
+    "logistic_regression_vs_decision_tree": {
+      "contingency_table": {
+        "both_correct": 987,
+        "m1_correct_m2_wrong": 591,
+        "m1_wrong_m2_correct": 1014,
+        "both_wrong": 1158
+      },
+      "disagreements": 1605,
+      "statistic": 110.9558,
+      "p_value": 0.0,
+      "significant_at_05": true,
+      "significant_at_01": true
+    },
+    "logistic_regression_vs_random_forest": {
+      "contingency_table": {
+        "both_correct": 761,
+        "m1_correct_m2_wrong": 817,
+        "m1_wrong_m2_correct": 111,
+        "both_wrong": 2061
+      },
+      "disagreements": 928,
+      "statistic": 535.5873,
+      "p_value": 0.0,
+      "significant_at_05": true,
+      "significant_at_01": true
+    },
+    "decision_tree_vs_random_forest": {
+      "contingency_table": {
+        "both_correct": 814,
+        "m1_correct_m2_wrong": 1187,
+        "m1_wrong_m2_correct": 58,
+        "both_wrong": 1691
+      },
+      "disagreements": 1245,
+      "statistic": 1021.9952,
+      "p_value": 0.0,
+      "significant_at_05": true,
+      "significant_at_01": true
+    }
+  },
+  "bootstrap_95_confidence_intervals_marginal": {
+    "logistic_regression": {
+      "macro_f1": {
+        "mean": 0.7559,
+        "std": 0.0028,
+        "ci_95_lower": 0.75,
+        "ci_95_upper": 0.7613
+      },
+      "seen_recall": {
+        "mean": 0.7152,
+        "std": 0.0047,
+        "ci_95_lower": 0.7051,
+        "ci_95_upper": 0.7241
+      },
+      "unseen_recall": {
+        "mean": 0.4204,
+        "std": 0.0079,
+        "ci_95_lower": 0.4057,
+        "ci_95_upper": 0.437
+      },
+      "gap_pp": {
+        "mean": 29.4757,
+        "std": 0.9357,
+        "ci_95_lower": 27.6664,
+        "ci_95_upper": 31.2652
+      }
+    },
+    "decision_tree": {
+      "macro_f1": {
+        "mean": 0.8322,
+        "std": 0.0025,
+        "ci_95_lower": 0.8272,
+        "ci_95_upper": 0.837
+      },
+      "seen_recall": {
+        "mean": 0.824,
+        "std": 0.004,
+        "ci_95_lower": 0.8158,
+        "ci_95_upper": 0.8315
+      },
+      "unseen_recall": {
+        "mean": 0.5338,
+        "std": 0.008,
+        "ci_95_lower": 0.5182,
+        "ci_95_upper": 0.5496
+      },
+      "gap_pp": {
+        "mean": 29.0225,
+        "std": 0.8913,
+        "ci_95_lower": 27.2129,
+        "ci_95_upper": 30.7441
+      }
+    },
+    "random_forest": {
+      "macro_f1": {
+        "mean": 0.7623,
+        "std": 0.0028,
+        "ci_95_lower": 0.7567,
+        "ci_95_upper": 0.7674
+      },
+      "seen_recall": {
+        "mean": 0.7591,
+        "std": 0.0044,
+        "ci_95_lower": 0.7501,
+        "ci_95_upper": 0.767
+      },
+      "unseen_recall": {
+        "mean": 0.2325,
+        "std": 0.0069,
+        "ci_95_lower": 0.219,
+        "ci_95_upper": 0.2462
+      },
+      "gap_pp": {
+        "mean": 52.6614,
+        "std": 0.8282,
+        "ci_95_lower": 50.9919,
+        "ci_95_upper": 54.2391
+      }
+    }
+  },
+  "paired_bootstrap_95_confidence_intervals_differences": {
+    "dt_minus_rf": {
+      "macro_f1": {
+        "mean": 0.0699,
+        "std": 0.0019,
+        "ci_95_lower": 0.0662,
+        "ci_95_upper": 0.0739,
+        "p_value_diff_le_0": 0.0
+      },
+      "unseen_recall_pp": {
+        "mean": 30.1259,
+        "std": 0.8095,
+        "ci_95_lower": 28.617,
+        "ci_95_upper": 31.7528,
+        "p_value_diff_le_0": 0.0
+      }
+    },
+    "lr_minus_rf": {
+      "macro_f1": {
+        "mean": -0.0064,
+        "std": 0.0018,
+        "ci_95_lower": -0.01,
+        "ci_95_upper": -0.0029,
+        "p_value_diff_le_0": 1.0
+      },
+      "unseen_recall_pp": {
+        "mean": 18.788,
+        "std": 0.7513,
+        "ci_95_lower": 17.3071,
+        "ci_95_upper": 20.2508,
+        "p_value_diff_le_0": 0.0
+      }
+    },
+    "dt_minus_lr": {
+      "macro_f1": {
+        "mean": 0.0763,
+        "std": 0.0024,
+        "ci_95_lower": 0.0715,
+        "ci_95_upper": 0.0807,
+        "p_value_diff_le_0": 0.0
+      },
+      "unseen_recall_pp": {
+        "mean": 11.3379,
+        "std": 1.0591,
+        "ci_95_lower": 9.2454,
+        "ci_95_upper": 13.4344,
+        "p_value_diff_le_0": 0.0
+      }
+    }
+  }
+}

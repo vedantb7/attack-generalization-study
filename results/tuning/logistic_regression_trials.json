@@ -1,0 +1,335 @@
+{
+  "model": "Logistic Regression",
+  "best_params": {
+    "C": 82.04566741799677,
+    "class_weight": "balanced"
+  },
+  "best_cv_macro_f1": 0.9757399386369275,
+  "trials": [
+    {
+      "trial_number": 0,
+      "params": {
+        "C": 0.0745934328572655,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9712100346502378,
+      "std_macro_f1": 0.00103747075198356,
+      "duration_seconds": 11.19
+    },
+    {
+      "trial_number": 1,
+      "params": {
+        "C": 0.9846738873614566,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9729539122274081,
+      "std_macro_f1": 0.000902835039393698,
+      "duration_seconds": 21.85
+    },
+    {
+      "trial_number": 2,
+      "params": {
+        "C": 0.0019517224641449498,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9653385843678037,
+      "std_macro_f1": 0.0011510806972471334,
+      "duration_seconds": 4.55
+    },
+    {
+      "trial_number": 3,
+      "params": {
+        "C": 3.4702669886504163,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9747703024549617,
+      "std_macro_f1": 0.0010894427633304673,
+      "duration_seconds": 28.54
+    },
+    {
+      "trial_number": 4,
+      "params": {
+        "C": 14.528246637516036,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9743349219790204,
+      "std_macro_f1": 0.0011551439803901722,
+      "duration_seconds": 34.39
+    },
+    {
+      "trial_number": 5,
+      "params": {
+        "C": 0.008260808399079604,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9687309500249792,
+      "std_macro_f1": 0.001099109730956304,
+      "duration_seconds": 4.9
+    },
+    {
+      "trial_number": 6,
+      "params": {
+        "C": 0.14445251022763064,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9723688304457191,
+      "std_macro_f1": 0.0008948066186939386,
+      "duration_seconds": 11.39
+    },
+    {
+      "trial_number": 7,
+      "params": {
+        "C": 0.004982752357076452,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9673957145727217,
+      "std_macro_f1": 0.0011096590085514365,
+      "duration_seconds": 4.56
+    },
+    {
+      "trial_number": 8,
+      "params": {
+        "C": 0.19069966103000435,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9718414801565427,
+      "std_macro_f1": 0.0008909044738877209,
+      "duration_seconds": 11.56
+    },
+    {
+      "trial_number": 9,
+      "params": {
+        "C": 0.37253938395788866,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9722423145792527,
+      "std_macro_f1": 0.001086672658571077,
+      "duration_seconds": 15.08
+    },
+    {
+      "trial_number": 10,
+      "params": {
+        "C": 86.44140211657357,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9756608556405155,
+      "std_macro_f1": 0.0010047931321354139,
+      "duration_seconds": 34.03
+    },
+    {
+      "trial_number": 11,
+      "params": {
+        "C": 70.41830285015996,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9757101214832831,
+      "std_macro_f1": 0.0010159320101646508,
+      "duration_seconds": 36.11
+    },
+    {
+      "trial_number": 12,
+      "params": {
+        "C": 67.94608875570314,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9755308605856076,
+      "std_macro_f1": 0.001036808906794409,
+      "duration_seconds": 34.55
+    },
+    {
+      "trial_number": 13,
+      "params": {
+        "C": 72.19780078181711,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9754312934773098,
+      "std_macro_f1": 0.0009969662790497108,
+      "duration_seconds": 33.35
+    },
+    {
+      "trial_number": 14,
+      "params": {
+        "C": 9.05153364894748,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9752707870753252,
+      "std_macro_f1": 0.0009637690567458709,
+      "duration_seconds": 31.58
+    },
+    {
+      "trial_number": 15,
+      "params": {
+        "C": 82.00502466463118,
+        "class_weight": null,
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9744549498199163,
+      "std_macro_f1": 0.0011497297844291412,
+      "duration_seconds": 35.61
+    },
+    {
+      "trial_number": 16,
+      "params": {
+        "C": 21.510186424105804,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9754607958473693,
+      "std_macro_f1": 0.0010369528894885473,
+      "duration_seconds": 31.9
+    },
+    {
+      "trial_number": 17,
+      "params": {
+        "C": 0.8552140164609465,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9735409023400013,
+      "std_macro_f1": 0.0010283265538474716,
+      "duration_seconds": 17.32
+    },
+    {
+      "trial_number": 18,
+      "params": {
+        "C": 15.750518908116932,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9752810678276029,
+      "std_macro_f1": 0.0011398032263050233,
+      "duration_seconds": 30.12
+    },
+    {
+      "trial_number": 19,
+      "params": {
+        "C": 3.1307082510247906,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9745705359327111,
+      "std_macro_f1": 0.0011013463253251666,
+      "duration_seconds": 28.0
+    },
+    {
+      "trial_number": 20,
+      "params": {
+        "C": 82.04566741799677,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9757399386369275,
+      "std_macro_f1": 0.0010790387350005615,
+      "duration_seconds": 38.68
+    },
+    {
+      "trial_number": 21,
+      "params": {
+        "C": 73.00486911183701,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9757007717989208,
+      "std_macro_f1": 0.0009923905006874515,
+      "duration_seconds": 38.8
+    },
+    {
+      "trial_number": 22,
+      "params": {
+        "C": 29.9264629754832,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9755906642146372,
+      "std_macro_f1": 0.0011348389871075149,
+      "duration_seconds": 35.17
+    },
+    {
+      "trial_number": 23,
+      "params": {
+        "C": 6.242811102102009,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9751302459553083,
+      "std_macro_f1": 0.0010238784093003588,
+      "duration_seconds": 31.67
+    },
+    {
+      "trial_number": 24,
+      "params": {
+        "C": 42.94509548651562,
+        "class_weight": "balanced",
+        "solver": "lbfgs",
+        "max_iter": 500,
+        "random_state": 42
+      },
+      "mean_macro_f1": 0.9756405359066168,
+      "std_macro_f1": 0.0010469049517368057,
+      "duration_seconds": 36.06
+    }
+  ]
+}

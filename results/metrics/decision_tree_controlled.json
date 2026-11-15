@@ -1,0 +1,200 @@
+{
+  "model": "Decision Tree",
+  "framework": "ES335 Controlled Experimental Framework (Standardized 122-feature, 5-fold CV)",
+  "hyperparameters": {
+    "criterion": "gini",
+    "max_depth": 30,
+    "min_samples_split": 2,
+    "min_samples_leaf": 2,
+    "max_features": null,
+    "class_weight": "balanced",
+    "best_cv_macro_f1": 0.9979
+  },
+  "decision_threshold": 0.5,
+  "evaluation_dataset": "NSL-KDD official test set (KDDTest+.csv), 22,543 records (9,710 Normal, 12,833 Attack)",
+  "timing": {
+    "training_time_seconds": 1.499,
+    "inference_time_seconds": 0.0184,
+    "inference_us_per_sample": 0.82
+  },
+  "overall_metrics": {
+    "accuracy": 0.832187,
+    "macro_f1": 0.832173,
+    "weighted_f1": 0.832389,
+    "attack_precision": 0.956149,
+    "attack_recall": 0.73911,
+    "attack_f1": 0.833736,
+    "normal_precision": 0.73477,
+    "normal_recall": 0.955201,
+    "normal_f1": 0.830609,
+    "false_positive_rate": 0.044799,
+    "false_negative_rate": 0.26089,
+    "specificity": 0.955201,
+    "confusion_matrix": [
+      [
+        9275,
+        435
+      ],
+      [
+        3348,
+        9485
+      ]
+    ]
+  },
+  "attack_category_recall": {
+    "DoS": {
+      "total_samples": 7458,
+      "detected": 6371,
+      "missed": 1087,
+      "recall": 0.8543
+    },
+    "Probe": {
+      "total_samples": 2421,
+      "detected": 2010,
+      "missed": 411,
+      "recall": 0.8302
+    },
+    "R2L": {
+      "total_samples": 2887,
+      "detected": 1082,
+      "missed": 1805,
+      "recall": 0.3748
+    },
+    "U2R": {
+      "total_samples": 67,
+      "detected": 22,
+      "missed": 45,
+      "recall": 0.3284
+    }
+  },
+  "seen_vs_unseen_recall": {
+    "seen_total": 9083,
+    "seen_detected": 7484,
+    "seen_recall": 0.824,
+    "unseen_total": 3750,
+    "unseen_detected": 2001,
+    "unseen_recall": 0.5336,
+    "generalization_drop_percentage_points": 29.04
+  },
+  "per_unseen_attack_recall": {
+    "apache2": {
+      "category": "DoS",
+      "total_samples": 737,
+      "detected": 334,
+      "missed": 403,
+      "recall": 0.4532
+    },
+    "httptunnel": {
+      "category": "R2L",
+      "total_samples": 133,
+      "detected": 110,
+      "missed": 23,
+      "recall": 0.8271
+    },
+    "mailbomb": {
+      "category": "DoS",
+      "total_samples": 293,
+      "detected": 63,
+      "missed": 230,
+      "recall": 0.215
+    },
+    "mscan": {
+      "category": "Probe",
+      "total_samples": 996,
+      "detected": 589,
+      "missed": 407,
+      "recall": 0.5914
+    },
+    "named": {
+      "category": "R2L",
+      "total_samples": 17,
+      "detected": 5,
+      "missed": 12,
+      "recall": 0.2941
+    },
+    "processtable": {
+      "category": "DoS",
+      "total_samples": 685,
+      "detected": 235,
+      "missed": 450,
+      "recall": 0.3431
+    },
+    "ps": {
+      "category": "U2R",
+      "total_samples": 15,
+      "detected": 9,
+      "missed": 6,
+      "recall": 0.6
+    },
+    "saint": {
+      "category": "Probe",
+      "total_samples": 319,
+      "detected": 317,
+      "missed": 2,
+      "recall": 0.9937
+    },
+    "sendmail": {
+      "category": "R2L",
+      "total_samples": 14,
+      "detected": 1,
+      "missed": 13,
+      "recall": 0.0714
+    },
+    "snmpgetattack": {
+      "category": "R2L",
+      "total_samples": 178,
+      "detected": 0,
+      "missed": 178,
+      "recall": 0.0
+    },
+    "snmpguess": {
+      "category": "R2L",
+      "total_samples": 331,
+      "detected": 327,
+      "missed": 4,
+      "recall": 0.9879
+    },
+    "sqlattack": {
+      "category": "U2R",
+      "total_samples": 2,
+      "detected": 2,
+      "missed": 0,
+      "recall": 1.0
+    },
+    "udpstorm": {
+      "category": "DoS",
+      "total_samples": 2,
+      "detected": 2,
+      "missed": 0,
+      "recall": 1.0
+    },
+    "worm": {
+      "category": "R2L",
+      "total_samples": 2,
+      "detected": 0,
+      "missed": 2,
+      "recall": 0.0
+    },
+    "xlock": {
+      "category": "R2L",
+      "total_samples": 9,
+      "detected": 2,
+      "missed": 7,
+      "recall": 0.2222
+    },
+    "xsnoop": {
+      "category": "R2L",
+      "total_samples": 4,
+      "detected": 1,
+      "missed": 3,
+      "recall": 0.25
+    },
+    "xterm": {
+      "category": "U2R",
+      "total_samples": 13,
+      "detected": 4,
+      "missed": 9,
+      "recall": 0.3077
+    }
+  }
+}
