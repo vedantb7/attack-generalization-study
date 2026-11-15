@@ -80,6 +80,30 @@ DEFAULT_TRAIN_PATH: Path = PROJECT_ROOT / 'dataset' / 'raw' / 'KDDTrain+.csv'
 DEFAULT_TEST_PATH: Path = PROJECT_ROOT / 'dataset' / 'raw' / 'KDDTest+.csv'
 
 
+def _has_header(path: Path) -> bool:
+    """True when the file's first field is the 'duration' column name.
+
+    `dataset/add_headers.py` adds a header row to the copies in `dataset/`;
+    the pristine files in `dataset/raw/` stay headerless.
+    """
+    with open(path, "rb") as f:
+        return f.read(9) == b"duration,"
+
+
+def _read_nsl_kdd_csv(path: Path) -> pd.DataFrame:
+    """Read a headered or headerless NSL-KDD CSV into the canonical 43 columns.
+
+    Headered files name the label column `class`; it is renamed to `label`
+    so in-memory column names are identical for both file variants.
+    """
+    if _has_header(path):
+        df = pd.read_csv(path, header=0).rename(columns={"class": "label"})
+        if list(df.columns) != COLUMN_NAMES:
+            raise ValueError(f"Unexpected header in {path}: {list(df.columns)}")
+        return df
+    return pd.read_csv(path, header=None, names=COLUMN_NAMES)
+
+
 def load_nsl_kdd(
     train_path: Optional[Union[str, Path]] = DEFAULT_TRAIN_PATH,
     test_path: Optional[Union[str, Path]] = DEFAULT_TEST_PATH,
@@ -117,8 +141,8 @@ def load_nsl_kdd(
     if not test_path.exists():
         raise FileNotFoundError(f"Testing dataset not found: {test_path}")
 
-    train_df = pd.read_csv(train_path, header=None, names=COLUMN_NAMES)
-    test_df = pd.read_csv(test_path, header=None, names=COLUMN_NAMES)
+    train_df = _read_nsl_kdd_csv(train_path)
+    test_df = _read_nsl_kdd_csv(test_path)
 
     if add_derived_targets:
         # Validate that all attack labels exist in ATTACK_MAPPING
