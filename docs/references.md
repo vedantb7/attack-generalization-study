@@ -56,33 +56,43 @@
    Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining (KDD '19), pp. 2623–2631.  
    *Significance:* Tree-structured Parzen Estimator (TPE) Bayesian hyperparameter search used for automated hyperparameter tuning under 5-fold cross-validation.
 
+9. **Chen, T., & Guestrin, C. (2016).**  
+    *XGBoost: A Scalable Tree Boosting System.*  
+    Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, pp. 785–794.  
+    *Significance:* Gradient-boosted tree ensemble used as the second high-capacity model (`notebooks/07_xgboost.ipynb`).
+
 ---
 
 ## 4. Statistical Testing & Resampling Methodology
 
-9. **McNemar, Q. (1947).**  
+10. **McNemar, Q. (1947).**  
    *Note on the sampling error of the difference between correlated proportions or percentages.*  
    *Psychometrika*, 12(2), pp. 153–157.  
    *Significance:* Non-parametric statistical hypothesis test on paired nominal data used to determine whether classifier disagreements on the official test set are statistically significant.
 
-10. **Edwards, A. L. (1948).**  
+11. **Edwards, A. L. (1948).**  
     *Note on the "correction for continuity" in testing the significance of the difference between correlated proportions.*  
     *Psychometrika*, 13(3), pp. 185–187.  
     *Significance:* Derives the continuity-corrected McNemar test statistic ($\chi^2 = (|b - c| - 1)^2 / (b + c)$) ensuring conservative $p$-values when discordance counts are small.
 
-11. **Efron, B., & Tibshirani, R. J. (1993).**  
+12. **Efron, B., & Tibshirani, R. J. (1993).**  
     *An Introduction to the Bootstrap.*  
     Monographs on Statistics and Applied Probability 57, Chapman & Hall/CRC, New York.  
-    *Significance:* Resampling methodology used to compute 95% percentile bootstrap confidence intervals (1,000 resamples) for test metrics and unseen attack generalization recall.
+    *Significance:* Resampling methodology used to compute 95% percentile bootstrap confidence intervals (2,000 resamples of test rows, and of unseen attack types for the cluster bootstrap) for test metrics and unseen-attack recall.
+
+13. **Holm, S. (1979).**  
+    *A simple sequentially rejective multiple test procedure.*  
+    *Scandinavian Journal of Statistics*, 6(2), pp. 65–70.  
+    *Significance:* Step-down family-wise error correction applied to the 36 two-sided tests reported in `notebooks/08_evaluation_comparison.ipynb`.
 
 ---
 
 ## 5. Tooling & Software Frameworks
 
-12. **Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., et al. (2011).**  
+14. **Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., et al. (2011).**  
     *Scikit-learn: Machine Learning in Python.*  
     *Journal of Machine Learning Research*, 12, pp. 2825–2830.
 
-13. **McKinney, W. (2010).**  
+15. **McKinney, W. (2010).**  
     *Data Structures for Statistical Computing in Python.*  
     Proceedings of the 9th Python in Science Conference (SciPy 2010), pp. 56–61.

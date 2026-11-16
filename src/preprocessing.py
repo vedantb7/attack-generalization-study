@@ -30,7 +30,7 @@ DISALLOWED_COLUMNS = {
 }
 
 # Default destination for persisting the fitted preprocessor
-DEFAULT_PREPROCESSOR_PATH: Path = PROJECT_ROOT / 'models' / 'preprocessor.joblib'
+DEFAULT_PREPROCESSOR_PATH: Path = PROJECT_ROOT / 'scalars' / 'preprocessor.joblib'
 
 
 def get_feature_columns() -> List[str]:
@@ -153,7 +153,7 @@ def save_preprocessor(
     preprocessor : ColumnTransformer
         A fitted ColumnTransformer instance.
     path : str or Path, optional
-        Target file path. Defaults to models/preprocessor.joblib.
+        Target file path. Defaults to scalars/preprocessor.joblib.
 
     Returns
     -------
@@ -175,7 +175,7 @@ def load_preprocessor(
     Parameters
     ----------
     path : str or Path, optional
-        Path to the saved preprocessor file. Defaults to models/preprocessor.joblib.
+        Path to the saved preprocessor file. Defaults to scalars/preprocessor.joblib.
 
     Returns
     -------

@@ -1,6 +1,6 @@
 {
   "0": "normal",
-  "1": "attack (any non-normal class)",
-  "positive_class": 1,
-  "source_column": "class/label"
+  "1": "attack (any non-normal label)",
+  "target_column": "is_intrusion",
+  "source_column": "label"
 }

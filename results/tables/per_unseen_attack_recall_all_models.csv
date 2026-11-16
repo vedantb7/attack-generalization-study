@@ -1,0 +1,18 @@
+attack,category,n,Logistic Regression recall@0.5,Decision Tree recall@0.5,Random Forest recall@0.5,XGBoost recall@0.5
+mscan,Probe,996,0.4869,0.8092,0.3996,0.5663
+apache2,DoS,737,0.1913,0.0787,0.2619,0.0
+processtable,DoS,685,0.2453,0.0175,0.0073,0.2248
+snmpguess,R2L,331,0.0091,0.0,0.0,0.0
+saint,Probe,319,0.9498,0.9843,0.9875,0.9781
+mailbomb,DoS,293,0.0,0.0,0.0,0.0
+snmpgetattack,R2L,178,0.0,0.0,0.0,0.0
+httptunnel,R2L,133,0.0,0.8271,0.015,0.1654
+named,R2L,17,0.1176,0.2353,0.1176,0.2353
+ps,U2R,15,0.0,0.2,0.1333,0.1333
+sendmail,R2L,14,0.0714,0.0,0.0,0.0
+xterm,U2R,13,0.3077,0.0,0.2308,0.1538
+xlock,R2L,9,0.0,0.0,0.0,0.0
+xsnoop,R2L,4,0.25,0.0,0.25,0.0
+sqlattack,U2R,2,0.0,1.0,0.0,0.0
+udpstorm,DoS,2,0.0,1.0,1.0,1.0
+worm,R2L,2,0.0,0.0,0.0,0.0

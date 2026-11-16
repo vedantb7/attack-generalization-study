@@ -1,0 +1,37 @@
+test,pair,p_raw,p_holm,significant_holm_05,effect,ci_95
+mcnemar_full,logistic_regression_vs_decision_tree,7.311419016596636e-122,2.5589966558088228e-120,True,551.0848,
+mcnemar_full,logistic_regression_vs_random_forest,3.051552255574201e-64,1.0375277668952283e-62,True,286.3838,
+mcnemar_full,logistic_regression_vs_xgboost,1.207065257613668e-131,4.345434927409205e-130,True,596.0557,
+mcnemar_full,decision_tree_vs_random_forest,6.280112581312104e-15,1.8840337743936311e-13,True,60.8118,
+mcnemar_full,decision_tree_vs_xgboost,0.32271608673024804,0.6116941529235382,False,0.9779,
+mcnemar_full,random_forest_vs_xgboost,6.286738087537757e-24,1.9488888071367047e-22,True,101.7539,
+mcnemar_unseen,logistic_regression_vs_decision_tree,1.5720020149357286e-13,4.558805843313613e-12,True,54.478,
+mcnemar_unseen,logistic_regression_vs_random_forest,1.4190211146766714e-10,3.97325912109468e-09,True,41.1373,
+mcnemar_unseen,logistic_regression_vs_xgboost,0.06709695612838106,0.4337831084457771,False,3.3526,
+mcnemar_unseen,decision_tree_vs_random_forest,2.6019983088878726e-42,8.58659441932998e-41,True,185.8176,
+mcnemar_unseen,decision_tree_vs_xgboost,6.485952045867073e-26,2.0755046546774633e-24,True,110.818,
+mcnemar_unseen,random_forest_vs_xgboost,8.164200757817376e-09,2.2043342046106916e-07,True,33.2356,
+paired_bootstrap:macro_f1,logistic_regression_vs_decision_tree,0.0009995002498750624,0.025987006496751622,True,-0.0441,"[-0.0476, -0.0405]"
+paired_bootstrap:unseen_recall_pp,logistic_regression_vs_decision_tree,0.0009995002498750624,0.025987006496751622,True,-5.4177,"[-6.7925, -4.0585]"
+paired_bootstrap:auc_unseen_vs_normal,logistic_regression_vs_decision_tree,0.0009995002498750624,0.025987006496751622,True,0.1495,"[0.1396, 0.1598]"
+paired_bootstrap:unseen_recall_at_test_fpr_2pct_pp,logistic_regression_vs_decision_tree,0.0009995002498750624,0.025987006496751622,True,-8.4583,"[-10.1236, -1.1736]"
+paired_bootstrap:macro_f1,logistic_regression_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,-0.0324,"[-0.0362, -0.0287]"
+paired_bootstrap:unseen_recall_pp,logistic_regression_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,4.946,"[3.4294, 6.4316]"
+paired_bootstrap:auc_unseen_vs_normal,logistic_regression_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,-0.0586,"[-0.0626, -0.0545]"
+paired_bootstrap:unseen_recall_at_test_fpr_2pct_pp,logistic_regression_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,-3.9803,"[-5.3167, -2.93]"
+paired_bootstrap:macro_f1,logistic_regression_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,-0.0453,"[-0.0488, -0.0418]"
+paired_bootstrap:unseen_recall_pp,logistic_regression_vs_xgboost,0.06496751624187906,0.4337831084457771,False,1.2139,"[-0.0271, 2.4693]"
+paired_bootstrap:auc_unseen_vs_normal,logistic_regression_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,-0.0635,"[-0.0676, -0.0595]"
+paired_bootstrap:unseen_recall_at_test_fpr_2pct_pp,logistic_regression_vs_xgboost,0.14192903548225888,0.5677161419290355,False,-2.2148,"[-3.3692, 0.1837]"
+paired_bootstrap:macro_f1,decision_tree_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,0.0116,"[0.0088, 0.0144]"
+paired_bootstrap:unseen_recall_pp,decision_tree_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,10.3636,"[8.9025, 11.7142]"
+paired_bootstrap:auc_unseen_vs_normal,decision_tree_vs_random_forest,0.0009995002498750624,0.025987006496751622,True,-0.2081,"[-0.2177, -0.1981]"
+paired_bootstrap:unseen_recall_at_test_fpr_2pct_pp,decision_tree_vs_random_forest,0.18690654672663667,0.5677161419290355,False,4.478,"[-2.3644, 6.5498]"
+paired_bootstrap:macro_f1,decision_tree_vs_xgboost,0.3058470764617691,0.6116941529235382,False,-0.0013,"[-0.0038, 0.0013]"
+paired_bootstrap:unseen_recall_pp,decision_tree_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,6.6316,"[5.4718, 7.8021]"
+paired_bootstrap:auc_unseen_vs_normal,decision_tree_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,-0.213,"[-0.2228, -0.2028]"
+paired_bootstrap:unseen_recall_at_test_fpr_2pct_pp,decision_tree_vs_xgboost,0.06196901549225387,0.4337831084457771,False,6.2434,"[-0.3224, 9.3866]"
+paired_bootstrap:macro_f1,random_forest_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,-0.0129,"[-0.0155, -0.0105]"
+paired_bootstrap:unseen_recall_pp,random_forest_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,-3.732,"[-4.969, -2.4965]"
+paired_bootstrap:auc_unseen_vs_normal,random_forest_vs_xgboost,0.0009995002498750624,0.025987006496751622,True,-0.0049,"[-0.0071, -0.0028]"
+paired_bootstrap:unseen_recall_at_test_fpr_2pct_pp,random_forest_vs_xgboost,0.001999000499750125,0.025987006496751622,True,1.7655,"[0.7737, 3.7721]"

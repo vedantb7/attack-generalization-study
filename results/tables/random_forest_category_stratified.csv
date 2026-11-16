@@ -1,0 +1,5 @@
+category,seen_n,seen_recall,unseen_n,unseen_recall
+DoS,5741,0.9969,1717,0.1165
+Probe,1106,1.0,1315,0.5422
+R2L,2199,0.0655,688,0.0073
+U2R,37,0.0541,30,0.1667

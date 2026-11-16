@@ -1,0 +1,736 @@
+{
+  "model": "XGBoost",
+  "seed": 42,
+  "n_trials": 25,
+  "objective": "mean ROC-AUC, leave-attack-types-out CV on KDDTrain+",
+  "best_params": {
+    "objective": "binary:logistic",
+    "tree_method": "hist",
+    "eval_metric": "logloss",
+    "scale_pos_weight": 1.0,
+    "n_jobs": -1,
+    "random_state": 42,
+    "n_estimators": 150,
+    "max_depth": 5,
+    "learning_rate": 0.021269319496482,
+    "min_child_weight": 14.468106924329765,
+    "subsample": 0.7108827637432168,
+    "colsample_bytree": 0.7638331914778156,
+    "reg_lambda": 0.9817432732476797
+  },
+  "best_novelty_cv_auc": 0.982192253629415,
+  "best_fold_aucs": [
+    0.9993283386662631,
+    0.9854932861589055,
+    0.9972567217738533,
+    0.9740751695704893,
+    0.9548077519775634
+  ],
+  "oof_thresholds": {
+    "fpr_1pct": 0.18641409277915955,
+    "fpr_2pct": 0.10624941438436508,
+    "fpr_5pct": 0.05205737426877022
+  },
+  "trials": [
+    {
+      "trial_number": 0,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 150,
+        "max_depth": 7,
+        "learning_rate": 0.14518497439122724,
+        "min_child_weight": 6.009974718380312,
+        "subsample": 0.6624074561769746,
+        "colsample_bytree": 0.5779972601681014,
+        "reg_lambda": 0.0017073967431528124
+      },
+      "fold_auc": [
+        0.9985985651197439,
+        0.9921746071733075,
+        0.9991985645416155,
+        0.9773034840312531,
+        0.8936465493069267
+      ],
+      "mean_auc": 0.9721843540345694,
+      "std_auc": 0.040053665501380196,
+      "duration_seconds": 12.57
+    },
+    {
+      "trial_number": 1,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 300,
+        "max_depth": 5,
+        "learning_rate": 0.13607801490147406,
+        "min_child_weight": 1.0636066512540283,
+        "subsample": 0.9879639408647978,
+        "colsample_bytree": 0.9162213204002109,
+        "reg_lambda": 0.0070689749506246055
+      },
+      "fold_auc": [
+        0.9969266920849464,
+        0.9597151895232745,
+        0.999643309016528,
+        0.9706251667055099,
+        0.7918049969936762
+      ],
+      "mean_auc": 0.943743070864787,
+      "std_auc": 0.07748066614892322,
+      "duration_seconds": 10.83
+    },
+    {
+      "trial_number": 2,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 3,
+        "learning_rate": 0.0455875904753014,
+        "min_child_weight": 4.816414530907083,
+        "subsample": 0.7727780074568463,
+        "colsample_bytree": 0.645614570099021,
+        "reg_lambda": 0.2801635158716261
+      },
+      "fold_auc": [
+        0.9965556984001117,
+        0.9511531960359498,
+        0.9963175256053785,
+        0.9702038467639093,
+        0.9086275914106103
+      ],
+      "mean_auc": 0.964571571643192,
+      "std_auc": 0.03277893899627606,
+      "duration_seconds": 6.87
+    },
+    {
+      "trial_number": 3,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 3,
+        "learning_rate": 0.05393925667147033,
+        "min_child_weight": 3.920673972242136,
+        "subsample": 0.9140703845572055,
+        "colsample_bytree": 0.5998368910791798,
+        "reg_lambda": 0.11400863701127326
+      },
+      "fold_auc": [
+        0.9958990038382234,
+        0.9563176028403435,
+        0.9966774203262947,
+        0.9762919667365846,
+        0.8805034170600207
+      ],
+      "mean_auc": 0.9611378821602934,
+      "std_auc": 0.04295623979688013,
+      "duration_seconds": 5.57
+    },
+    {
+      "trial_number": 4,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 2,
+        "learning_rate": 0.10364734587283783,
+        "min_child_weight": 1.6666983286066417,
+        "subsample": 0.6260206371941118,
+        "colsample_bytree": 0.9744427686266666,
+        "reg_lambda": 7.2866537374910445
+      },
+      "fold_auc": [
+        0.9945558625598662,
+        0.9462654424278324,
+        0.9986383951568953,
+        0.9667489595336709,
+        0.9667130976093241
+      ],
+      "mean_auc": 0.9745843514575178,
+      "std_auc": 0.019507787605863334,
+      "duration_seconds": 7.2
+    },
+    {
+      "trial_number": 5,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 300,
+        "max_depth": 3,
+        "learning_rate": 0.026055614206180563,
+        "min_child_weight": 7.766184280392884,
+        "subsample": 0.7760609974958406,
+        "colsample_bytree": 0.5610191174223894,
+        "reg_lambda": 0.09565499215943825
+      },
+      "fold_auc": [
+        0.9971745867834853,
+        0.9546639615775575,
+        0.9982598612558247,
+        0.9746519880100224,
+        0.9162343454796286
+      ],
+      "mean_auc": 0.9681969486213037,
+      "std_auc": 0.03055618964015147,
+      "duration_seconds": 12.02
+    },
+    {
+      "trial_number": 6,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 7,
+        "learning_rate": 0.04030685101059539,
+        "min_child_weight": 7.277150634170934,
+        "subsample": 0.7246844304357644,
+        "colsample_bytree": 0.7600340105889054,
+        "reg_lambda": 0.1537592023548176
+      },
+      "fold_auc": [
+        0.999384170930675,
+        0.9940229359570901,
+        0.9991616640580303,
+        0.9732367576556346,
+        0.9405268060928437
+      ],
+      "mean_auc": 0.9812664669388548,
+      "std_auc": 0.022518494517634203,
+      "duration_seconds": 8.89
+    },
+    {
+      "trial_number": 7,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 7,
+        "learning_rate": 0.16317624457583127,
+        "min_child_weight": 16.684619386293466,
+        "subsample": 0.9579309401710595,
+        "colsample_bytree": 0.7989499894055425,
+        "reg_lambda": 4.869640941520899
+      },
+      "fold_auc": [
+        0.9992213034654206,
+        0.9747299574561024,
+        0.9991771570037208,
+        0.9771539992873848,
+        0.8990065641009037
+      ],
+      "mean_auc": 0.9698577962627064,
+      "std_auc": 0.036928877864411215,
+      "duration_seconds": 7.86
+    },
+    {
+      "trial_number": 8,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 3,
+        "learning_rate": 0.022605879840724725,
+        "min_child_weight": 2.6501137707458966,
+        "subsample": 0.7554709158757928,
+        "colsample_bytree": 0.6356745158869479,
+        "reg_lambda": 2.0651425578959257
+      },
+      "fold_auc": [
+        0.9979010562708321,
+        0.9492660371861023,
+        0.9903319993682558,
+        0.9634163069225471,
+        0.9242052933090669
+      ],
+      "mean_auc": 0.9650241386113608,
+      "std_auc": 0.026975768926794045,
+      "duration_seconds": 6.08
+    },
+    {
+      "trial_number": 9,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 150,
+        "max_depth": 3,
+        "learning_rate": 0.08695411021388597,
+        "min_child_weight": 1.5252697030515172,
+        "subsample": 0.9208787923016158,
+        "colsample_bytree": 0.5372753218398854,
+        "reg_lambda": 8.862326508576253
+      },
+      "fold_auc": [
+        0.9978396122263812,
+        0.9443436628418156,
+        0.9985877103875895,
+        0.9789956656181306,
+        0.9051153060587023
+      ],
+      "mean_auc": 0.9649763914265238,
+      "std_auc": 0.03581985796388919,
+      "duration_seconds": 7.28
+    },
+    {
+      "trial_number": 10,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 7,
+        "learning_rate": 0.03985128981426435,
+        "min_child_weight": 16.240695066131302,
+        "subsample": 0.6959393850660445,
+        "colsample_bytree": 0.576038831716926,
+        "reg_lambda": 0.039304739840101056
+      },
+      "fold_auc": [
+        0.9992613592161381,
+        0.9709050877088048,
+        0.9991576881377151,
+        0.9766844631314211,
+        0.8971850764303595
+      ],
+      "mean_auc": 0.9686387349248877,
+      "std_auc": 0.0375357084208013,
+      "duration_seconds": 14.03
+    },
+    {
+      "trial_number": 11,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 250,
+        "max_depth": 4,
+        "learning_rate": 0.06058717219106995,
+        "min_child_weight": 4.144605741455815,
+        "subsample": 0.6154925942287409,
+        "colsample_bytree": 0.9922143265845331,
+        "reg_lambda": 1.5180466080351178
+      },
+      "fold_auc": [
+        0.9968967741632786,
+        0.9736522246829653,
+        0.9993078366325887,
+        0.979229198125454,
+        0.8559414432055942
+      ],
+      "mean_auc": 0.9610054953619762,
+      "std_auc": 0.053452317819253074,
+      "duration_seconds": 12.94
+    },
+    {
+      "trial_number": 12,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 150,
+        "max_depth": 3,
+        "learning_rate": 0.17687463871949616,
+        "min_child_weight": 2.3461718677374943,
+        "subsample": 0.7424364893339975,
+        "colsample_bytree": 0.8918148105745083,
+        "reg_lambda": 6.345573676119696
+      },
+      "fold_auc": [
+        0.9970681773317008,
+        0.9522918398171178,
+        0.999339496130304,
+        0.9755515703253612,
+        0.8251262873904383
+      ],
+      "mean_auc": 0.9498754741989845,
+      "std_auc": 0.06465493181355891,
+      "duration_seconds": 13.99
+    },
+    {
+      "trial_number": 13,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 150,
+        "max_depth": 6,
+        "learning_rate": 0.11762956210263083,
+        "min_child_weight": 1.199766589371592,
+        "subsample": 0.635377317428212,
+        "colsample_bytree": 0.7040855331743934,
+        "reg_lambda": 7.321913890125374
+      },
+      "fold_auc": [
+        0.9983540144033408,
+        0.9851257675612842,
+        0.9995010630740163,
+        0.9771798111306692,
+        0.8511291848556
+      ],
+      "mean_auc": 0.9622579682049821,
+      "std_auc": 0.05618750181132956,
+      "duration_seconds": 7.94
+    },
+    {
+      "trial_number": 14,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 2,
+        "learning_rate": 0.04012927317156941,
+        "min_child_weight": 1.6710175969744148,
+        "subsample": 0.62677845937641,
+        "colsample_bytree": 0.8326458443579912,
+        "reg_lambda": 1.5046497235874556
+      },
+      "fold_auc": [
+        0.9953344809842994,
+        0.9522883520866331,
+        0.9955398717364823,
+        0.966711332545966,
+        0.9434892206118621
+      ],
+      "mean_auc": 0.9706726515930487,
+      "std_auc": 0.02153693526678508,
+      "duration_seconds": 7.73
+    },
+    {
+      "trial_number": 15,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.05910553452298708,
+        "min_child_weight": 9.770810464900352,
+        "subsample": 0.7365723516472361,
+        "colsample_bytree": 0.7917187046459335,
+        "reg_lambda": 0.1636185133596877
+      },
+      "fold_auc": [
+        0.9993366461142267,
+        0.9841891796328727,
+        0.9992940605615797,
+        0.9776182360035716,
+        0.897801531056248
+      ],
+      "mean_auc": 0.9716479306736996,
+      "std_auc": 0.03788717901394144,
+      "duration_seconds": 6.88
+    },
+    {
+      "trial_number": 16,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 3,
+        "learning_rate": 0.08368710998543087,
+        "min_child_weight": 2.596173059545871,
+        "subsample": 0.7401805073365001,
+        "colsample_bytree": 0.9804333640780821,
+        "reg_lambda": 0.89298788659457
+      },
+      "fold_auc": [
+        0.9966186274052254,
+        0.9544077055912891,
+        0.9993091509864118,
+        0.9789770065706103,
+        0.8524299620997735
+      ],
+      "mean_auc": 0.956348490530662,
+      "std_auc": 0.0543731168984872,
+      "duration_seconds": 7.89
+    },
+    {
+      "trial_number": 17,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 150,
+        "max_depth": 5,
+        "learning_rate": 0.028888234468139946,
+        "min_child_weight": 4.471729611863268,
+        "subsample": 0.641529282326707,
+        "colsample_bytree": 0.8336977559970411,
+        "reg_lambda": 3.0266026275142455
+      },
+      "fold_auc": [
+        0.999121043017901,
+        0.9883563601050456,
+        0.9987200165293136,
+        0.9684465274363872,
+        0.9388038515397006
+      ],
+      "mean_auc": 0.9786895597256695,
+      "std_auc": 0.02283813112683978,
+      "duration_seconds": 10.77
+    },
+    {
+      "trial_number": 18,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 6,
+        "learning_rate": 0.022953250875744912,
+        "min_child_weight": 9.043294870941763,
+        "subsample": 0.6781328923998708,
+        "colsample_bytree": 0.8060343999163888,
+        "reg_lambda": 3.081762537357879
+      },
+      "fold_auc": [
+        0.9994688970059525,
+        0.9908544410515018,
+        0.9990930876473068,
+        0.9695378934848513,
+        0.9414875688460594
+      ],
+      "mean_auc": 0.9800883776071343,
+      "std_auc": 0.02215412742669305,
+      "duration_seconds": 10.1
+    },
+    {
+      "trial_number": 19,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 250,
+        "max_depth": 7,
+        "learning_rate": 0.03834797886191451,
+        "min_child_weight": 10.166328483712757,
+        "subsample": 0.6793995660939233,
+        "colsample_bytree": 0.7942489289197606,
+        "reg_lambda": 3.028269835881682
+      },
+      "fold_auc": [
+        0.9993744739900045,
+        0.9811832771100489,
+        0.9992938059055265,
+        0.9779563769423364,
+        0.8961753324960873
+      ],
+      "mean_auc": 0.9707966532888006,
+      "std_auc": 0.03835691504106992,
+      "duration_seconds": 15.54
+    },
+    {
+      "trial_number": 20,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 150,
+        "max_depth": 5,
+        "learning_rate": 0.021269319496482,
+        "min_child_weight": 14.468106924329765,
+        "subsample": 0.7108827637432168,
+        "colsample_bytree": 0.7638331914778156,
+        "reg_lambda": 0.9817432732476797
+      },
+      "fold_auc": [
+        0.9993283386662631,
+        0.9854932861589055,
+        0.9972567217738533,
+        0.9740751695704893,
+        0.9548077519775634
+      ],
+      "mean_auc": 0.982192253629415,
+      "std_auc": 0.016415105305574915,
+      "duration_seconds": 8.49
+    },
+    {
+      "trial_number": 21,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 4,
+        "learning_rate": 0.020499550943638794,
+        "min_child_weight": 15.007473205129049,
+        "subsample": 0.7215372203555467,
+        "colsample_bytree": 0.7508991328206448,
+        "reg_lambda": 1.3446900844025425
+      },
+      "fold_auc": [
+        0.998793159190489,
+        0.9839712726463953,
+        0.9977221098185007,
+        0.972214564258246,
+        0.9443849561774091
+      ],
+      "mean_auc": 0.9794172124182081,
+      "std_auc": 0.02005179874503364,
+      "duration_seconds": 11.68
+    },
+    {
+      "trial_number": 22,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 6,
+        "learning_rate": 0.03342347642329371,
+        "min_child_weight": 8.269628102755512,
+        "subsample": 0.688384215432964,
+        "colsample_bytree": 0.867850124580375,
+        "reg_lambda": 9.747080919658542
+      },
+      "fold_auc": [
+        0.9992663990563309,
+        0.9850158358999557,
+        0.99919087557175,
+        0.972917932161302,
+        0.9470242064581688
+      ],
+      "mean_auc": 0.9806830498295014,
+      "std_auc": 0.01949291310615708,
+      "duration_seconds": 10.47
+    },
+    {
+      "trial_number": 23,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 5,
+        "learning_rate": 0.03167582829024292,
+        "min_child_weight": 5.6707936147085904,
+        "subsample": 0.7286462105671799,
+        "colsample_bytree": 0.7762967824325245,
+        "reg_lambda": 8.821341106165097
+      },
+      "fold_auc": [
+        0.9991547223770398,
+        0.9817376659017178,
+        0.9990303436816736,
+        0.9799043409612833,
+        0.9343624154944908
+      ],
+      "mean_auc": 0.978837897683241,
+      "std_auc": 0.02369861900595128,
+      "duration_seconds": 11.42
+    },
+    {
+      "trial_number": 24,
+      "params": {
+        "objective": "binary:logistic",
+        "tree_method": "hist",
+        "eval_metric": "logloss",
+        "scale_pos_weight": 1.0,
+        "n_jobs": -1,
+        "random_state": 42,
+        "n_estimators": 200,
+        "max_depth": 6,
+        "learning_rate": 0.0435309009735051,
+        "min_child_weight": 8.646231801011314,
+        "subsample": 0.6908786549984114,
+        "colsample_bytree": 0.958008270605137,
+        "reg_lambda": 1.3890662213386822
+      },
+      "fold_auc": [
+        0.999233988553118,
+        0.9811580131129044,
+        0.9993246932203708,
+        0.9762781824014275,
+        0.8827355761318025
+      ],
+      "mean_auc": 0.9677460906839247,
+      "std_auc": 0.04351588143909992,
+      "duration_seconds": 12.63
+    }
+  ]
+}

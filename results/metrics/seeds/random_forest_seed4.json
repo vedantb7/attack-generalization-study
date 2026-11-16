@@ -1,0 +1,331 @@
+{
+  "model": "Random Forest",
+  "framework": "ES335 Controlled Experimental Framework (122 features, leave-attack-type-out CV, notebooks)",
+  "hyperparameters": {
+    "class_weight": null,
+    "bootstrap": true,
+    "n_jobs": -1,
+    "random_state": 4,
+    "n_estimators": 100,
+    "max_depth": 20,
+    "min_samples_split": 8,
+    "min_samples_leaf": 1,
+    "max_features": "sqrt",
+    "best_novelty_cv_auc": 0.994125,
+    "best_novelty_cv_auc_std": 0.004906
+  },
+  "decision_threshold": 0.5,
+  "evaluation_dataset": "NSL-KDD official test set (KDDTest+), 22,543 records (9,710 Normal, 12,833 Attack)",
+  "timing": {
+    "training_time_seconds": 2.533,
+    "inference_time_seconds": 0.1399,
+    "inference_us_per_sample": 6.21
+  },
+  "overall_metrics": {
+    "accuracy": 0.7731,
+    "macro_f1": 0.772115,
+    "weighted_f1": 0.77004,
+    "attack_precision": 0.969008,
+    "attack_recall": 0.621289,
+    "attack_f1": 0.757134,
+    "normal_precision": 0.660496,
+    "normal_recall": 0.973738,
+    "normal_f1": 0.787097,
+    "false_positive_rate": 0.026262,
+    "false_negative_rate": 0.378711,
+    "specificity": 0.973738,
+    "confusion_matrix": [
+      [
+        9455,
+        255
+      ],
+      [
+        4860,
+        7973
+      ]
+    ]
+  },
+  "attack_category_recall": {
+    "DoS": {
+      "total_samples": 7458,
+      "detected": 5943,
+      "missed": 1515,
+      "recall": 0.7969
+    },
+    "Probe": {
+      "total_samples": 2421,
+      "detected": 1868,
+      "missed": 553,
+      "recall": 0.7716
+    },
+    "R2L": {
+      "total_samples": 2887,
+      "detected": 156,
+      "missed": 2731,
+      "recall": 0.054
+    },
+    "U2R": {
+      "total_samples": 67,
+      "detected": 6,
+      "missed": 61,
+      "recall": 0.0896
+    }
+  },
+  "seen_vs_unseen_recall": {
+    "seen_total": 9083,
+    "seen_detected": 6984,
+    "seen_recall": 0.7689,
+    "unseen_total": 3750,
+    "unseen_detected": 989,
+    "unseen_recall": 0.2637,
+    "generalization_drop_percentage_points": 50.52,
+    "unseen_macro_recall_over_types": 0.1974,
+    "seen_recall_reweighted_to_unseen_category_mix": 0.8201,
+    "reweighted_drop_percentage_points": 55.64
+  },
+  "category_stratified_seen_unseen_recall": {
+    "DoS": {
+      "seen": {
+        "total_samples": 5741,
+        "detected": 5727,
+        "missed": 14,
+        "recall": 0.9976
+      },
+      "unseen": {
+        "total_samples": 1717,
+        "detected": 216,
+        "missed": 1501,
+        "recall": 0.1258
+      }
+    },
+    "Probe": {
+      "seen": {
+        "total_samples": 1106,
+        "detected": 1105,
+        "missed": 1,
+        "recall": 0.9991
+      },
+      "unseen": {
+        "total_samples": 1315,
+        "detected": 763,
+        "missed": 552,
+        "recall": 0.5802
+      }
+    },
+    "R2L": {
+      "seen": {
+        "total_samples": 2199,
+        "detected": 150,
+        "missed": 2049,
+        "recall": 0.0682
+      },
+      "unseen": {
+        "total_samples": 688,
+        "detected": 6,
+        "missed": 682,
+        "recall": 0.0087
+      }
+    },
+    "U2R": {
+      "seen": {
+        "total_samples": 37,
+        "detected": 2,
+        "missed": 35,
+        "recall": 0.0541
+      },
+      "unseen": {
+        "total_samples": 30,
+        "detected": 4,
+        "missed": 26,
+        "recall": 0.1333
+      }
+    }
+  },
+  "per_unseen_attack_recall": {
+    "apache2": {
+      "category": "DoS",
+      "total_samples": 737,
+      "detected": 188,
+      "missed": 549,
+      "recall": 0.2551
+    },
+    "httptunnel": {
+      "category": "R2L",
+      "total_samples": 133,
+      "detected": 4,
+      "missed": 129,
+      "recall": 0.0301
+    },
+    "mailbomb": {
+      "category": "DoS",
+      "total_samples": 293,
+      "detected": 0,
+      "missed": 293,
+      "recall": 0.0
+    },
+    "mscan": {
+      "category": "Probe",
+      "total_samples": 996,
+      "detected": 448,
+      "missed": 548,
+      "recall": 0.4498
+    },
+    "named": {
+      "category": "R2L",
+      "total_samples": 17,
+      "detected": 1,
+      "missed": 16,
+      "recall": 0.0588
+    },
+    "processtable": {
+      "category": "DoS",
+      "total_samples": 685,
+      "detected": 26,
+      "missed": 659,
+      "recall": 0.038
+    },
+    "ps": {
+      "category": "U2R",
+      "total_samples": 15,
+      "detected": 2,
+      "missed": 13,
+      "recall": 0.1333
+    },
+    "saint": {
+      "category": "Probe",
+      "total_samples": 319,
+      "detected": 315,
+      "missed": 4,
+      "recall": 0.9875
+    },
+    "sendmail": {
+      "category": "R2L",
+      "total_samples": 14,
+      "detected": 0,
+      "missed": 14,
+      "recall": 0.0
+    },
+    "snmpgetattack": {
+      "category": "R2L",
+      "total_samples": 178,
+      "detected": 0,
+      "missed": 178,
+      "recall": 0.0
+    },
+    "snmpguess": {
+      "category": "R2L",
+      "total_samples": 331,
+      "detected": 0,
+      "missed": 331,
+      "recall": 0.0
+    },
+    "sqlattack": {
+      "category": "U2R",
+      "total_samples": 2,
+      "detected": 0,
+      "missed": 2,
+      "recall": 0.0
+    },
+    "udpstorm": {
+      "category": "DoS",
+      "total_samples": 2,
+      "detected": 2,
+      "missed": 0,
+      "recall": 1.0
+    },
+    "worm": {
+      "category": "R2L",
+      "total_samples": 2,
+      "detected": 0,
+      "missed": 2,
+      "recall": 0.0
+    },
+    "xlock": {
+      "category": "R2L",
+      "total_samples": 9,
+      "detected": 0,
+      "missed": 9,
+      "recall": 0.0
+    },
+    "xsnoop": {
+      "category": "R2L",
+      "total_samples": 4,
+      "detected": 1,
+      "missed": 3,
+      "recall": 0.25
+    },
+    "xterm": {
+      "category": "U2R",
+      "total_samples": 13,
+      "detected": 2,
+      "missed": 11,
+      "recall": 0.1538
+    }
+  },
+  "threshold_free": {
+    "roc_auc": 0.963027,
+    "pr_auc": 0.964827,
+    "roc_auc_seen_vs_normal": 0.973772,
+    "roc_auc_unseen_vs_normal": 0.937,
+    "n_distinct_scores": 5809
+  },
+  "test_roc_operating_points": {
+    "fpr_1pct": {
+      "threshold": 0.98,
+      "fpr": 0.009886714727085478,
+      "attack_recall": 0.4549209070365464,
+      "seen_recall": 0.6210503137729825,
+      "unseen_recall": 0.052533333333333335
+    },
+    "fpr_2pct": {
+      "threshold": 0.9083888888888889,
+      "fpr": 0.019979402677651904,
+      "attack_recall": 0.5184290501051976,
+      "seen_recall": 0.695144775955081,
+      "unseen_recall": 0.0904
+    },
+    "fpr_5pct": {
+      "threshold": 0.2759447600447653,
+      "fpr": 0.03903192584963955,
+      "attack_recall": 0.7217330320268059,
+      "seen_recall": 0.8000660574699989,
+      "unseen_recall": 0.532
+    }
+  },
+  "deployable_operating_points": {
+    "fpr_1pct": {
+      "threshold": 0.0934451601419599,
+      "fpr": 0.09680741503604531,
+      "attack_recall": 0.8663601651990961,
+      "seen_recall": 0.8689860178355169,
+      "unseen_recall": 0.86
+    },
+    "fpr_2pct": {
+      "threshold": 0.04638343163538223,
+      "fpr": 0.10947476828012358,
+      "attack_recall": 0.9372710979505962,
+      "seen_recall": 0.9408785643509854,
+      "unseen_recall": 0.9285333333333333
+    },
+    "fpr_5pct": {
+      "threshold": 0.015569124423963134,
+      "fpr": 0.12935118434603501,
+      "attack_recall": 0.9767006935245072,
+      "seen_recall": 0.9871187933502147,
+      "unseen_recall": 0.9514666666666667
+    }
+  },
+  "seed": 4,
+  "oof_thresholds": {
+    "fpr_1pct": 0.0934451601419599,
+    "fpr_2pct": 0.04638343163538223,
+    "fpr_5pct": 0.015569124423963134
+  },
+  "model_complexity": {
+    "n_trees": 100,
+    "mean_depth": 20.0,
+    "max_depth": 20,
+    "mean_leaves": 420.79,
+    "total_leaves": 42079
+  }
+}

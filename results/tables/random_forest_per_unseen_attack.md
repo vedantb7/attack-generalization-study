@@ -1,0 +1,19 @@
+| attack | category | total_samples | detected | missed | recall |
+|---|---|---|---|---|---|
+| mscan | Probe | 996 | 398 | 598 | 0.3996 |
+| apache2 | DoS | 737 | 193 | 544 | 0.2619 |
+| processtable | DoS | 685 | 5 | 680 | 0.0073 |
+| snmpguess | R2L | 331 | 0 | 331 | 0.0000 |
+| saint | Probe | 319 | 315 | 4 | 0.9875 |
+| mailbomb | DoS | 293 | 0 | 293 | 0.0000 |
+| snmpgetattack | R2L | 178 | 0 | 178 | 0.0000 |
+| httptunnel | R2L | 133 | 2 | 131 | 0.0150 |
+| named | R2L | 17 | 2 | 15 | 0.1176 |
+| ps | U2R | 15 | 2 | 13 | 0.1333 |
+| sendmail | R2L | 14 | 0 | 14 | 0.0000 |
+| xterm | U2R | 13 | 3 | 10 | 0.2308 |
+| xlock | R2L | 9 | 0 | 9 | 0.0000 |
+| xsnoop | R2L | 4 | 1 | 3 | 0.2500 |
+| sqlattack | U2R | 2 | 0 | 2 | 0.0000 |
+| udpstorm | DoS | 2 | 2 | 0 | 1.0000 |
+| worm | R2L | 2 | 0 | 2 | 0.0000 |

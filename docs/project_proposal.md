@@ -60,15 +60,15 @@ We evaluate a progressive complexity spectrum across the exact same standardized
 All models will be evaluated under:
 - **Global Evaluation:** Binary Intrusion Classification (Accuracy, Macro F1, Precision, Recall, PR-AUC).
 - **Stratified Attack Analysis:** Performance across the 5 DARPA categories (`Normal`, `DoS`, `Probe`, `R2L`, `U2R`).
-- **Unseen Attack Generalization Audit:** Disaggregated detection rate on the 17 novel attack signatures vs. the 22 known training attack signatures.
+- **Unseen Attack Generalization Audit:** Disaggregated detection rate on the 17 novel attack signatures vs. the 20 seen attack types present in the test set (22 attack types occur in training; `spy` and `warezclient` never appear in the test set).
 
 ---
 
 ## 5. Deliverables & Milestones
 
-- [x] **Milestone 1:** Exploratory Data Analysis & statistical distributions report (`notebooks/01_data_exploration.ipynb`, `docs/eda_report.md`).
+- [x] **Milestone 1:** Exploratory Data Analysis & statistical distributions report (`notebooks/01_data_exploration.ipynb`, `docs/dataset_notes.md`).
 - [x] **Milestone 2:** Standardized data loading & anti-leakage preprocessing module (`src/data_loader.py`, `src/preprocessing.py`, `tests/test_data_pipeline.py`).
 - [x] **Milestone 3:** Majority-class baseline implementation & benchmark metric storage (`notebooks/03_majority_baseline.ipynb`, `results/metrics/majority_baseline.json`).
-- [x] **Milestone 4:** Implementation and hyperparameter tuning for Logistic Regression, Decision Tree, and Random Forest (`notebooks/04_...`, `05_...`, `06_...`, `src/controlled_framework.py`).
-- [x] **Milestone 5:** Comparative generalization audit and statistical significance analysis (`notebooks/07_evaluation_comparison.ipynb`).
+- [x] **Milestone 4:** Implementation and hyperparameter tuning for Logistic Regression, Decision Tree, and Random Forest (`notebooks/04_logistic_regression.ipynb`, `05_decision_tree.ipynb`, `06_random_forest.ipynb`, helpers in `src/controlled_framework.py`).
+- [x] **Milestone 5:** Comparative generalization audit and statistical significance analysis (`notebooks/08_evaluation_comparison.ipynb`, with XGBoost in `notebooks/07_xgboost.ipynb` and the capacity sweep in `notebooks/09_capacity_analysis.ipynb`).
 - [ ] **Milestone 6:** Final report, methodology consolidation, and interactive results website (`website/`).

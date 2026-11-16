@@ -207,14 +207,14 @@
   },
   "ks_mean_all": 0.072,
   "ks_mean_normal_only": 0.044,
-  "dims_after_cleaning": {
+  "dims_after_encoding": {
     "train": [
       125973,
-      40
+      122
     ],
     "test": [
       22543,
-      40
+      122
     ]
   }
 }

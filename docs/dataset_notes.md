@@ -1,7 +1,7 @@
 # NSL-KDD Dataset Notes
 
 **Files:** `dataset/raw/KDDTrain+.csv` (125,973 rows), `dataset/raw/KDDTest+.csv` (22,543 rows).
-**Header script:** [`scripts/add_headers.py`](../scripts/add_headers.py). It is idempotent and byte-preserving.
+**Loader:** [`src/data_loader.py`](../src/data_loader.py) reads the headerless official files and assigns the canonical 43 column names.
 **EDA notebook:** [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb)
 **Sources:** Tavallaee et al., *A Detailed Analysis of the KDD CUP 99 Data Set* (CISDA 2009), which defines NSL-KDD. Stolfo et al., *KDD Cup 1999 task description* (feature definitions). Lee & Stolfo (2000), *A framework for constructing features and models for intrusion detection systems*.
 
@@ -16,8 +16,8 @@ NSL-KDD is a cleaned version of the KDD Cup 1999 data. That data came from the D
 | Item | Value (verified on these files) |
 |---|---|
 | Columns per row | **43** = 41 features + `class` + `difficulty_level` |
-| Header | Added by `scripts/add_headers.py`: the prompt's 42-column schema (`duration` … `class`) plus `difficulty_level` |
-| Delimiter / line endings | Comma / **CR-only (`\r`)**. Both are preserved exactly by the header script. |
+| Header | None in the official files; `src/data_loader.py` assigns the 43 canonical names (`label` for the class column) |
+| Delimiter / line endings | Comma / **CR-only (`\r`)**. The files are read as-is and never rewritten. |
 | Train rows / Test rows | 125,973 / 22,543. The commonly cited KDDTest+ has 22,544; this copy has one fewer row. |
 | Missing values / exact duplicates | 0 / 0 in both files |
 | In-memory name | `src/data_loader.py` renames `class` to `label` for backward compatibility. |
@@ -127,10 +127,10 @@ Numeric subtypes: **counts/bytes** are integers, unbounded or capped. **Rates** 
 
 ## Part B — EDA findings
 
-All numbers come from [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb) (seed 42) and are saved in `results/eda/eda_summary.json`. Figures are in `docs/images/eda/`.
+All numbers come from [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb) (seed 42) and are saved in `results/eda/eda_summary.json`. Figures are in `results/figures/eda/`.
 
 > ### Critical findings
-> 1. **Prior shift.** Train is 46.5% attack and test is **56.9%** attack. Accuracy is misleading, so the primary metrics are macro-F1, PR-AUC, attack recall and FPR.
+> 1. **Prior shift.** Train is 46.5% attack and test is **56.9%** attack. Accuracy is misleading, so the primary metrics are macro-F1, attack recall and FPR.
 > 2. **Novel attacks.** **17 attack types** (3,750 rows, **29.2% of test attacks**) appear only in `KDDTest+`. Validation on `KDDTrain+` will be optimistic.
 > 3. **Rare families.** R2L is 995 train rows but 2,887 test rows. U2R is 52 train rows and 67 test rows.
 > 4. **Leakage.** `difficulty_level` is derived from the label: univariate AUC 0.763, and it shifts by class. It is never a model input. No IP/port/timestamp/flow-ID columns exist.
@@ -143,7 +143,7 @@ Both files have identical 43-column schemas and dtypes: 38 numeric and 3 categor
 
 ### B.2 Data quality
 
-![Near-constant features and su_attempted](images/eda/01_quality_near_constant.png)
+![Near-constant features and su_attempted](../results/figures/eda/01_quality_near_constant.png)
 
 | Check | Result |
 |---|---|
@@ -157,14 +157,14 @@ Both files have identical 43-column schemas and dtypes: 38 numeric and 3 categor
 | `su_attempted = 2` | 59 train / 2 test rows. **All 59 are normal and all have `root_shell = 1`**, so it means "attempted". |
 
 **Decisions:**
-- Drop `num_outbound_cmds`.
-- Map `su_attempted` 2 → 1. This is row-wise and label-free.
+- Keep all 41 predictors. The constant `num_outbound_cmds` becomes an all-zero column after scaling and carries no weight.
+- Leave `su_attempted` as recorded.
 - **Keep** the near-constant content flags. They are the U2R/R2L evidence.
 - Remove no rows.
 
 ### B.3 Target and class balance
 
-![Class balance](images/eda/02_class_balance.png)
+![Class balance](../results/figures/eda/02_class_balance.png)
 
 | Class | Train | Test |
 |---|---|---|
@@ -179,16 +179,16 @@ Both files have identical 43-column schemas and dtypes: 38 numeric and 3 categor
 
 **Decisions:**
 - The task is binary (`is_intrusion`). The 39 attack names merge into "attack", so no rare-class removal is needed.
-- `class_weight` ∈ {None, balanced} is tuned.
+- `class_weight` is fixed to `None` for every model (`config.yaml`), so no model gets a different class prior.
 - **No SMOTE.** The binary ratio is about 50/50, and oversampling train families cannot create the novel test families.
 - The test set keeps its original distribution.
 
 ### B.4 Feature distributions and outliers
 
-![Skewness](images/eda/03_skewness.png)
-![Class-conditional distributions](images/eda/04_class_conditional_distributions.png)
-![Outliers vs attacks](images/eda/05_outliers_vs_attacks.png)
-![Categorical features](images/eda/06_categorical.png)
+![Skewness](../results/figures/eda/03_skewness.png)
+![Class-conditional distributions](../results/figures/eda/04_class_conditional_distributions.png)
+![Outliers vs attacks](../results/figures/eda/05_outliers_vs_attacks.png)
+![Categorical features](../results/figures/eda/06_categorical.png)
 
 - Counts and bytes are zero-inflated and heavy-tailed. `log1p` cuts the skew of `src_bytes` from 191 to 0.31.
 - In 11 of 24 features, IQR outliers are attack-enriched; in the others they are normal-enriched. They are **genuine behaviour**, so nothing is clipped or removed.
@@ -196,13 +196,13 @@ Both files have identical 43-column schemas and dtypes: 38 numeric and 3 categor
 - `flag` S0, REJ and RSTR, and the `icmp` protocol, are strongly attack-associated.
 
 **Decisions:**
-- Linear models get `log1p` → `StandardScaler` on counts/bytes and `StandardScaler` on rates. Trees get raw values.
-- One-hot encoding with `min_frequency=50`, so rare services share an "infrequent" column. `handle_unknown="infrequent_if_exist"` is kept defensively.
+- Every model gets the same input: `StandardScaler` on all 38 numeric features (no log transform).
+- One-hot encoding of all categorical levels with `handle_unknown="ignore"` (84 indicator columns).
 
 ### B.5 Feature–target relationships and leakage
 
-![MI and univariate AUC](images/eda/07_feature_target_mi_auc.png)
-![difficulty_level leakage](images/eda/08_difficulty_leakage.png)
+![MI and univariate AUC](../results/figures/eda/07_feature_target_mi_auc.png)
+![difficulty_level leakage](../results/figures/eda/08_difficulty_leakage.png)
 
 - Top MI: `src_bytes` 0.56, `service` 0.47, `dst_bytes` 0.44, `diff_srv_rate` 0.36, `flag` 0.36, `same_srv_rate` 0.36, `dst_host_srv_count` 0.33.
 - Near-zero MI: `land`, `is_guest_login`, `is_host_login`, `root_shell`, `num_file_creations`, `num_failed_logins`, `su_attempted`. These are rare-attack flags.
@@ -211,47 +211,43 @@ Both files have identical 43-column schemas and dtypes: 38 numeric and 3 categor
 
 ### B.6 Feature relationships and separability
 
-![Correlation](images/eda/09_correlation_clustermap.png)
-![PCA and t-SNE](images/eda/10_pca_tsne.png)
+![Correlation](../results/figures/eda/09_correlation_clustermap.png)
+![PCA and t-SNE](../results/figures/eda/10_pca_tsne.png)
 
 - Pairs with |r| ≥ 0.98 form a SYN-error cluster (`serror_rate`, `srv_serror_rate`, `dst_host_serror_rate`, `dst_host_srv_serror_rate`), plus `rerror_rate`/`srv_rerror_rate` and `num_compromised`/`num_root`.
 - In t-SNE, DoS, Probe and most R2L points form distinct clusters. In linear PCA, R2L and U2R sit inside the Normal cloud, so separability is non-linear. 10 PCs keep about 78% of the variance.
 
-**Decision:** A `CorrelationFilter(threshold=0.98)` is fit on training data only. On full train it drops `num_root`, `srv_serror_rate`, `srv_rerror_rate` and `dst_host_srv_serror_rate`. PCA is not used for modelling.
+**Decision:** Correlated features are kept, so every model sees the identical 122-feature input. PCA is not used for modelling.
 
 ### B.7 Distribution shift and splitting
 
-![Train–test shift](images/eda/11_train_test_shift.png)
+![Train–test shift](../results/figures/eda/11_train_test_shift.png)
 
 - The most shifted features (KS) are `dst_host_rerror_rate` 0.23, `dst_host_serror_rate` 0.20, `dst_host_srv_serror_rate` 0.20 and `serror_rate` 0.19.
 - Mean KS is 0.072 on all rows but 0.044 on normal traffic only. **The shift is mainly the attack mix.**
 - There is no temporal column, so temporal leakage cannot be assessed. The official split separates attack families, not time.
 
 **Decision:**
-- Keep the official split, and look at the test set once.
-- Inside `KDDTrain+`, use a stratified 80/20 train/validation split (seed 42) plus stratified 5-fold CV on the training part for tuning.
-- Report the validation→test gap.
+- Keep the official split; evaluate each model on the test set once.
+- Inside `KDDTrain+`, tune with leave-attack-types-out CV: each of 5 folds holds out a group of training attack types plus a random fifth of the normal rows, so tuning rewards detecting attack types the model has not seen.
 
 ### B.8 EDA summary and preprocessing decisions
 
-> [!NOTE]
-> **Exploratory vs. Production Pipeline:** The 107-feature pipeline described in early exploratory notebooks utilized correlation filtering ($|r| > 0.98$) and infrequent category grouping. For the canonical, controlled benchmark across all models (Logistic Regression, Decision Tree, Random Forest, Majority Baseline), the production framework uses the standard 122-feature `ColumnTransformer` (preserving all non-constant features with full one-hot encoding, as detailed in [`docs/methodology.md`](methodology.md) and `src/controlled_framework.py`), ensuring strict leak-free preprocessing and fair model comparison.
+The modelling pipeline is the shared 122-feature `ColumnTransformer` in [`src/preprocessing.py`](../src/preprocessing.py), built and saved in [`notebooks/02_preprocessing.ipynb`](../notebooks/02_preprocessing.ipynb).
 
 | Stage | Train | Test |
 |---|---|---|
-| Rows before / after cleaning | 125,973 / 125,973 | 22,543 / 22,543 |
-| Features before / after cleaning | 41 / 40 (`num_outbound_cmds` dropped) | 41 / 40 |
+| Rows before / after preprocessing | 125,973 / 125,973 | 22,543 / 22,543 |
+| Features: predictors → encoded | 41 → 122 | 41 → 122 |
 | Duplicates removed / infinities handled | 0 / 0 | 0 / 0 |
 | Labels: attack names → categories → binary | 22 → 4 → 2 classes | 37 → 4 → 2 classes |
 
 | # | Decision | Justification |
 |---|---|---|
-| 1 | Drop `num_outbound_cmds` | Constant |
-| 2 | `su_attempted` 2 → 1 | Outside the definition; all value-2 rows have `root_shell = 1` |
-| 3 | Keep near-constant flags and outliers | Rare-attack signal; outliers are not errors |
-| 4 | Exclude `difficulty_level`, `label`, derived targets | Leakage |
-| 5 | `log1p` + scaling (linear only) | Skew up to 290; trees are invariant |
-| 6 | OHE, `min_frequency=50` | 70-level `service` with a rare tail; no unseen test levels |
-| 7 | `CorrelationFilter(0.98)` fit on train folds | 6 pairs with \|r\| ≥ 0.98 |
-| 8 | Tune `class_weight`; no SMOTE | Binary near-balanced; prior shift in test |
-| 9 | Stratified 80/20 + 5-fold CV inside train; test once | Official split tests generalisation to novel attacks |
+| 1 | Keep all 41 predictors (incl. constant `num_outbound_cmds`) | One identical input for every model; a constant column carries no weight |
+| 2 | Keep near-constant flags and outliers | Rare-attack signal; outliers are not errors |
+| 3 | Exclude `difficulty_level`, `label`, derived targets | Leakage |
+| 4 | `StandardScaler` on 38 numeric features, all models | Same representation for linear and tree models |
+| 5 | `OneHotEncoder(handle_unknown="ignore")`, all levels | No unseen test levels; 84 indicator columns |
+| 6 | `class_weight=None` for every model; no SMOTE | Binary near-balanced; one class prior for all models |
+| 7 | Leave-attack-types-out 5-fold CV inside KDDTrain+; test once per model and seed | Official split tests generalisation to novel attacks |

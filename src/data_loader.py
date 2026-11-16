@@ -83,8 +83,8 @@ DEFAULT_TEST_PATH: Path = PROJECT_ROOT / 'dataset' / 'raw' / 'KDDTest+.csv'
 def _has_header(path: Path) -> bool:
     """True when the file's first field is the 'duration' column name.
 
-    `scripts/add_headers.py` adds a header row to the copies in `dataset/`;
-    the pristine files in `dataset/raw/` stay headerless.
+    The official files in `dataset/raw/` are headerless; headered copies of
+    the same data are also accepted.
     """
     with open(path, "rb") as f:
         return f.read(9) == b"duration,"
