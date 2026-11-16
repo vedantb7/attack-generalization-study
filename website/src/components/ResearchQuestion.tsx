@@ -1,156 +1,111 @@
 import React from 'react';
 import { HelpCircle, AlertOctagon, Cpu, ShieldCheck } from 'lucide-react';
+import { SEED_SUMMARY, THRESHOLD_FREE, CAPACITY_SWEEPS, DEPLOYABLE } from '../data/researchData';
+
+type Outcome = 'Supported' | 'Partly supported' | 'Not supported across families';
+
+const OUTCOME_STYLE: Record<Outcome, string> = {
+  Supported: 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/30 dark:text-emerald-300 dark:border-emerald-800',
+  'Partly supported': 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800',
+  'Not supported across families': 'bg-rose-50 text-rose-800 border-rose-300 dark:bg-rose-950/30 dark:text-rose-300 dark:border-rose-800',
+};
 
 export const ResearchQuestion: React.FC = () => {
+  const lrSweep = CAPACITY_SWEEPS.find(s => s.model === 'lr');
+  const lrFirst = lrSweep?.points[0];
+  const lrLast = lrSweep?.points[lrSweep.points.length - 1];
+  const rfOvershoot = DEPLOYABLE.rf.find(p => p.budget === 'fpr_1pct');
+  const tf = THRESHOLD_FREE;
+
+  const hypotheses: { id: string; title: string; claim: string; outcome: Outcome; evidence: string }[] = [
+    {
+      id: 'H1',
+      title: 'Memorization penalty',
+      claim: 'Ensembles are strongest on seen attacks but decline more steeply on unseen ones than simpler models.',
+      outcome: 'Partly supported',
+      evidence: `Ensembles are best on seen attacks (seen-vs-normal AUC: RF ${tf.rf.aucSeen.toFixed(3)}, XGBoost ${tf.xgb.aucSeen.toFixed(3)}, LR ${tf.lr.aucSeen.toFixed(3)}) and lose more ranking quality on unseen attacks than LR. But they still rank unseen attacks best in absolute terms (RF ${SEED_SUMMARY.rf.aucUnseen.mean.toFixed(3)}, XGBoost ${SEED_SUMMARY.xgb.aucUnseen.mean.toFixed(3)} vs LR ${SEED_SUMMARY.lr.aucUnseen.mean.toFixed(3)}, DT ${SEED_SUMMARY.dt.aucUnseen.mean.toFixed(3)}; mean of 5 seeds). The drop is not a collapse.`,
+    },
+    {
+      id: 'H2',
+      title: 'Regularization benefit',
+      claim: 'Simpler, regularized models generalize better to novel attack signatures.',
+      outcome: 'Not supported across families',
+      evidence: `Within LR it holds: unseen AUC rises from ${lrLast?.testAucUnseen.toFixed(3)} (C=${lrLast?.value}) to ${lrFirst?.testAucUnseen.toFixed(3)} (C=${lrFirst?.value}), and a depth-4–6 tree beats a fully grown one. Across families it fails: the regularised LR and the shallow tree rank unseen attacks worse than either ensemble in every seed.`,
+    },
+    {
+      id: 'H3',
+      title: 'Distribution-inversion sensitivity',
+      claim: 'With the train/test class inversion, accuracy is misleading and threshold-free metrics are needed.',
+      outcome: 'Supported',
+      evidence: `The majority baseline scores 43% accuracy with zero attack recall. Rankings at threshold 0.5 differ from rankings by AUC, and thresholds calibrated on training normals overshoot on test (RF: ${rfOvershoot?.fpr.toFixed(1)}% realised FPR for a 1% target).`,
+    },
+  ];
+
   return (
     <section id="question" className="py-16 md:py-24 border-b border-surface-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="max-w-3xl mb-12">
           <div className="flex items-center gap-2 text-xs font-mono font-semibold tracking-wider text-accent-primary uppercase mb-2">
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>The Research Question</span>
+            <span>The research question</span>
           </div>
           <h2 className="font-editorial-heading text-2xl sm:text-3xl md:text-4xl font-medium text-content-primary tracking-tight">
-            Can Simpler Models Generalize Better to Novel Attacks Than Complex Ensembles?
+            Do simpler models generalize better to novel attacks than complex ensembles?
           </h2>
           <p className="mt-3 text-sm sm:text-base text-content-muted leading-relaxed font-light">
-            In network intrusion detection, production classifiers are routinely evaluated on familiar attack traffic, achieving &gt;98% in-distribution accuracy. But when an attacker shifts tactics or deploys a new tool, does high expressive capacity become a liability?
+            Intrusion detectors are usually scored on familiar attack traffic, where accuracy above 98% is routine. The question here is what
+            happens on attack types the model never saw, and whether lower capacity is an advantage there.
           </p>
         </div>
 
-        {/* The Core Dichotomy Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          {/* Card 1: Signature Memorization */}
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-4">
+          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-3">
             <div className="flex items-center gap-2.5 text-accent-primary font-serif font-semibold text-lg">
               <AlertOctagon className="w-5 h-5 shrink-0 text-rose-600 dark:text-rose-400" />
-              <span>Signature Memorization</span>
+              <span>Signature memorization</span>
             </div>
             <p className="text-sm text-content-muted leading-relaxed">
-              When a machine learning model fits tightly around specific, localized artifacts in the training data—such as specific port combinations, byte counts, or narrow time-window packet counters—it effectively <strong className="text-content-primary">memorizes the signature</strong> rather than learning a generalized concept of malicious behavior.
+              A model that fits narrowly around artefacts of the training attacks (specific services, byte counts, short-window counters)
+              recognises those attacks but not new ones. High-capacity models are the usual suspects.
             </p>
-            <div className="p-3.5 rounded-lg bg-surface-elevated/60 text-xs font-mono text-content-secondary space-y-1">
-              <span className="font-semibold block text-content-primary">Observation in Random Forest:</span>
-              <span>100 deep trees with random feature subspacing (<code className="text-[11px]">max_features='sqrt'</code>) partition the training space into micro-cubes, saturating cross-validation (0.9987 F1) but blinding the ensemble to novel attack variants.</span>
-            </div>
           </div>
-
-          {/* Card 2: Unseen Attack Generalization */}
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-4">
+          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-3">
             <div className="flex items-center gap-2.5 text-accent-primary font-serif font-semibold text-lg">
               <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-              <span>Unseen Attack Generalization</span>
+              <span>Unseen-attack generalization</span>
             </div>
             <p className="text-sm text-content-muted leading-relaxed">
-              The ability of a classifier to correctly flag network flows originating from <strong className="text-content-primary">attack types absent from the training partition</strong>. Because attackers continuously modify tool payloads and evasion techniques, out-of-distribution robustness is the primary requirement for real-world defensive viability.
+              The ability to flag traffic from <strong className="text-content-primary">attack types absent from training</strong>. NSL-KDD's
+              official test set contains 17 such types (3,750 flows). We measure it threshold-free (ROC-AUC against normal traffic), at matched
+              false-positive rates, and at the conventional 0.5 threshold.
             </p>
-            <div className="p-3.5 rounded-lg bg-surface-elevated/60 text-xs font-mono text-content-secondary space-y-1">
-              <span className="font-semibold block text-content-primary">Observation in Decision Tree:</span>
-              <span>An unconstrained single tree evaluates all 122 features globally at each split, discovering broader structural cuts on duration and byte distributions that successfully detect 53.36% of novel attacks.</span>
-            </div>
           </div>
         </div>
 
-        {/* Boundary Geometry Comparison Visual */}
         <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm">
-          <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary mb-2">
-            Decision Boundary Geometry & Out-of-Distribution Shift
-          </h3>
+          <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary mb-2">Hypotheses and what the evidence says</h3>
           <p className="text-xs sm:text-sm text-content-muted mb-6 max-w-3xl">
-            Why do different inductive biases respond differently to novel attacks? Here is how each model family constructs its decision regions relative to training points and out-of-distribution test points:
+            The three pre-registered hypotheses from the project proposal, with the outcome of the controlled study.
           </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Model 1: Logistic Regression */}
-            <div className="p-4 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-3">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-content-primary">Logistic Regression</span>
-                <span className="text-content-muted">Linear Hyperplane</span>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {hypotheses.map(h => (
+              <div key={h.id} className="p-4 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-3 flex flex-col">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono text-xs font-bold text-content-primary">{h.id} · {h.title}</span>
+                </div>
+                <p className="text-xs text-content-primary leading-relaxed italic">{h.claim}</p>
+                <span className={`self-start text-[11px] font-mono font-semibold px-2 py-0.5 rounded border ${OUTCOME_STYLE[h.outcome]}`}>{h.outcome}</span>
+                <p className="text-xs text-content-muted leading-relaxed">{h.evidence}</p>
               </div>
-              <div className="aspect-[4/3] rounded bg-surface-card border border-surface-border flex items-center justify-center p-2 relative overflow-hidden">
-                <svg viewBox="0 0 160 120" className="w-full h-full">
-                  {/* Background grid */}
-                  <rect width="160" height="120" fill="none" />
-                  {/* Linear Decision Boundary */}
-                  <line x1="10" y1="110" x2="150" y2="10" stroke="#541C32" strokeWidth="2" />
-                  <path d="M 10 110 L 150 10 L 160 120 L 10 120 Z" fill="rgba(84, 28, 50, 0.08)" />
-                  <text x="100" y="80" className="text-[9px] font-mono fill-accent-primary">Attack (+)</text>
-                  <text x="30" y="40" className="text-[9px] font-mono fill-content-muted">Normal (-)</text>
-                  {/* Known points */}
-                  <circle cx="110" cy="90" r="3" fill="#541C32" />
-                  <circle cx="130" cy="70" r="3" fill="#541C32" />
-                  <circle cx="140" cy="100" r="3" fill="#541C32" />
-                  {/* Novel shifted point */}
-                  <circle cx="80" cy="95" r="3.5" fill="#B77C88" stroke="#351321" strokeWidth="1" />
-                  <text x="45" y="105" className="text-[8px] font-mono fill-rose-600 font-semibold">Novel (Caught)</text>
-                </svg>
-              </div>
-              <p className="text-xs text-content-muted leading-relaxed">
-                A single global linear boundary divides the feature space. While forgiving of continuous shifts, it cannot model non-linear protocol dependencies, generating higher false alarms (7.55% FPR).
-              </p>
-            </div>
-
-            {/* Model 2: Decision Tree */}
-            <div className="p-4 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-3">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-content-primary">Decision Tree</span>
-                <span className="text-content-muted">Axis-Aligned Cuts</span>
-              </div>
-              <div className="aspect-[4/3] rounded bg-surface-card border border-surface-border flex items-center justify-center p-2 relative overflow-hidden">
-                <svg viewBox="0 0 160 120" className="w-full h-full">
-                  {/* Axis-aligned partition cuts */}
-                  <line x1="80" y1="0" x2="80" y2="120" stroke="#541C32" strokeWidth="1.5" />
-                  <line x1="80" y1="50" x2="160" y2="50" stroke="#541C32" strokeWidth="1.5" />
-                  <line x1="80" y1="85" x2="160" y2="85" stroke="#541C32" strokeWidth="1.5" />
-                  <rect x="80" y="50" width="80" height="70" fill="rgba(84, 28, 50, 0.12)" />
-                  <text x="100" y="70" className="text-[9px] font-mono fill-accent-primary">Attack Region</text>
-                  {/* Known points */}
-                  <circle cx="110" cy="65" r="3" fill="#541C32" />
-                  <circle cx="125" cy="75" r="3" fill="#541C32" />
-                  <circle cx="140" cy="60" r="3" fill="#541C32" />
-                  {/* Novel shifted point */}
-                  <circle cx="95" cy="100" r="3.5" fill="#B77C88" stroke="#351321" strokeWidth="1" />
-                  <text x="95" y="115" className="text-[8px] font-mono fill-emerald-600 font-semibold">Caught (53.4%)</text>
-                </svg>
-              </div>
-              <p className="text-xs text-content-muted leading-relaxed">
-                Recursive orthogonal cuts extend semi-infinitely across continuous features. When novel attacks exhibit altered rates on global features, the broad partition blocks catch them.
-              </p>
-            </div>
-
-            {/* Model 3: Random Forest */}
-            <div className="p-4 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-3">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="font-bold text-content-primary">Random Forest</span>
-                <span className="text-content-muted">Subspace Ensembles</span>
-              </div>
-              <div className="aspect-[4/3] rounded bg-surface-card border border-surface-border flex items-center justify-center p-2 relative overflow-hidden">
-                <svg viewBox="0 0 160 120" className="w-full h-full">
-                  {/* Isolated hyper-boxes */}
-                  <rect x="90" y="20" width="30" height="25" fill="rgba(84, 28, 50, 0.15)" stroke="#541C32" strokeWidth="1" strokeDasharray="2 1" rx="2" />
-                  <rect x="110" y="55" width="35" height="30" fill="rgba(84, 28, 50, 0.15)" stroke="#541C32" strokeWidth="1" strokeDasharray="2 1" rx="2" />
-                  {/* Training points inside boxes */}
-                  <circle cx="102" cy="32" r="2.5" fill="#541C32" />
-                  <circle cx="125" cy="68" r="2.5" fill="#541C32" />
-                  <circle cx="132" cy="75" r="2.5" fill="#541C32" />
-                  {/* Novel shifted point OUTSIDE the boxes */}
-                  <circle cx="95" cy="95" r="3.5" fill="#B77C88" stroke="#351321" strokeWidth="1" />
-                  <text x="40" y="105" className="text-[8px] font-mono fill-rose-600 font-semibold">MISSED (Unseen Gap 52.7pp)</text>
-                </svg>
-              </div>
-              <p className="text-xs text-content-muted leading-relaxed">
-                Randomized feature subspace projection creates tight local consensus envelopes around known training clusters. When novel attacks shift off these subspaces, the majority of trees vote Normal.
-              </p>
-            </div>
+            ))}
           </div>
 
-          {/* Academic Guardrail Callout */}
           <div className="mt-6 p-3.5 rounded-lg border border-amber-300 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/20 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
             <Cpu className="w-4 h-4 shrink-0 text-amber-700 dark:text-amber-400 mt-0.5" />
             <div>
-              <strong className="font-semibold block mb-0.5">Academic Scope & Terminology Guardrail:</strong>
-              These 17 unseen attack signatures are absent from training within the standardized NSL-KDD benchmark. We explicitly do <span className="underline font-semibold">not</span> claim genuine real-world zero-day exploit immunity. Our objective is strictly to assess whether simpler models show superior out-of-distribution inductive bias under controlled benchmark conditions.
+              <strong className="font-semibold block mb-0.5">Scope:</strong>
+              The 17 unseen attack types are absent from training within the NSL-KDD benchmark. They are benchmark-level novel signatures, not
+              real-world zero-day exploits, and we make no zero-day claims.
             </div>
           </div>
         </div>

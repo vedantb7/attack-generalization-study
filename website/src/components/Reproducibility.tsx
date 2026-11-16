@@ -10,24 +10,25 @@ export const Reproducibility: React.FC = () => {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const REPRODUCE_BASH = `# 1. Clone repository
+  const REPRODUCE_BASH = `# 1. Clone the repository
 git clone https://github.com/vedantb7/instrusion_detection.git
-cd "Intrusion Detection"
+cd instrusion_detection
 
-# 2. Set up virtual environment
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+# 2. Set up the environment
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt      # or requirements-lock.txt for exact versions
 
-# 3. Verify automated unit test suite (15 data tests + 12 feature tests)
-python -m unittest discover tests -v
-pytest tests/test_features.py -v
+# 3. Run every notebook in order (01 -> 10); each saves its own outputs
+export PYTHONHASHSEED=42
+for nb in notebooks/*.ipynb; do
+  jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 "$nb" || break
+done
+# 02 builds folds + preprocessor, 03-07 train 5 models x 5 seeds,
+# 08 compares them, 09 sweeps capacity, 10 regenerates this website's data
 
-# 4. Reproduce controlled training & 5-fold Optuna tuning
-python scripts/run_all_controlled_models.py
-
-# 5. Rebuild and execute comparative evaluation notebook & statistics
-python scripts/build_comparison_notebook.py`;
+# 4. Run the tests (27)
+pytest -q tests`;
 
   const BIBTEX_CITATION = `@misc{bondekar2026signature,
   title={Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection},
@@ -80,7 +81,7 @@ python scripts/build_comparison_notebook.py`;
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs font-mono">
             <div className="p-2.5 rounded bg-surface-elevated/40 border border-surface-border">
               <span className="text-content-muted block text-[10px]">TRAINED MODELS:</span>
-              <span className="font-semibold text-content-primary">models/*_controlled.joblib</span>
+              <span className="font-semibold text-content-primary">models/*.joblib</span>
             </div>
             <div className="p-2.5 rounded bg-surface-elevated/40 border border-surface-border">
               <span className="text-content-muted block text-[10px]">METRIC ARCHIVES:</span>

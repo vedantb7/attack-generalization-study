@@ -9,15 +9,15 @@ interface NavbarProps {
 
 const NAV_LINKS = [
   { label: 'Overview', href: '#overview' },
-  { label: 'Hypothesis', href: '#question' },
-  { label: 'Pipeline', href: '#dataset' },
+  { label: 'Hypotheses', href: '#question' },
   { label: 'Models', href: '#models' },
   { label: 'Results', href: '#benchmark' },
-  { label: 'Generalization', href: '#generalization' },
-  { label: 'Unseen Explorer', href: '#explorer' },
-  { label: 'Error Analysis', href: '#errors' },
-  { label: 'Significance', href: '#statistics' },
-  { label: 'Limitations', href: '#limitations' },
+  { label: 'FPR Budget', href: '#operating' },
+  { label: 'Gap', href: '#generalization' },
+  { label: 'Explorer', href: '#explorer' },
+  { label: 'Robustness', href: '#robustness' },
+  { label: 'Stats', href: '#statistics' },
+  { label: 'Conclusions', href: '#limitations' },
   { label: 'Reproduce', href: '#reproduce' },
 ];
 

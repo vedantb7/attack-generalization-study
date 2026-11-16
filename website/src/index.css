@@ -18,6 +18,12 @@
   --color-rose: #B77C88;
   --color-tag-bg: #EAE0D2;
   --chart-grid: rgba(40, 35, 38, 0.08);
+  /* Per-model chart colours (light / burgundy theme) */
+  --model-baseline: #9A928F;
+  --model-lr: #3F6390;
+  --model-dt: #5E7F2E;
+  --model-rf: #8E2C4C;
+  --model-xgb: #B9792A;
 
   color-scheme: light dark;
 }
@@ -38,6 +44,12 @@ html[data-theme="navy"] {
   --color-rose: #829AB5;
   --color-tag-bg: #1B2C42;
   --chart-grid: rgba(243, 237, 225, 0.08);
+  /* Per-model chart colours (navy theme) */
+  --model-baseline: #8A97A8;
+  --model-lr: #8FB3E0;
+  --model-dt: #A8CB78;
+  --model-rf: #E79AB2;
+  --model-xgb: #EDC27E;
 
   color-scheme: dark;
 }

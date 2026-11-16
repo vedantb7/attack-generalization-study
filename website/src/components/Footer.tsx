@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUp, Github, ShieldAlert } from 'lucide-react';
+import { ArrowUp, Database, Github, ShieldAlert } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const scrollToTop = () => {
@@ -26,6 +26,15 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <a
+              href="https://www.unb.ca/cic/datasets/nsl.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-card border border-surface-border hover:text-content-primary transition-colors"
+            >
+              <Database className="w-3.5 h-3.5" />
+              <span>NSL-KDD Dataset</span>
+            </a>
             <a
               href="https://github.com/vedantb7/instrusion_detection"
               target="_blank"

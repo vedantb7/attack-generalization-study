@@ -5,10 +5,12 @@ import { ResearchQuestion } from './components/ResearchQuestion';
 import { DatasetPipeline } from './components/DatasetPipeline';
 import { ModelsCompared } from './components/ModelsCompared';
 import { BenchmarkResults } from './components/BenchmarkResults';
+import { OperatingPoints } from './components/OperatingPoints';
 import { CategoryAnalysis } from './components/CategoryAnalysis';
 import { GeneralizationGap } from './components/GeneralizationGap';
 import { UnseenAttackExplorer } from './components/UnseenAttackExplorer';
 import { ErrorAnalysis } from './components/ErrorAnalysis';
+import { Robustness } from './components/Robustness';
 import { StatisticalAnalysis } from './components/StatisticalAnalysis';
 import { LimitationsConclusions } from './components/LimitationsConclusions';
 import { Reproducibility } from './components/Reproducibility';
@@ -62,10 +64,12 @@ export const App: React.FC = () => {
         <DatasetPipeline />
         <ModelsCompared />
         <BenchmarkResults />
+        <OperatingPoints />
         <CategoryAnalysis />
         <GeneralizationGap />
         <UnseenAttackExplorer />
         <ErrorAnalysis />
+        <Robustness />
         <StatisticalAnalysis />
         <LimitationsConclusions />
         <Reproducibility />

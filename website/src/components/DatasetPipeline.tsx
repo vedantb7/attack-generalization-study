@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, AlertTriangle } from 'lucide-react';
+import { Database, AlertTriangle, ExternalLink } from 'lucide-react';
 import { DATASET_SPECIFICATION } from '../data/researchData';
 
 export const DatasetPipeline: React.FC = () => {
@@ -27,6 +27,19 @@ export const DatasetPipeline: React.FC = () => {
           <p className="mt-3 text-sm sm:text-base text-content-muted leading-relaxed font-light">
             Each observation represents a single aggregated TCP/IP network connection record summarized across 41 predictive telemetry features. To prevent evaluation leakage, all preprocessing parameters are fitted strictly inside cross-validation training folds.
           </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-mono">
+            <a
+              href="https://www.unb.ca/cic/datasets/nsl.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-soft text-accent-primary border border-accent-border hover:bg-accent-primary hover:text-white transition-colors"
+            >
+              <Database className="w-3.5 h-3.5" />
+              <span>NSL-KDD dataset (Canadian Institute for Cybersecurity, UNB)</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+            <span className="text-content-muted">Files used: KDDTrain+ and KDDTest+ (official split, unmodified)</span>
+          </div>
         </div>
 
         {/* Dataset Breakdown Cards */}
@@ -87,7 +100,7 @@ export const DatasetPipeline: React.FC = () => {
                   </div>
                 </div>
                 <div className="pt-2 border-t border-surface-border/60 text-[11px] text-content-muted">
-                  <strong>Distribution Inversion:</strong> Attack majority (56.9%) with 17 novel unseen attack signatures ($n=3,750$).
+                  <strong>Distribution Inversion:</strong> Attack majority (56.9%) with 17 novel unseen attack types (3,750 flows).
                 </div>
               </div>
             </div>
@@ -97,7 +110,7 @@ export const DatasetPipeline: React.FC = () => {
               <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
               <div>
                 <strong className="font-semibold block mb-0.5">Strict Metadata Leakage Prevention:</strong>
-                Column 43 (<code className="font-mono text-[11px]">difficulty_level</code>) represents the post-hoc consensus classification accuracy of 21 machine learning learners trained on the original KDD Cup data. Including it as an input predictor would constitute severe target leakage. Our pipeline rigorously strips <code className="font-mono text-[11px]">difficulty_level</code> from all feature matrices $X$.
+                Column 43 (<code className="font-mono text-[11px]">difficulty_level</code>) represents the post-hoc consensus classification accuracy of 21 machine learning learners trained on the original KDD Cup data. Including it as an input predictor would constitute severe target leakage. Our pipeline rigorously strips <code className="font-mono text-[11px]">difficulty_level</code> from every feature matrix.
               </div>
             </div>
           </div>
@@ -154,7 +167,7 @@ export const DatasetPipeline: React.FC = () => {
             </div>
 
             <div className="text-[11px] font-mono text-content-muted pt-3 border-t border-surface-border">
-              Common 122-feature representation shared by all four models.
+              Common 122-feature representation shared by all models.
             </div>
           </div>
         </div>
@@ -198,7 +211,7 @@ export const DatasetPipeline: React.FC = () => {
               </div>
               <h4 className="font-semibold text-xs text-content-primary">ColumnTransformer</h4>
               <p className="text-[11px] text-content-muted leading-relaxed">
-                <code className="font-mono">OneHotEncoder(handle_unknown='ignore')</code> on 3 categoricals (84 cols) + <code className="font-mono">StandardScaler()</code> on 38 numerical cols &rarr; 122 features.
+                <code className="font-mono break-all">OneHotEncoder</code> on 3 categoricals (84 cols, unknown levels ignored) + <code className="font-mono break-all">StandardScaler</code> on 38 numerical cols &rarr; 122 features.
               </p>
             </div>
 
@@ -207,9 +220,9 @@ export const DatasetPipeline: React.FC = () => {
               <div className="w-6 h-6 rounded bg-accent-soft border border-accent-border flex items-center justify-center font-mono text-xs font-bold text-accent-primary">
                 4
               </div>
-              <h4 className="font-semibold text-xs text-content-primary">5-Fold Fold-Level CV</h4>
+              <h4 className="font-semibold text-xs text-content-primary">Leave-Attack-Types-Out CV</h4>
               <p className="text-[11px] text-content-muted leading-relaxed">
-                Preprocessors fit strictly on each fold's training slice (N=100,778). 25 Optuna TPE trials maximizing validation Macro-F1.
+                5 folds, each holding out a group of training attack types plus a fifth of normal rows. Preprocessor refit per fold; 25 Optuna trials maximise held-out ROC-AUC.
               </p>
             </div>
 
@@ -218,9 +231,9 @@ export const DatasetPipeline: React.FC = () => {
               <div className="w-6 h-6 rounded bg-accent-soft border border-accent-border flex items-center justify-center font-mono text-xs font-bold text-accent-primary">
                 5
               </div>
-              <h4 className="font-semibold text-xs text-content-primary">One-Time Test Eval</h4>
+              <h4 className="font-semibold text-xs text-content-primary">Test Eval × 5 Seeds</h4>
               <p className="text-[11px] text-content-muted leading-relaxed">
-                Final models fit on full KDDTrain+. Official KDDTest+ (N=22,543) evaluated exactly once at fixed 0.50 threshold (zero tuning).
+                Final models refit on all of KDDTrain+ with the full best-trial parameters. KDDTest+ scored once per seed: threshold-free, at matched FPR and at 0.5.
               </p>
             </div>
           </div>

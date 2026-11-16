@@ -3,7 +3,7 @@
 **Project:** Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection  
 **Course:** ES 335: Machine Learning (IIT Gandhinagar)  
 **Modules:** [`src/data_loader.py`](../src/data_loader.py), [`src/preprocessing.py`](../src/preprocessing.py)  
-**Notebooks (single source of truth, run in order 01 → 09):** [`01_data_exploration`](../notebooks/01_data_exploration.ipynb), [`02_preprocessing`](../notebooks/02_preprocessing.ipynb), [`03_majority_baseline`](../notebooks/03_majority_baseline.ipynb), [`04_logistic_regression`](../notebooks/04_logistic_regression.ipynb), [`05_decision_tree`](../notebooks/05_decision_tree.ipynb), [`06_random_forest`](../notebooks/06_random_forest.ipynb), [`07_xgboost`](../notebooks/07_xgboost.ipynb), [`08_evaluation_comparison`](../notebooks/08_evaluation_comparison.ipynb), [`09_capacity_analysis`](../notebooks/09_capacity_analysis.ipynb)  
+**Notebooks (single source of truth, run in order 01 → 10):** [`01_data_exploration`](../notebooks/01_data_exploration.ipynb), [`02_preprocessing`](../notebooks/02_preprocessing.ipynb), [`03_majority_baseline`](../notebooks/03_majority_baseline.ipynb), [`04_logistic_regression`](../notebooks/04_logistic_regression.ipynb), [`05_decision_tree`](../notebooks/05_decision_tree.ipynb), [`06_random_forest`](../notebooks/06_random_forest.ipynb), [`07_xgboost`](../notebooks/07_xgboost.ipynb), [`08_evaluation_comparison`](../notebooks/08_evaluation_comparison.ipynb), [`09_capacity_analysis`](../notebooks/09_capacity_analysis.ipynb), [`10_website_data`](../notebooks/10_website_data.ipynb)  
 **Helpers:** [`src/controlled_framework.py`](../src/controlled_framework.py); settings in [`config.yaml`](../config.yaml)  
 
 ---
@@ -257,7 +257,7 @@ Test results were never used to select hyperparameters or thresholds within any 
 
 ## 11. Reproduction
 
-Run the notebooks in order (01 → 09) in Jupyter, or headless:
+Run the notebooks in order (01 → 10) in Jupyter, or headless:
 
 ```bash
 export PYTHONHASHSEED=42
@@ -267,4 +267,4 @@ done
 pytest -q tests
 ```
 
-Outputs: `models/` (fitted pipelines, seed 42), `scalars/` (preprocessor, feature names, label mapping), `results/{splits,tuning,metrics,predictions,tables,figures,eda}/` (other seeds under `*/seeds/`). All shared settings live in `config.yaml`; model-specific search spaces and fixed parameters live in notebooks 04–07.
+Outputs: `models/` (fitted pipelines, seed 42), `scalars/` (preprocessor, feature names, label mapping), `results/{splits,tuning,metrics,predictions,tables,figures,eda}/` (other seeds under `*/seeds/`). All shared settings live in `config.yaml`; model-specific search spaces and fixed parameters live in notebooks 04–07. Notebook 10 regenerates the website's data file (`website/src/data/researchData.ts`) from `results/`.
