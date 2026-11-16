@@ -1,35 +1,31 @@
-seed: 42
-seeds_for_variance: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+# Single configuration for the controlled experiment.
+# Every notebook and src/controlled_framework.py read their settings from here.
+seed: 42                          # primary seed: its models/artifacts are the headline results
+seeds: [42, 1, 2, 3, 4]           # every model is tuned + refit end to end once per seed (variance across seeds)
 paths:
   train: dataset/raw/KDDTrain+.csv
   test: dataset/raw/KDDTest+.csv
-  results: results
-  models: models/final
+  models: models                  # fitted model pipelines (*.joblib), primary seed
+  scalars: scalars                # fitted preprocessor, feature names, label mapping
+  metrics: results/metrics        # per-model metrics + statistical comparison (JSON); seeds/ for other seeds
+  predictions: results/predictions  # per-row test predictions incl. P(attack) (CSV); seeds/ for other seeds
+  tuning: results/tuning          # Optuna trial logs (JSON + CSV)
+  tables: results/tables          # summary tables (CSV + Markdown)
+  figures: results/figures        # plots, one sub-folder per notebook
+  splits: results/splits          # novelty CV fold assignment
+  eda: results/eda                # EDA summary (JSON)
 cv:
+  scheme: leave_attack_type_out   # each fold holds out a group of training attack TYPES plus a random share of normals
   n_splits: 5
-  iid_repeats: 3
 tuning:
-  n_trials: 100            # SAME for every model (fairness)
-  n_startup_trials: 20     # first 20 trials are random search (course Week 8 workflow)
-  quick_mode_trials: 30    # use for a first dry run; still identical across models
-  quick_mode: true         # true -> every tunable model gets quick_mode_trials (overnight run)
-selection:
-  k_options: [10, 15, 20, 25, 30, "all"]
-  corr_threshold: 0.95
-  mi_sample_size: 30000
+  n_trials: 25                    # identical Optuna TPE budget for every tuned model
+  objective: novelty_roc_auc      # mean ROC-AUC of held-out attack types vs held-out normals
+models:
+  class_weight: null              # fixed identically for every model (removed from the search spaces)
 evaluation:
-  primary_metric: f1_macro
-  noninferiority_margin: 0.01
-  bootstrap_iterations: 10000
+  decision_threshold: 0.5         # fixed threshold for the primary test comparison
+  fpr_budgets: [0.01, 0.02, 0.05] # operating points: thresholds from out-of-fold training normals, and ROC readings on test
+  matched_fpr_for_tests: 0.02     # FPR budget used for the paired matched-FPR recall test
+  bootstrap_iterations: 2000      # percentile bootstrap; >= 2000 so the p-value floor (2/(B+1)) survives Holm over 36 tests
   alpha: 0.05
-split:
-  val_size: 0.2            # stratified train_sub / val split of KDDTrain+ (same as RF notebook)
-features:
-  corr_threshold: 0.98     # CorrelationFilter |r| threshold (fit on training folds only)
-  min_frequency: 50        # OneHotEncoder rare-category grouping
-artifacts:
-  models_dir: models       # fitted pipelines, metadata, ONNX
-  scalars_dir: scalars     # fitted preprocessors (scalers/encoders), feature names, label mapping
-mlflow:
-  tracking_uri: "sqlite:///{root}/mlruns/mlflow.db"
-  experiment: nsl-kdd-binary-ids
+  multiple_comparison: holm       # Holm-Bonferroni over the family of reported tests

@@ -1,7 +1,287 @@
 {
-    "model": "Majority-Class Baseline",
-    "accuracy": 0.43073237812181164,
-    "precision": 0.0,
-    "recall": 0.0,
-    "f1": 0.0
+  "model": "Majority Baseline",
+  "framework": "ES335 Controlled Experimental Framework (122 features, leave-attack-type-out CV, notebooks)",
+  "hyperparameters": {
+    "strategy": "most_frequent",
+    "predicted_class": 0
+  },
+  "decision_threshold": 0.5,
+  "evaluation_dataset": "NSL-KDD official test set (KDDTest+), 22,543 records (9,710 Normal, 12,833 Attack)",
+  "timing": {
+    "training_time_seconds": 0.016,
+    "inference_time_seconds": 0.0005,
+    "inference_us_per_sample": 0.02
+  },
+  "overall_metrics": {
+    "accuracy": 0.430732,
+    "macro_f1": 0.301057,
+    "weighted_f1": 0.25935,
+    "attack_precision": 0.0,
+    "attack_recall": 0.0,
+    "attack_f1": 0.0,
+    "normal_precision": 0.430732,
+    "normal_recall": 1.0,
+    "normal_f1": 0.602115,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 1.0,
+    "specificity": 1.0,
+    "confusion_matrix": [
+      [
+        9710,
+        0
+      ],
+      [
+        12833,
+        0
+      ]
+    ]
+  },
+  "attack_category_recall": {
+    "DoS": {
+      "total_samples": 7458,
+      "detected": 0,
+      "missed": 7458,
+      "recall": 0.0
+    },
+    "Probe": {
+      "total_samples": 2421,
+      "detected": 0,
+      "missed": 2421,
+      "recall": 0.0
+    },
+    "R2L": {
+      "total_samples": 2887,
+      "detected": 0,
+      "missed": 2887,
+      "recall": 0.0
+    },
+    "U2R": {
+      "total_samples": 67,
+      "detected": 0,
+      "missed": 67,
+      "recall": 0.0
+    }
+  },
+  "seen_vs_unseen_recall": {
+    "seen_total": 9083,
+    "seen_detected": 0,
+    "seen_recall": 0.0,
+    "unseen_total": 3750,
+    "unseen_detected": 0,
+    "unseen_recall": 0.0,
+    "generalization_drop_percentage_points": 0.0,
+    "unseen_macro_recall_over_types": 0.0,
+    "seen_recall_reweighted_to_unseen_category_mix": 0.0,
+    "reweighted_drop_percentage_points": 0.0
+  },
+  "category_stratified_seen_unseen_recall": {
+    "DoS": {
+      "seen": {
+        "total_samples": 5741,
+        "detected": 0,
+        "missed": 5741,
+        "recall": 0.0
+      },
+      "unseen": {
+        "total_samples": 1717,
+        "detected": 0,
+        "missed": 1717,
+        "recall": 0.0
+      }
+    },
+    "Probe": {
+      "seen": {
+        "total_samples": 1106,
+        "detected": 0,
+        "missed": 1106,
+        "recall": 0.0
+      },
+      "unseen": {
+        "total_samples": 1315,
+        "detected": 0,
+        "missed": 1315,
+        "recall": 0.0
+      }
+    },
+    "R2L": {
+      "seen": {
+        "total_samples": 2199,
+        "detected": 0,
+        "missed": 2199,
+        "recall": 0.0
+      },
+      "unseen": {
+        "total_samples": 688,
+        "detected": 0,
+        "missed": 688,
+        "recall": 0.0
+      }
+    },
+    "U2R": {
+      "seen": {
+        "total_samples": 37,
+        "detected": 0,
+        "missed": 37,
+        "recall": 0.0
+      },
+      "unseen": {
+        "total_samples": 30,
+        "detected": 0,
+        "missed": 30,
+        "recall": 0.0
+      }
+    }
+  },
+  "per_unseen_attack_recall": {
+    "apache2": {
+      "category": "DoS",
+      "total_samples": 737,
+      "detected": 0,
+      "missed": 737,
+      "recall": 0.0
+    },
+    "httptunnel": {
+      "category": "R2L",
+      "total_samples": 133,
+      "detected": 0,
+      "missed": 133,
+      "recall": 0.0
+    },
+    "mailbomb": {
+      "category": "DoS",
+      "total_samples": 293,
+      "detected": 0,
+      "missed": 293,
+      "recall": 0.0
+    },
+    "mscan": {
+      "category": "Probe",
+      "total_samples": 996,
+      "detected": 0,
+      "missed": 996,
+      "recall": 0.0
+    },
+    "named": {
+      "category": "R2L",
+      "total_samples": 17,
+      "detected": 0,
+      "missed": 17,
+      "recall": 0.0
+    },
+    "processtable": {
+      "category": "DoS",
+      "total_samples": 685,
+      "detected": 0,
+      "missed": 685,
+      "recall": 0.0
+    },
+    "ps": {
+      "category": "U2R",
+      "total_samples": 15,
+      "detected": 0,
+      "missed": 15,
+      "recall": 0.0
+    },
+    "saint": {
+      "category": "Probe",
+      "total_samples": 319,
+      "detected": 0,
+      "missed": 319,
+      "recall": 0.0
+    },
+    "sendmail": {
+      "category": "R2L",
+      "total_samples": 14,
+      "detected": 0,
+      "missed": 14,
+      "recall": 0.0
+    },
+    "snmpgetattack": {
+      "category": "R2L",
+      "total_samples": 178,
+      "detected": 0,
+      "missed": 178,
+      "recall": 0.0
+    },
+    "snmpguess": {
+      "category": "R2L",
+      "total_samples": 331,
+      "detected": 0,
+      "missed": 331,
+      "recall": 0.0
+    },
+    "sqlattack": {
+      "category": "U2R",
+      "total_samples": 2,
+      "detected": 0,
+      "missed": 2,
+      "recall": 0.0
+    },
+    "udpstorm": {
+      "category": "DoS",
+      "total_samples": 2,
+      "detected": 0,
+      "missed": 2,
+      "recall": 0.0
+    },
+    "worm": {
+      "category": "R2L",
+      "total_samples": 2,
+      "detected": 0,
+      "missed": 2,
+      "recall": 0.0
+    },
+    "xlock": {
+      "category": "R2L",
+      "total_samples": 9,
+      "detected": 0,
+      "missed": 9,
+      "recall": 0.0
+    },
+    "xsnoop": {
+      "category": "R2L",
+      "total_samples": 4,
+      "detected": 0,
+      "missed": 4,
+      "recall": 0.0
+    },
+    "xterm": {
+      "category": "U2R",
+      "total_samples": 13,
+      "detected": 0,
+      "missed": 13,
+      "recall": 0.0
+    }
+  },
+  "threshold_free": {
+    "roc_auc": 0.5,
+    "pr_auc": 0.569268,
+    "roc_auc_seen_vs_normal": 0.5,
+    "roc_auc_unseen_vs_normal": 0.5,
+    "n_distinct_scores": 1
+  },
+  "test_roc_operating_points": {
+    "fpr_1pct": {
+      "threshold": 0.0,
+      "fpr": 0.0,
+      "attack_recall": 0.0,
+      "seen_recall": 0.0,
+      "unseen_recall": 0.0
+    },
+    "fpr_2pct": {
+      "threshold": 0.0,
+      "fpr": 0.0,
+      "attack_recall": 0.0,
+      "seen_recall": 0.0,
+      "unseen_recall": 0.0
+    },
+    "fpr_5pct": {
+      "threshold": 0.0,
+      "fpr": 0.0,
+      "attack_recall": 0.0,
+      "seen_recall": 0.0,
+      "unseen_recall": 0.0
+    }
+  },
+  "seed": 42
 }

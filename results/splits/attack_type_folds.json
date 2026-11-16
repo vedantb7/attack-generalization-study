@@ -1,0 +1,38 @@
+{
+  "scheme": "leave_attack_type_out",
+  "n_splits": 5,
+  "attack_types_per_fold": {
+    "0": [
+      "guess_passwd",
+      "neptune",
+      "nmap",
+      "perl",
+      "rootkit"
+    ],
+    "1": [
+      "back",
+      "buffer_overflow",
+      "loadmodule",
+      "satan",
+      "spy"
+    ],
+    "2": [
+      "ftp_write",
+      "ipsweep",
+      "teardrop",
+      "warezmaster"
+    ],
+    "3": [
+      "land",
+      "multihop",
+      "portsweep",
+      "warezclient"
+    ],
+    "4": [
+      "imap",
+      "phf",
+      "pod",
+      "smurf"
+    ]
+  }
+}

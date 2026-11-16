@@ -12,12 +12,20 @@ venv/
 ENV/
 env/
 
-# MLflow & Experiments
-mlruns/
-results/optuna.db-journal
-
 # Jupyter Notebook Checkpoints
 .ipynb_checkpoints
+
+# Legacy experiment tracking (no longer used)
+mlruns/
+
+# Large, regenerable notebook outputs not read by any downstream notebook
+# (rerun notebooks 04-07 to recreate them)
+results/predictions/seeds/
+results/predictions/*_oof_train_scores.csv
+
+# Local tooling / indexes
+.code-graph/
+graphify-out/
 
 # IDEs
 .vscode/
@@ -32,7 +40,7 @@ htmlcov/
 
 # Temporary and OS artifacts
 *.tmp
+*.bak
 *.joblib.tmp*
-artifact_hashes_pre.txt
 .DS_Store
 Thumbs.db

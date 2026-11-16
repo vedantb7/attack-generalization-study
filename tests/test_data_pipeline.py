@@ -187,7 +187,7 @@ class TestPreprocessing(unittest.TestCase):
         X_train, _ = split_features_target(self.train_df)
         X_test, _ = split_features_target(self.test_df)
 
-        # Load existing preprocessor from models/preprocessor.joblib
+        # Load the preprocessor saved by notebooks/02_preprocessing.ipynb (scalars/preprocessor.joblib)
         saved_prep = load_preprocessor(DEFAULT_PREPROCESSOR_PATH)
         X_train_saved = saved_prep.transform(X_train)
         X_test_saved = saved_prep.transform(X_test)

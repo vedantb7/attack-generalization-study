@@ -1,0 +1,20 @@
+| pair | metric | mean_diff | sd_diff | a_wins | n_seeds |
+|---|---|---|---|---|---|
+| logistic_regression_vs_decision_tree | auc_unseen_vs_normal | 0.1375 | 0.0277 | 5 | 5 |
+| logistic_regression_vs_decision_tree | unseen_recall@test_fpr_2pct | -0.1117 | 0.0471 | 0 | 5 |
+| logistic_regression_vs_decision_tree | unseen_recall | -0.0143 | 0.0872 | 1 | 5 |
+| logistic_regression_vs_random_forest | auc_unseen_vs_normal | -0.0579 | 0.0036 | 0 | 5 |
+| logistic_regression_vs_random_forest | unseen_recall@test_fpr_2pct | -0.0299 | 0.0140 | 0 | 5 |
+| logistic_regression_vs_random_forest | unseen_recall | 0.0468 | 0.0102 | 5 | 5 |
+| logistic_regression_vs_xgboost | auc_unseen_vs_normal | -0.0600 | 0.0048 | 0 | 5 |
+| logistic_regression_vs_xgboost | unseen_recall@test_fpr_2pct | -0.0149 | 0.0140 | 2 | 5 |
+| logistic_regression_vs_xgboost | unseen_recall | -0.0272 | 0.0534 | 3 | 5 |
+| decision_tree_vs_random_forest | auc_unseen_vs_normal | -0.1954 | 0.0288 | 0 | 5 |
+| decision_tree_vs_random_forest | unseen_recall@test_fpr_2pct | 0.0818 | 0.0457 | 5 | 5 |
+| decision_tree_vs_random_forest | unseen_recall | 0.0611 | 0.0797 | 4 | 5 |
+| decision_tree_vs_xgboost | auc_unseen_vs_normal | -0.1975 | 0.0283 | 0 | 5 |
+| decision_tree_vs_xgboost | unseen_recall@test_fpr_2pct | 0.0968 | 0.0604 | 5 | 5 |
+| decision_tree_vs_xgboost | unseen_recall | -0.0130 | 0.0800 | 2 | 5 |
+| random_forest_vs_xgboost | auc_unseen_vs_normal | -0.0021 | 0.0082 | 1 | 5 |
+| random_forest_vs_xgboost | unseen_recall@test_fpr_2pct | 0.0150 | 0.0233 | 4 | 5 |
+| random_forest_vs_xgboost | unseen_recall | -0.0741 | 0.0499 | 0 | 5 |
