@@ -64,7 +64,7 @@ export const UnseenAttackExplorer: React.FC = () => {
           <div className="flex flex-wrap gap-1.5">
             {['All', 'DoS', 'Probe', 'R2L', 'U2R'].map(c => (
               <button key={c} type="button" onClick={() => setCategory(c)} aria-pressed={category === c}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono border ${category === c ? 'bg-accent-primary text-white border-accent-primary' : 'border-surface-border text-content-muted hover:text-content-primary'}`}>
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono border ${category === c ? 'bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary border-accent-primary' : 'border-surface-border text-content-muted hover:bg-surface-elevated hover:text-content-primary'}`}>
                 {c}
               </button>
             ))}
@@ -79,7 +79,7 @@ export const UnseenAttackExplorer: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8 rounded-xl bg-surface-card border border-surface-border shadow-sm overflow-x-auto">
+          <div id="explorer-table" className="lg:col-span-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover overflow-x-auto">
             <table className="w-full text-xs font-mono" aria-describedby="unseen-attacks-caption">
               <caption id="unseen-attacks-caption" className="sr-only">Unseen attack types with per-model detection rates</caption>
               <thead>
@@ -121,7 +121,7 @@ export const UnseenAttackExplorer: React.FC = () => {
             </table>
           </div>
 
-          <div className="lg:col-span-4 p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm h-fit">
+          <div className="lg:col-span-4 p-5 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover h-fit">
             <div className="text-[10px] font-mono uppercase tracking-wider text-accent-primary">{active.category} · {active.count.toLocaleString()} test flows</div>
             <h3 className="font-serif font-semibold text-xl text-content-primary mt-1">{active.name}</h3>
             <div className="mt-4 space-y-3">

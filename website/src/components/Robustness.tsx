@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Activity } from 'lucide-react';
 import { SEED_SUMMARY, CAPACITY_SWEEPS, LEARNED_IDS, MODEL_NAMES, PROTOCOL, SweepSeries } from '../data/researchData';
 import { MODEL_COLOR } from './modelStyle';
@@ -26,12 +26,15 @@ const SweepChart: React.FC<{ s: SweepSeries }> = ({ s }) => {
   const px = (k: number) => 36 + (k / (s.points.length - 1)) * (W - 50);
   const py = (v: number) => H - 32 - ((v - lo) / (hi - lo)) * (H - 50);
   const color = MODEL_COLOR[s.model];
+  const [hover, setHover] = useState<number | null>(null);
+  const hp = hover !== null ? s.points[hover] : null;
   return (
-    <div className="p-4 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+    <div className="card-lift p-4 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
       <div>
         <h4 className="font-serif font-semibold text-sm text-content-primary">{MODEL_NAMES[s.model]}</h4>
         <span className="block text-[10px] font-mono text-content-muted">tuned {s.param}={Number.isNaN(Number(s.tuned)) ? s.tuned : Number(Number(s.tuned).toPrecision(2))} · Spearman CV↔test {s.spearman.toFixed(2)}</span>
       </div>
+      <div className="relative" onMouseLeave={() => setHover(null)}>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto mt-1" role="img" aria-label={`${MODEL_NAMES[s.model]} capacity sweep over ${s.param}`}>
         {[lo, (lo + hi) / 2, hi].map(t => (
           <g key={t}>
@@ -43,12 +46,27 @@ const SweepChart: React.FC<{ s: SweepSeries }> = ({ s }) => {
           <polyline key={ser.key} fill="none" stroke={color} strokeWidth={ser.key === 'testAucUnseen' ? 2.4 : 1.4} strokeDasharray={ser.dash}
             points={s.points.map((p, k) => `${px(k)},${py(p[ser.key])}`).join(' ')} />
         ))}
-        {s.points.map((p, k) => <circle key={k} cx={px(k)} cy={py(p.testAucUnseen)} r="2.6" fill={color} />)}
+        {hover !== null && <line x1={px(hover)} x2={px(hover)} y1="12" y2={H - 32} stroke="var(--color-text-muted)" strokeDasharray="2 2" />}
+        {s.points.map((p, k) => <circle key={k} cx={px(k)} cy={py(p.testAucUnseen)} r={hover === k ? 4.5 : 2.6} fill={color} style={{ transition: 'r 120ms' }} />)}
+        {s.points.map((_, k) => {
+          const half = (W - 50) / (s.points.length - 1) / 2;
+          return <rect key={`h${k}`} x={px(k) - half} y="8" width={half * 2} height={H - 40} fill="transparent" onMouseEnter={() => setHover(k)} />;
+        })}
         {s.points.map((p, k) => (
           <text key={`l${k}`} x={px(k)} y={H - 18} textAnchor="middle" className="text-[8px] font-mono fill-content-muted">{p.value}</text>
         ))}
         <text x={W / 2} y={H - 4} textAnchor="middle" className="text-[9px] font-mono fill-content-muted">{s.param} (capacity →)</text>
       </svg>
+      {hp && hover !== null && (
+        <div className="chart-tip" style={{ left: `${Math.min(62, Math.max(4, (px(hover) / W) * 100 - 20))}%`, top: '4%' }}>
+          <div className="font-semibold text-content-primary">{s.param} = {hp.value}</div>
+          <div>test unseen AUC <strong>{hp.testAucUnseen.toFixed(3)}</strong></div>
+          <div>test seen AUC {hp.testAucSeen.toFixed(3)}</div>
+          <div>novelty CV AUC {hp.cvAuc.toFixed(3)}</div>
+          <div className="text-content-muted">{s.model === 'lr' ? '‖w‖₂' : 'leaves'} {hp.complexity.toLocaleString()}</div>
+        </div>
+      )}
+      </div>
     </div>
   );
 };
@@ -72,7 +90,7 @@ export const Robustness: React.FC = () => {
           </p>
         </div>
 
-        <div className="rounded-xl bg-surface-card border border-surface-border shadow-sm overflow-x-auto mb-10">
+        <div id="seed-variation" className="rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover overflow-x-auto mb-10">
           <table className="w-full text-xs font-mono">
             <caption className="text-left px-4 pt-4 pb-2 text-content-muted">Mean ± SD over seeds {PROTOCOL.seeds.join(', ')}.</caption>
             <thead>
@@ -87,7 +105,7 @@ export const Robustness: React.FC = () => {
             </thead>
             <tbody>
               {SEED_ROWS.map(r => (
-                <tr key={r.key} className="border-b border-surface-border/50 last:border-0">
+                <tr key={r.key} className="border-b border-surface-border/50 last:border-0 hover:bg-surface-elevated/50 transition-colors">
                   <td className="px-4 py-2 text-content-primary whitespace-nowrap">{r.label}</td>
                   {LEARNED_IDS.map(id => {
                     const s = SEED_SUMMARY[id][r.key];
@@ -103,7 +121,7 @@ export const Robustness: React.FC = () => {
           </table>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div id="capacity-sweeps" className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {CAPACITY_SWEEPS.map(s => <SweepChart key={s.model} s={s} />)}
         </div>
         <div className="flex flex-wrap gap-4 mt-3 text-[11px] font-mono text-content-muted">

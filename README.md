@@ -139,7 +139,7 @@ The notebooks are the **single source of truth**: every result, model, table and
 | Team Member | Core Responsibilities |
 |:---|:---|
 | **Vedant** | Data loading & preprocessing modules (`src/data_loader.py`, `src/preprocessing.py`)<br>Majority-class baseline (`notebooks/03_majority_baseline.ipynb`)<br>Random Forest (`notebooks/06_random_forest.ipynb`)<br>Controlled framework (`src/controlled_framework.py`) |
-| **Dhruv** | Exploratory data analysis (`notebooks/01_data_exploration.ipynb`, `docs/dataset_notes.md`)<br>Logistic Regression (`notebooks/04_logistic_regression.ipynb`)<br>Decision Tree (`notebooks/05_decision_tree.ipynb`)<br>Comparative evaluation & statistical tests (`notebooks/08_evaluation_comparison.ipynb`) |
+| **Dhruv Meshram** | Exploratory data analysis (`notebooks/01_data_exploration.ipynb`, `docs/dataset_notes.md`)<br>Logistic Regression (`notebooks/04_logistic_regression.ipynb`)<br>Decision Tree (`notebooks/05_decision_tree.ipynb`)<br>Comparative evaluation & statistical tests (`notebooks/08_evaluation_comparison.ipynb`) |
 | **Shared** | XGBoost (`notebooks/07_xgboost.ipynb`), capacity analysis (`notebooks/09_capacity_analysis.ipynb`), protocol revision after the methodology review |
 
 ---

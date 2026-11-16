@@ -42,9 +42,9 @@ export const ErrorAnalysis: React.FC = () => {
             analysis was run, so they say <em>where</em> models fail, not <em>why</em>.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div id="shared-failures" className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {cards.map(c => (
-            <div key={c.title} className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-3">
+            <div key={c.title} className="card-lift p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-3">
               <h3 className="font-serif font-semibold text-base text-content-primary">{c.title}</h3>
               <p className="text-sm text-content-muted leading-relaxed">{c.body}</p>
               {c.list.length > 0 && (

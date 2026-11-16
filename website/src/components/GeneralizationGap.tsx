@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TrendingDown } from 'lucide-react';
 import { GENERALIZATION_DATA as G, LEARNED_IDS, MODEL_NAMES, LearnedId } from '../data/researchData';
 import { MODEL_COLOR } from './modelStyle';
@@ -9,6 +9,7 @@ export const GeneralizationGap: React.FC = () => {
   const x = (v: number) => 150 + ((v - lo) / (hi - lo)) * 232;
   const aucSeen = G.aucSeen as Record<LearnedId, number>;
   const aucUnseen = G.aucUnseen as Record<LearnedId, number>;
+  const [hover, setHover] = useState<LearnedId | null>(null);
 
   return (
     <section id="generalization" className="py-16 md:py-24 border-b border-surface-border">
@@ -28,9 +29,10 @@ export const GeneralizationGap: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+          <div id="auc-gap" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Ranking quality: AUC vs normal traffic</h3>
             <p className="text-xs text-content-muted mt-1 mb-4">Hollow = seen attacks, filled = unseen attacks (seed 42). Threshold-free.</p>
+            <div className="relative" onMouseLeave={() => setHover(null)}>
             <svg viewBox="0 0 400 210" className="w-full h-auto" role="img" aria-label="Seen and unseen AUC per model">
               {[0.7, 0.8, 0.9, 1.0].map(t => (
                 <g key={t}>
@@ -41,7 +43,8 @@ export const GeneralizationGap: React.FC = () => {
               {LEARNED_IDS.map((id, k) => {
                 const y = 30 + k * 42;
                 return (
-                  <g key={id}>
+                  <g key={id} opacity={hover && hover !== id ? 0.3 : 1} style={{ transition: 'opacity 150ms' }}>
+                    <rect x="0" y={y - 18} width="400" height="38" fill="transparent" onMouseEnter={() => setHover(id)} />
                     <text x="142" y={y + 4} textAnchor="end" className="text-[11px] font-mono fill-content-primary">{MODEL_NAMES[id]}</text>
                     <line x1={x(aucUnseen[id])} x2={x(aucSeen[id])} y1={y} y2={y} stroke={MODEL_COLOR[id]} strokeWidth="2" />
                     <circle cx={x(aucSeen[id])} cy={y} r="5" fill="var(--color-surface)" stroke={MODEL_COLOR[id]} strokeWidth="2" />
@@ -53,13 +56,22 @@ export const GeneralizationGap: React.FC = () => {
                 );
               })}
             </svg>
+            {hover && (
+              <div className="chart-tip" style={{ left: '40%', top: `${((30 + LEARNED_IDS.indexOf(hover) * 42 + 22) / 210) * 100}%` }}>
+                <div className="font-semibold text-content-primary">{MODEL_NAMES[hover]}</div>
+                <div>seen vs normal {aucSeen[hover].toFixed(4)}</div>
+                <div>unseen vs normal {aucUnseen[hover].toFixed(4)}</div>
+                <div className="text-content-muted">drop {(aucSeen[hover] - aucUnseen[hover]).toFixed(4)}</div>
+              </div>
+            )}
+            </div>
             <p className="text-[11px] text-content-muted mt-2">
               LR barely drops ({aucSeen.lr.toFixed(3)} → {aucUnseen.lr.toFixed(3)}) because its seen-attack AUC is already the lowest. The ensembles
               drop more but stay highest on unseen attacks. The Decision Tree drops most.
             </p>
           </div>
 
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+          <div id="recall-gap" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Detection rate at threshold 0.5</h3>
             <p className="text-xs text-content-muted mt-1 mb-4">
               Thin bar = row-bootstrap 95% CI (test sampling). Wide band = attack-type cluster CI, which resamples the 17 unseen types.

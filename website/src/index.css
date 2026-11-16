@@ -13,6 +13,7 @@
   --color-text-muted: #7A7271;
   --color-accent-primary: #541C32;
   --color-accent-hover: #351321;
+  --color-on-accent: #FFFFFF;
   --color-accent-soft: rgba(84, 28, 50, 0.07);
   --color-accent-border: rgba(84, 28, 50, 0.22);
   --color-rose: #B77C88;
@@ -25,7 +26,7 @@
   --model-rf: #8E2C4C;
   --model-xgb: #B9792A;
 
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 html[data-theme="navy"] {
@@ -39,6 +40,7 @@ html[data-theme="navy"] {
   --color-text-muted: #94A3B8;
   --color-accent-primary: #E9D9B8;
   --color-accent-hover: #F6EDE0;
+  --color-on-accent: #0F1826;
   --color-accent-soft: rgba(233, 217, 184, 0.10);
   --color-accent-border: rgba(233, 217, 184, 0.28);
   --color-rose: #829AB5;
@@ -104,4 +106,99 @@ html {
 .font-num {
   font-family: 'JetBrains Mono', monospace;
   font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+/* ------------------------------------------------------------------
+   Interaction utilities (hover / press). Motion is disabled for
+   visitors who ask for reduced motion.
+   ------------------------------------------------------------------ */
+@layer components {
+  /* Small selectable / summary cards: lift and accent edge on hover */
+  .card-lift {
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background-color 200ms ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.28);
+    border-color: var(--color-accent-border);
+  }
+
+  /* Large content panels: no movement, just a calm edge highlight */
+  .panel-hover {
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .panel-hover:hover {
+    border-color: var(--color-accent-border);
+    box-shadow: 0 6px 20px -14px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Buttons: gentle press feedback */
+  .btn-press {
+    transition: transform 120ms ease, background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  }
+  .btn-press:active {
+    transform: scale(0.97);
+  }
+
+  /* Chart marks: brighten the hovered mark */
+  .mark-hover {
+    transition: opacity 150ms ease, filter 150ms ease;
+  }
+  .mark-hover:hover {
+    filter: brightness(1.12);
+  }
+
+  /* Arrow that nudges right on hover of its parent link */
+  .group:hover .nudge {
+    transform: translateX(3px);
+  }
+  .nudge {
+    transition: transform 150ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-lift,
+  .panel-hover,
+  .btn-press,
+  .mark-hover,
+  .nudge {
+    transition: none !important;
+  }
+  .card-lift:hover,
+  .btn-press:active,
+  .group:hover .nudge {
+    transform: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Floating chart tooltip */
+.chart-tip {
+  pointer-events: none;
+  position: absolute;
+  z-index: 20;
+  min-width: 9rem;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.35);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* Press feedback for every button (disabled for reduced motion above) */
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:disabled) {
+    transition-property: color, background-color, border-color, transform, box-shadow;
+    transition-duration: 150ms;
+  }
+  button:not(:disabled):active {
+    transform: scale(0.97);
+  }
 }

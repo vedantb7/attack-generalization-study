@@ -1,5 +1,5 @@
 import React from 'react';
-import { HelpCircle, AlertOctagon, Cpu, ShieldCheck } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import { SEED_SUMMARY, THRESHOLD_FREE, CAPACITY_SWEEPS, DEPLOYABLE } from '../data/researchData';
 
 type Outcome = 'Supported' | 'Partly supported' | 'Not supported across families';
@@ -59,9 +59,8 @@ export const ResearchQuestion: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-3">
+          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-3">
             <div className="flex items-center gap-2.5 text-accent-primary font-serif font-semibold text-lg">
-              <AlertOctagon className="w-5 h-5 shrink-0 text-rose-600 dark:text-rose-400" />
               <span>Signature memorization</span>
             </div>
             <p className="text-sm text-content-muted leading-relaxed">
@@ -69,9 +68,8 @@ export const ResearchQuestion: React.FC = () => {
               recognises those attacks but not new ones. High-capacity models are the usual suspects.
             </p>
           </div>
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-3">
+          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-3">
             <div className="flex items-center gap-2.5 text-accent-primary font-serif font-semibold text-lg">
-              <ShieldCheck className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>Unseen-attack generalization</span>
             </div>
             <p className="text-sm text-content-muted leading-relaxed">
@@ -82,14 +80,14 @@ export const ResearchQuestion: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+        <div id="hypotheses" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
           <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary mb-2">Hypotheses and what the evidence says</h3>
           <p className="text-xs sm:text-sm text-content-muted mb-6 max-w-3xl">
             The three pre-registered hypotheses from the project proposal, with the outcome of the controlled study.
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {hypotheses.map(h => (
-              <div key={h.id} className="p-4 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-3 flex flex-col">
+              <div key={h.id} className="card-lift p-4 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-3 flex flex-col">
                 <div className="flex items-center justify-between gap-2">
                   <span className="font-mono text-xs font-bold text-content-primary">{h.id} · {h.title}</span>
                 </div>
@@ -101,7 +99,6 @@ export const ResearchQuestion: React.FC = () => {
           </div>
 
           <div className="mt-6 p-3.5 rounded-lg border border-amber-300 dark:border-amber-700/60 bg-amber-50/50 dark:bg-amber-950/20 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
-            <Cpu className="w-4 h-4 shrink-0 text-amber-700 dark:text-amber-400 mt-0.5" />
             <div>
               <strong className="font-semibold block mb-0.5">Scope:</strong>
               The 17 unseen attack types are absent from training within the NSL-KDD benchmark. They are benchmark-level novel signatures, not

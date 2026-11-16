@@ -4,7 +4,7 @@
 **Project Title:** Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection  
 **Team Members:**  
 - **Vedant:** Data Loading, Preprocessing Pipeline, Majority-Class Baseline, Random Forest Classifier, Interactive Demonstration Website (deferred)  
-- **Dhruv:** Exploratory Data Analysis, Logistic Regression, Decision Tree Classifier, Comparative Evaluation & Statistical Analysis  
+- **Dhruv Meshram:** Exploratory Data Analysis, Logistic Regression, Decision Tree Classifier, Comparative Evaluation & Statistical Analysis  
 
 ---
 
