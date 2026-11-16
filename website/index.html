@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="burgundy">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    
+    <title>Signature Memorization vs. Unseen Attack Generalization | ES 335 ML Project — IIT Gandhinagar</title>
+    <meta name="description" content="An empirical investigation comparing Logistic Regression, Decision Tree, and Random Forest on familiar training signatures vs. novel unseen network attacks in the NSL-KDD benchmark." />
+    <meta name="keywords" content="Network Intrusion Detection, Machine Learning, NSL-KDD, Signature Memorization, Zero-Day Generalization, Decision Tree, Random Forest, Logistic Regression" />
+    <meta name="author" content="Vedant Bondekar & Dhruv — IIT Gandhinagar" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23541C32'><path d='M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z'/></svg>" />
+
+    <!-- OpenGraph / Social Cards -->
+    <meta property="og:title" content="Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection" />
+    <meta property="og:description" content="Do simpler machine learning models generalize better to previously unseen attack types than complex ensembles? Controlled empirical study on NSL-KDD." />
+    <meta property="og:type" content="article" />
+
+    <!-- Anti-FOUC Theme Initialization Script -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem("research-theme") || "burgundy";
+          document.documentElement.setAttribute("data-theme", stored);
+          var meta = document.querySelector('meta[name="color-scheme"]');
+          if (meta) {
+            meta.content = (stored === "navy") ? "dark" : "light";
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Google Fonts: Newsreader (Editorial Serif), Plus Jakarta Sans (Clean Modern Sans), JetBrains Mono (Figures) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-surface-bg text-content-primary antialiased font-sans selection:bg-accent-primary selection:text-white transition-colors duration-300">
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>
