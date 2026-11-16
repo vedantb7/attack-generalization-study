@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Default: Burgundy + Ivory Editorial Theme */
+  --color-bg: #F6F0E6;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #EDE5DA;
+  --color-border: #D8CEBE;
+  --color-text-primary: #282326;
+  --color-text-secondary: #541C32;
+  --color-text-muted: #7A7271;
+  --color-accent-primary: #541C32;
+  --color-accent-hover: #351321;
+  --color-accent-soft: rgba(84, 28, 50, 0.07);
+  --color-accent-border: rgba(84, 28, 50, 0.22);
+  --color-rose: #B77C88;
+  --color-tag-bg: #EAE0D2;
+  --chart-grid: rgba(40, 35, 38, 0.08);
+
+  color-scheme: light dark;
+}
+
+html[data-theme="navy"] {
+  /* Secondary: Midnight Navy + Champagne Editorial Theme */
+  --color-bg: #0F1826;
+  --color-surface: #172437;
+  --color-surface-elevated: #1F314A;
+  --color-border: #2C4362;
+  --color-text-primary: #F3EDE1;
+  --color-text-secondary: #E9D9B8;
+  --color-text-muted: #94A3B8;
+  --color-accent-primary: #E9D9B8;
+  --color-accent-hover: #F6EDE0;
+  --color-accent-soft: rgba(233, 217, 184, 0.10);
+  --color-accent-border: rgba(233, 217, 184, 0.28);
+  --color-rose: #829AB5;
+  --color-tag-bg: #1B2C42;
+  --chart-grid: rgba(243, 237, 225, 0.08);
+
+  color-scheme: dark;
+}
+
+/* Custom editorial scrollbar styling (Modern Web Guidance) */
+:root {
+  --scrollbar-thumb: var(--color-border);
+  --scrollbar-track: var(--color-bg);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+}
+
+/* Smooth section scrolling */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+/* Accessible focus ring */
+*:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive Table Wrapper with Container Query */
+.table-wrapper {
+  overflow-x: auto;
+  max-width: 100%;
+  container-type: inline-size;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Typography styles */
+.font-editorial-heading {
+  font-family: 'Newsreader', Georgia, serif;
+  letter-spacing: -0.015em;
+}
+
+.font-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
