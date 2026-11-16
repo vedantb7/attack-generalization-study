@@ -1,4 +1,4 @@
-# 🛡️ Data Pipeline & Preprocessing Methodology
+# 🛡️ Methodology: Data Pipeline, Controlled Experiment and Results
 
 **Project:** Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection  
 **Course:** ES 335: Machine Learning (IIT Gandhinagar)  
@@ -10,7 +10,7 @@
 
 ## 1. Overview & Research Objective
 
-This project investigates whether simpler machine learning models generalize better to previously unseen attack types than higher-capacity models. To ensure strict scientific rigor and comparability between team members (Vedant and Dhruv), all models are trained and evaluated using one unified, reproducible data pipeline.
+This project investigates whether simpler models (Logistic Regression, a single Decision Tree) generalize better to previously unseen attack types than higher-capacity ensembles (Random Forest, XGBoost). All models share one data pipeline (§2–6) and one controlled protocol (§8), and every result is produced by the notebooks. Results are in §9, the test-set exposure history in §10 and reproduction steps in §11.
 
 > [!IMPORTANT]
 > **Methodological Restriction:** While NSL-KDD contains 17 attack types present exclusively in the test set, we do not claim genuine real-world zero-day detection based solely on this synthetic benchmark. These attacks represent novel signatures within the benchmark domain.
@@ -61,7 +61,7 @@ When `add_derived_targets=True` (default):
 2. **5-Class Categorization (`attack_category`):**
    - Maps 39 individual attack signatures into standard DARPA classes: `Normal`, `DoS`, `Probe`, `R2L`, `U2R`.
    - **Mapping Validation:** Pre-validates all unique labels against `ATTACK_MAPPING`. If an unmapped signature appears, it raises a descriptive `ValueError` instead of silently introducing NaNs.
-   - **Signature Preservation:** Original fine-grained attack names remain intact in `df['label']` for granular zero-day evaluation.
+   - **Signature Preservation:** Original fine-grained attack names remain intact in `df['label']` for per-attack and seen/unseen evaluation.
 
 ---
 
@@ -88,7 +88,7 @@ Combined inside a scikit-learn `ColumnTransformer`:
 ## 5. Train-Only Fitting & Anti-Leakage Protocol
 
 To ensure valid generalization measurement:
-1. **Train-Only Statistics:** All encoders and scalers are fitted exclusively on `X_train`.
+1. **Train-Only Statistics:** All encoders and scalers are fitted exclusively on training rows: on the training part of every CV fold during tuning, and on all of `KDDTrain+` for the final model.
 2. **Test Transformation Only:** `X_test` is strictly transformed via `preprocessor.transform(X_test)`. It is never used in `fit()` or `fit_transform()`.
 3. **Official Partitions:** The official NSL-KDD `KDDTrain+` and `KDDTest+` files are used without random repartitioning to preserve the designed unseen attack distribution.
 
@@ -108,35 +108,26 @@ The fitted pipeline is serialized using `joblib`:
 
 ---
 
-## 7. Standard Code Recipe for Model Training
+## 7. Using the Saved Artifacts
 
-All team members must load and preprocess data using this standard recipe:
+Models are trained **only** by running notebooks 03–07, which call `cf.run_controlled_experiment()`. Each saved model in `models/` is a full `Pipeline` (fitted preprocessor + estimator), so it takes the raw 41 predictors directly:
 
 ```python
+import joblib
 from src.data_loader import load_nsl_kdd
-from src.preprocessing import split_features_target, load_preprocessor, create_preprocessor
+from src.preprocessing import split_features_target, load_preprocessor
 
-# 1. Load standardized dataframes
 train_df, test_df = load_nsl_kdd()
-
-# 2. Extract 41 predictor features and binary target
-X_train, y_train = split_features_target(train_df, target_col="is_intrusion")
 X_test, y_test = split_features_target(test_df, target_col="is_intrusion")
 
-# 3. Option A: Load shared pre-fitted preprocessor
-preprocessor = load_preprocessor()
-X_train_proc = preprocessor.transform(X_train)
-X_test_proc = preprocessor.transform(X_test)
+model = joblib.load("models/random_forest.joblib")      # preprocessor + estimator, seed 42
+p_attack = model.predict_proba(X_test)[:, 1]             # P(attack); the study's 0.5 rule is p_attack > 0.5
 
-# 3. Option B: Create and fit preprocessor from scratch
-# preprocessor = create_preprocessor(X_train)
-# X_train_proc = preprocessor.fit_transform(X_train)
-# X_test_proc = preprocessor.transform(X_test)
-
-# Dimensions:
-# X_train_proc: (125973, 122)
-# X_test_proc:  (22543, 122)
+preprocessor = load_preprocessor()                       # scalars/preprocessor.joblib, for inspection
+Z_test = preprocessor.transform(X_test)                  # (22543, 122)
 ```
+
+To retrain or change a model, edit its notebook (search space, fixed parameters) or `config.yaml` and rerun it, then rerun notebooks 08 and 09.
 
 ---
 
@@ -216,7 +207,7 @@ Fold 0 holds out `neptune` (70% of training attacks), which explains most of the
 | Random Forest | 0.768 | 2.72% | 76.8% | 24.6% | [23.2, 26.0] | [1.1, 46.5] | 52.2 pp | 57.4 pp |
 | XGBoost | 0.781 | 2.57% | 78.2% | 28.3% | [26.9, 29.8] | [2.4, 52.3] | 49.9 pp | 54.7 pp |
 
-"Reweighted drop" uses seen recall reweighted to the unseen category mix (DoS 46%, Probe 35%, R2L 18%, U2R 1%); the drop grows rather than shrinks, so it is not an artefact of category composition.
+"Reweighted drop" uses seen recall reweighted to the unseen category mix (DoS 46%, Probe 35%, R2L 18%, U2R 1%); the drop grows rather than shrinks, so it is not an artefact of category composition. In ranking terms the drop differs a lot by model: seen-vs-normal → unseen-vs-normal AUC goes 0.885 → 0.883 (LR), 0.963 → 0.947 (XGBoost), 0.975 → 0.942 (RF) and 0.947 → 0.734 (DT). LR loses almost nothing because it already separates seen attacks poorly.
 
 ### 9.4 Paired tests (seed 42, Holm over 36 tests)
 | Pair | Δ AUC unseen vs normal | Δ unseen recall @2% FPR (pp) | Δ unseen recall @0.5 (pp) | Δ Macro-F1 |

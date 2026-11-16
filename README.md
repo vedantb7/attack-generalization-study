@@ -138,6 +138,7 @@ The notebooks are the **single source of truth**: every result, model, table and
 |:---|:---|
 | **Vedant** | Data loading & preprocessing modules (`src/data_loader.py`, `src/preprocessing.py`)<br>Majority-class baseline (`notebooks/03_majority_baseline.ipynb`)<br>Random Forest (`notebooks/06_random_forest.ipynb`)<br>Controlled framework (`src/controlled_framework.py`) |
 | **Dhruv** | Exploratory data analysis (`notebooks/01_data_exploration.ipynb`, `docs/dataset_notes.md`)<br>Logistic Regression (`notebooks/04_logistic_regression.ipynb`)<br>Decision Tree (`notebooks/05_decision_tree.ipynb`)<br>Comparative evaluation & statistical tests (`notebooks/08_evaluation_comparison.ipynb`) |
+| **Shared** | XGBoost (`notebooks/07_xgboost.ipynb`), capacity analysis (`notebooks/09_capacity_analysis.ipynb`), protocol revision after the methodology review |
 
 ---
 
@@ -269,7 +270,7 @@ The training-only novelty CV ranks LR settings the way the test set does (Spearm
 1. **Simpler models do not generalise better across families.** On threshold-free ranking of unseen attacks against normal traffic, the two ensembles (RF 0.941, XGBoost 0.943 over 5 seeds) clearly beat Logistic Regression (0.883) and the Decision Tree (0.746), consistently across seeds and significantly in paired tests. The earlier impression that RF "collapses" on unseen attacks came from comparing models at threshold 0.5, where they sit at different operating points.
 2. **Within a family, regularisation helps the single models.** Stronger L2 regularisation raises LR's unseen-vs-normal AUC from 0.71 to 0.88, and a moderately deep tree (depth 4–6) beats a fully grown one. The ensembles are insensitive to depth. So "regularise single models" is supported; "prefer single models to ensembles" is not.
 3. **Low-FPR detection of unseen attacks is poor for every model.** At 1% test FPR no model detects more than 7.2% of unseen-attack rows, and at 2% the best 5-seed average is 16.6% (Decision Tree). Ensembles only pull ahead around 5% FPR (XGBoost 82%, RF 63%). Which model looks best therefore depends on the operating point, and thresholds calibrated on training data overshoot the target FPR on test.
-4. **The seen → unseen drop is real** for every model (recall at 0.5 falls by 41–52 pp; AUC falls by 0.002 for LR, 0.016 for XGBoost, 0.033 for RF and 0.213 for the Decision Tree), and it persists after reweighting seen attacks to the unseen category mix (`results/tables/composition_reweighted_gap.md`).
+4. **The seen → unseen drop depends on how it is measured.** Recall at 0.5 falls by 41–52 pp for every model, and that drop persists after reweighting seen attacks to the unseen category mix (`results/tables/composition_reweighted_gap.md`). In ranking terms it differs a lot: AUC falls by 0.002 for LR, 0.016 for XGBoost, 0.033 for RF and 0.213 for the Decision Tree. LR's small drop reflects weak seen-attack separation (AUC 0.885), not better generalisation.
 5. **Limits.**
    - Unseen-attack results hinge on a few attack types; attack-type cluster CIs for unseen recall at 0.5 span roughly 0.01–0.67 and overlap for all models.
    - Five seeds; the Decision Tree is the least stable model (unseen recall at 0.5 varies by ±8.7 pp).
