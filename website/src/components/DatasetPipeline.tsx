@@ -32,9 +32,8 @@ export const DatasetPipeline: React.FC = () => {
               href="https://www.unb.ca/cic/datasets/nsl.html"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-soft text-accent-primary border border-accent-border hover:bg-accent-primary hover:text-white transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary border border-accent-primary transition-colors"
             >
-              <Database className="w-3.5 h-3.5" />
               <span>NSL-KDD dataset (Canadian Institute for Cybersecurity, UNB)</span>
               <ExternalLink className="w-3 h-3" />
             </a>
@@ -43,9 +42,9 @@ export const DatasetPipeline: React.FC = () => {
         </div>
 
         {/* Dataset Breakdown Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+        <div id="dataset-split" className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
           {/* Left: Distribution Inversion Comparison */}
-          <div className="lg:col-span-7 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-6">
+          <div className="lg:col-span-7 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-6">
             <div className="flex items-center justify-between border-b border-surface-border pb-3">
               <h3 className="font-serif font-semibold text-lg text-content-primary">
                 Partition Footprint & Distribution Inversion
@@ -116,7 +115,7 @@ export const DatasetPipeline: React.FC = () => {
           </div>
 
           {/* Right: 41 Features Taxonomy Selector */}
-          <div className="lg:col-span-5 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm flex flex-col justify-between">
+          <div className="lg:col-span-5 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between border-b border-surface-border pb-3 mb-4">
                 <h3 className="font-serif font-semibold text-lg text-content-primary">
@@ -134,7 +133,7 @@ export const DatasetPipeline: React.FC = () => {
                     onClick={() => setSelectedGroup(idx)}
                     className={`p-2.5 rounded-lg text-left text-xs transition-colors border ${
                       selectedGroup === idx
-                        ? 'border-accent-primary bg-accent-soft text-accent-primary font-semibold'
+                        ? 'border-accent-primary bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary font-semibold'
                         : 'border-surface-border bg-surface-elevated/40 text-content-muted hover:text-content-primary hover:bg-surface-elevated'
                     }`}
                   >
@@ -173,7 +172,7 @@ export const DatasetPipeline: React.FC = () => {
         </div>
 
         {/* Visual Pipeline Flow */}
-        <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+        <div id="pipeline-steps" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
           <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary mb-2">
             End-to-End Controlled Pipeline Architecture
           </h3>

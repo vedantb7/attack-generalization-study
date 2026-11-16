@@ -47,19 +47,19 @@ export const StatisticalAnalysis: React.FC = () => {
         <div className="flex flex-wrap gap-2 mb-5" role="tablist">
           {([['bootstrap', 'Paired bootstrap'], ['mcnemar', 'McNemar'], ['seeds', 'Across seeds']] as [Tab, string][]).map(([k, label]) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} onClick={() => setTab(k)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono border ${tab === k ? 'bg-accent-primary text-white border-accent-primary' : 'border-surface-border text-content-muted hover:text-content-primary'}`}>
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono border ${tab === k ? 'bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary border-accent-primary' : 'border-surface-border text-content-muted hover:bg-surface-elevated hover:text-content-primary'}`}>
               {label}
             </button>
           ))}
         </div>
 
-        <div className="rounded-xl bg-surface-card border border-surface-border shadow-sm overflow-x-auto">
+        <div id="test-results" className="rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover overflow-x-auto">
           {tab === 'bootstrap' && (
             <>
               <div className="flex flex-wrap gap-1.5 px-4 pt-4">
                 {bootstrapMetrics.map(m => (
                   <button key={m} type="button" onClick={() => setMetric(m)} aria-pressed={metric === m}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-mono border ${metric === m ? 'bg-accent-soft text-accent-primary border-accent-border font-semibold' : 'border-surface-border text-content-muted hover:text-content-primary'}`}>
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-mono border ${metric === m ? 'bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary border-accent-primary font-semibold' : 'border-surface-border text-content-muted hover:bg-surface-elevated hover:text-content-primary'}`}>
                     {m}
                   </button>
                 ))}
@@ -72,7 +72,7 @@ export const StatisticalAnalysis: React.FC = () => {
                 </tr></thead>
                 <tbody>
                   {bootRows.map(t => (
-                    <tr key={`${t.a}-${t.b}`} className="border-b border-surface-border/50 last:border-0">
+                    <tr key={`${t.a}-${t.b}`} className="border-b border-surface-border/50 last:border-0 hover:bg-surface-elevated/50 transition-colors">
                       <td className="px-4 py-2 text-content-primary whitespace-nowrap">{pair(t.a, t.b)}</td>
                       <td className="px-3 py-2 text-right font-num text-content-primary">{t.effect > 0 ? '+' : ''}{fmtEffect(metric, t.effect)}</td>
                       <td className="px-3 py-2 text-right font-num text-content-muted whitespace-nowrap">{t.ci ? `[${fmtEffect(metric, t.ci[0])}, ${fmtEffect(metric, t.ci[1])}]` : ''}</td>
@@ -97,7 +97,7 @@ export const StatisticalAnalysis: React.FC = () => {
               </tr></thead>
               <tbody>
                 {mcRows.map(t => (
-                  <tr key={`${t.family}-${t.a}-${t.b}`} className="border-b border-surface-border/50 last:border-0">
+                  <tr key={`${t.family}-${t.a}-${t.b}`} className="border-b border-surface-border/50 last:border-0 hover:bg-surface-elevated/50 transition-colors">
                     <td className="px-4 py-2 text-content-muted whitespace-nowrap">{t.family.includes('unseen') ? 'unseen (3,750)' : 'all (22,543)'}</td>
                     <td className="px-3 py-2 text-content-primary whitespace-nowrap">{MODEL_ABBR[t.a]} vs {MODEL_ABBR[t.b]}</td>
                     <td className="px-3 py-2 text-right font-num text-content-primary">{t.aBetter?.toLocaleString()} / {t.bBetter?.toLocaleString()}</td>
@@ -121,7 +121,7 @@ export const StatisticalAnalysis: React.FC = () => {
               </tr></thead>
               <tbody>
                 {SEED_PAIRS.map(p => (
-                  <tr key={`${p.a}-${p.b}-${p.metric}`} className="border-b border-surface-border/50 last:border-0">
+                  <tr key={`${p.a}-${p.b}-${p.metric}`} className="border-b border-surface-border/50 last:border-0 hover:bg-surface-elevated/50 transition-colors">
                     <td className="px-4 py-2 text-content-primary whitespace-nowrap">{MODEL_ABBR[p.a]} − {MODEL_ABBR[p.b]}</td>
                     <td className="px-3 py-2 text-content-muted whitespace-nowrap">{SEED_METRIC[p.metric] ?? p.metric}</td>
                     <td className="px-3 py-2 text-right font-num text-content-primary whitespace-nowrap">

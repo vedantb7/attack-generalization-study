@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
-import { Sliders, ChevronDown, ChevronUp, Cpu, Binary, GitFork, Boxes, Layers } from 'lucide-react';
+import { Sliders, ChevronDown, ChevronUp } from 'lucide-react';
 import { MODELS, PROTOCOL, ModelId } from '../data/researchData';
-
-const ICONS: Record<ModelId, React.ReactNode> = {
-  baseline: <Binary className="w-5 h-5" />,
-  lr: <Cpu className="w-5 h-5" />,
-  dt: <GitFork className="w-5 h-5" />,
-  rf: <Boxes className="w-5 h-5" />,
-  xgb: <Layers className="w-5 h-5" />,
-};
+import { MODEL_COLOR } from './modelStyle';
 
 const COMPLEXITY_LABEL: Record<string, string> = {
   C: 'C (inverse L2 strength)',
@@ -56,14 +49,16 @@ export const ModelsCompared: React.FC = () => {
                 type="button"
                 onClick={() => setSelectedModel(model.id)}
                 aria-pressed={isSelected}
-                className={`p-4 rounded-xl text-left transition-all border ${
+                className={`card-lift p-4 rounded-xl text-left border ${
                   isSelected
                     ? 'border-accent-primary bg-surface-card shadow-md ring-1 ring-accent-primary'
                     : 'border-surface-border bg-surface-card/60 hover:bg-surface-card text-content-muted hover:text-content-primary'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <div className={`p-1.5 rounded-md ${isSelected ? 'bg-accent-soft text-accent-primary' : 'bg-surface-elevated text-content-muted'}`}>{ICONS[model.id]}</div>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full ring-2 ring-surface-card" style={{ background: MODEL_COLOR[model.id] }} aria-hidden="true" />
+                  </span>
                   <span className="font-mono text-[10px] text-content-muted text-right">{model.type}</span>
                 </div>
                 <div className="font-serif font-semibold text-sm sm:text-base text-content-primary truncate">{model.shortName}</div>
@@ -79,7 +74,7 @@ export const ModelsCompared: React.FC = () => {
           })}
         </div>
 
-        <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-6">
+        <div id="model-details" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
             <div>
               <div className="flex items-center gap-2 flex-wrap">

@@ -34,7 +34,7 @@ export const CategoryAnalysis: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
           {ATTACK_CATEGORIES.map(c => (
             <button key={c.category} type="button" onClick={() => setSelected(c.category)} aria-pressed={selected === c.category}
-              className={`p-4 rounded-xl text-left border transition-all ${selected === c.category ? 'border-accent-primary bg-surface-card ring-1 ring-accent-primary shadow-md' : 'border-surface-border bg-surface-card/60 hover:bg-surface-card'}`}>
+              className={`card-lift p-4 rounded-xl text-left border ${selected === c.category ? 'border-accent-primary bg-surface-card ring-1 ring-accent-primary shadow-md' : 'border-surface-border bg-surface-card/60 hover:bg-surface-card'}`}>
               <div className="font-serif font-semibold text-sm text-content-primary">{c.label}</div>
               <div className="font-num text-xs text-content-muted mt-1">{c.total.toLocaleString()} test rows · {c.unseenN.toLocaleString()} unseen</div>
             </button>
@@ -42,7 +42,7 @@ export const CategoryAnalysis: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+          <div id="category-recall" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">{cat.label}: recall at threshold 0.5</h3>
             <p className="text-xs text-content-muted mt-1 mb-5">{NOTES[cat.category]}</p>
             <div className="space-y-3">
@@ -58,7 +58,7 @@ export const CategoryAnalysis: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+          <div id="category-seen-unseen" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">{cat.category}: seen vs unseen attack types</h3>
             <p className="text-xs text-content-muted mt-1 mb-5">
               {cat.seenN.toLocaleString()} seen-type rows vs {cat.unseenN.toLocaleString()} unseen-type rows, threshold 0.5.

@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
 
         <div className="pt-6 border-t border-surface-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px]">
           <div>
-            Research by <strong className="text-content-primary">Vedant Bondekar & Dhruv</strong> (IIT Gandhinagar)
+            Research by <strong className="text-content-primary">Vedant Bondekar & Dhruv Meshram</strong> (IIT Gandhinagar)
           </div>
           <div>
             Built with React, TypeScript & Tailwind CSS • Controlled Benchmark 2026

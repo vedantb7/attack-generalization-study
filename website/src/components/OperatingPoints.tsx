@@ -2,6 +2,7 @@ import React from 'react';
 import { Gauge } from 'lucide-react';
 import { THRESHOLD_FREE, DEPLOYABLE, LEARNED_IDS, MODEL_NAMES, SEED_SUMMARY } from '../data/researchData';
 import { MODEL_COLOR, budgetLabel } from './modelStyle';
+import { RocExplorer } from './RocExplorer';
 
 export const OperatingPoints: React.FC = () => {
   const budgets = Object.keys(THRESHOLD_FREE.lr.unseenAtFpr);
@@ -27,8 +28,10 @@ export const OperatingPoints: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+        <RocExplorer />
+
+        <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6">
+          <div id="matched-fpr" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Matched test FPR (ROC reading)</h3>
             <p className="text-xs text-content-muted mt-1 mb-4">
               Unseen-attack recall when each model's threshold is set so that at most 1, 2 or 5% of test normals are flagged. Used for comparison
@@ -71,7 +74,7 @@ export const OperatingPoints: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+          <div id="deployable-thresholds" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Deployable thresholds (training data only)</h3>
             <p className="text-xs text-content-muted mt-1 mb-4">
               Thresholds chosen so that 1, 2 or 5% of <em>out-of-fold training</em> normals exceed them, then applied to the test set. This is
@@ -89,7 +92,7 @@ export const OperatingPoints: React.FC = () => {
                 </thead>
                 <tbody>
                   {LEARNED_IDS.map(id => (
-                    <tr key={id} className="border-b border-surface-border/50 last:border-0 align-top">
+                    <tr key={id} className="border-b border-surface-border/50 last:border-0 align-top hover:bg-surface-elevated/50 transition-colors">
                       <td className="py-2 pr-2 text-content-primary whitespace-nowrap">
                         <span className="inline-block w-2 h-2 rounded-full mr-1.5" style={{ background: MODEL_COLOR[id] }} />
                         {MODEL_NAMES[id]}

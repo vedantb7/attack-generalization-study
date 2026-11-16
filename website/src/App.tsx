@@ -11,69 +11,88 @@ import { GeneralizationGap } from './components/GeneralizationGap';
 import { UnseenAttackExplorer } from './components/UnseenAttackExplorer';
 import { ErrorAnalysis } from './components/ErrorAnalysis';
 import { Robustness } from './components/Robustness';
+import { HeadToHead } from './components/HeadToHead';
 import { StatisticalAnalysis } from './components/StatisticalAnalysis';
 import { LimitationsConclusions } from './components/LimitationsConclusions';
 import { Reproducibility } from './components/Reproducibility';
 import { Footer } from './components/Footer';
+import { SideNav } from './components/SideNav';
+
+type Theme = 'burgundy' | 'navy';
+
+const readInitialTheme = (): Theme => {
+  // index.html sets data-theme before React loads (saved choice, else the OS preference).
+  const attr = document.documentElement.getAttribute('data-theme');
+  return attr === 'navy' ? 'navy' : 'burgundy';
+};
 
 export const App: React.FC = () => {
-  const [theme, setTheme] = useState<'burgundy' | 'navy'>(() => {
-    try {
-      const saved = localStorage.getItem('research-theme');
-      if (saved === 'navy' || saved === 'burgundy') {
-        return saved;
-      }
-    } catch (e) {}
-    return 'burgundy';
-  });
+  const [theme, setTheme] = useState<Theme>(readInitialTheme);
 
   useEffect(() => {
-    // Reflect theme on documentElement and sync meta[name="color-scheme"]
     document.documentElement.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem('research-theme', theme);
-    } catch (e) {}
-
     const meta = document.querySelector('meta[name="color-scheme"]');
-    if (meta) {
-      meta.setAttribute('content', theme === 'navy' ? 'dark' : 'light');
-    }
+    if (meta) meta.setAttribute('content', theme === 'navy' ? 'dark' : 'light');
   }, [theme]);
 
-  // Sync across tabs via window storage event (Modern Web Guidance)
+  // Keep tabs in sync, and follow OS changes until the visitor picks a theme.
   useEffect(() => {
-    const handleStorage = (e: StorageEvent) => {
-      if (e.key === 'research-theme' && (e.newValue === 'burgundy' || e.newValue === 'navy')) {
-        setTheme(e.newValue);
-      }
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'research-theme' && (e.newValue === 'burgundy' || e.newValue === 'navy')) setTheme(e.newValue);
     };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onSystem = (e: MediaQueryListEvent) => {
+      let saved: string | null = null;
+      try {
+        saved = localStorage.getItem('research-theme');
+      } catch {
+        saved = null;
+      }
+      if (saved !== 'navy' && saved !== 'burgundy') setTheme(e.matches ? 'navy' : 'burgundy');
+    };
+    window.addEventListener('storage', onStorage);
+    mq.addEventListener('change', onSystem);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      mq.removeEventListener('change', onSystem);
+    };
   }, []);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'burgundy' ? 'navy' : 'burgundy'));
+    setTheme(prev => {
+      const next: Theme = prev === 'burgundy' ? 'navy' : 'burgundy';
+      try {
+        localStorage.setItem('research-theme', next);
+      } catch {
+        /* storage unavailable: the choice lasts for this page view */
+      }
+      return next;
+    });
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-bg text-content-primary selection:bg-accent-primary selection:text-white transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-surface-bg text-content-primary transition-colors duration-200">
       <Navbar theme={theme} toggleTheme={toggleTheme} />
-      <main className="flex-1">
-        <Hero />
-        <ResearchQuestion />
-        <DatasetPipeline />
-        <ModelsCompared />
-        <BenchmarkResults />
-        <OperatingPoints />
-        <CategoryAnalysis />
-        <GeneralizationGap />
-        <UnseenAttackExplorer />
-        <ErrorAnalysis />
-        <Robustness />
-        <StatisticalAnalysis />
-        <LimitationsConclusions />
-        <Reproducibility />
-      </main>
+      <div className="flex-1 lg:grid lg:grid-cols-[minmax(0,1fr)_16rem] xl:grid-cols-[minmax(0,1fr)_17rem] 2xl:grid-cols-[minmax(0,1fr)_19rem]">
+        <main className="min-w-0">
+          <Hero />
+          <ResearchQuestion />
+          <DatasetPipeline />
+          <ModelsCompared />
+          <BenchmarkResults />
+          <OperatingPoints />
+          <CategoryAnalysis />
+          <GeneralizationGap />
+          <UnseenAttackExplorer />
+          <ErrorAnalysis />
+          <Robustness />
+          <HeadToHead />
+          <StatisticalAnalysis />
+          <LimitationsConclusions />
+          <Reproducibility />
+        </main>
+        <SideNav />
+      </div>
       <Footer />
     </div>
   );

@@ -48,16 +48,16 @@ export const LimitationsConclusions: React.FC = () => {
           <h2 className="font-editorial-heading text-2xl sm:text-3xl md:text-4xl font-medium text-content-primary tracking-tight">What the evidence supports, and what it does not</h2>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-4">
+          <div id="supported" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Supported</h3>
             <List items={supported} icon={<CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />} />
           </div>
-          <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-4">
+          <div id="not-supported" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Not supported</h3>
             <List items={notSupported} icon={<XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />} />
           </div>
         </div>
-        <div className="p-6 rounded-xl bg-surface-elevated/50 border border-surface-border">
+        <div id="limitations-list" className="p-6 rounded-xl bg-surface-elevated/50 border border-surface-border">
           <h3 className="font-serif font-semibold text-base text-content-primary mb-3">Limitations</h3>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 list-disc pl-5 text-sm text-content-muted leading-relaxed">
             {limits.map(t => <li key={t}>{t}</li>)}

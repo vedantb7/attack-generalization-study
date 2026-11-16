@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Terminal, Copy, Check, ExternalLink, Code2, BookOpen, GitBranch } from 'lucide-react';
+import { Terminal, Copy, Check, ExternalLink } from 'lucide-react';
 
 export const Reproducibility: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
@@ -32,7 +32,7 @@ pytest -q tests`;
 
   const BIBTEX_CITATION = `@misc{bondekar2026signature,
   title={Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection},
-  author={Bondekar, Vedant and Dhruv},
+  author={Bondekar, Vedant and Meshram, Dhruv},
   year={2026},
   howpublished={Undergraduate Machine Learning Project, ES 335, IIT Gandhinagar},
   url={https://github.com/vedantb7/instrusion_detection}
@@ -56,10 +56,9 @@ pytest -q tests`;
         </div>
 
         {/* Reproduce Terminal Commands Box */}
-        <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm mb-12 space-y-4">
+        <div id="reproduce-commands" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-12 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border pb-3">
             <div className="flex items-center gap-2">
-              <Code2 className="w-4 h-4 text-accent-primary" />
               <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary">
                 End-to-End Replication Instructions
               </h3>
@@ -97,10 +96,9 @@ pytest -q tests`;
         {/* BibTeX Citation Box & Academic AI Disclosure */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* BibTeX Citation */}
-          <div className="lg:col-span-7 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-4">
+          <div id="citation" className="lg:col-span-7 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
             <div className="flex items-center justify-between border-b border-surface-border pb-3">
               <div className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-accent-primary" />
                 <h3 className="font-serif font-semibold text-base text-content-primary">
                   Academic Citation (BibTeX)
                 </h3>
@@ -121,13 +119,13 @@ pytest -q tests`;
           </div>
 
           {/* Academic Transparency & AI Disclosure */}
-          <div className="lg:col-span-5 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm space-y-4 flex flex-col justify-between">
+          <div className="lg:col-span-5 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4 flex flex-col justify-between">
             <div className="space-y-3">
               <h3 className="font-serif font-semibold text-base text-content-primary border-b border-surface-border pb-3">
                 Project Attribution & AI-Assistance Disclosure
               </h3>
               <p className="text-xs text-content-muted leading-relaxed font-light">
-                This project was conducted for <strong className="text-content-primary">ES 335: Machine Learning (Semester 5) at IIT Gandhinagar</strong> by <strong className="text-content-primary">Vedant Bondekar and Dhruv</strong>.
+                This project was conducted for <strong className="text-content-primary">ES 335: Machine Learning (Semester 5) at IIT Gandhinagar</strong> by <strong className="text-content-primary">Vedant Bondekar and Dhruv Meshram</strong>.
               </p>
               <div className="p-3 rounded-lg bg-surface-elevated/50 border border-surface-border text-xs text-content-muted leading-relaxed">
                 <strong>Academic AI Transparency:</strong> Large Language Models (LLMs) were utilized as technical engineering assistants for code formatting, documentation synthesis, and UI scaffolding. All experimental hypotheses, data pipelines, model training runs, and statistical validations were independently audited and verified against authoritative serialized artifacts.
@@ -140,7 +138,6 @@ pytest -q tests`;
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono font-semibold bg-surface-elevated hover:bg-surface-border text-content-primary border border-surface-border transition-colors mt-2"
             >
-              <GitBranch className="w-4 h-4 text-accent-primary" />
               <span>Browse Full GitHub Repository</span>
               <ExternalLink className="w-3.5 h-3.5 text-content-muted" />
             </a>

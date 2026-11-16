@@ -34,7 +34,7 @@ export const BenchmarkResults: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+        <div id="metric-explorer" className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
           <div className="lg:col-span-4 space-y-1.5" role="tablist" aria-label="Metric">
             {OVERALL_METRICS.map(m => (
               <button
@@ -44,7 +44,7 @@ export const BenchmarkResults: React.FC = () => {
                 aria-selected={metricKey === m.key}
                 onClick={() => setMetricKey(m.key)}
                 className={`w-full text-left px-3 py-2 rounded-lg text-xs font-mono transition-colors border ${
-                  metricKey === m.key ? 'bg-accent-soft border-accent-border text-accent-primary font-semibold' : 'border-transparent text-content-muted hover:bg-surface-elevated hover:text-content-primary'
+                  metricKey === m.key ? 'bg-accent-primary border-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary font-semibold' : 'border-transparent text-content-muted hover:bg-surface-elevated hover:text-content-primary'
                 }`}
               >
                 {m.metric}
@@ -52,7 +52,7 @@ export const BenchmarkResults: React.FC = () => {
             ))}
           </div>
 
-          <div className="lg:col-span-8 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+          <div className="lg:col-span-8 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
             <h3 className="font-serif font-semibold text-lg text-content-primary">{metric.metric}</h3>
             <p className="text-xs text-content-muted mt-1 mb-5">
               {metric.description} {metric.higherIsBetter ? 'Higher is better.' : 'Lower is better.'}
@@ -76,7 +76,7 @@ export const BenchmarkResults: React.FC = () => {
           </div>
         </div>
 
-        <div className="rounded-xl bg-surface-card border border-surface-border shadow-sm mb-10 overflow-x-auto">
+        <div id="metrics-table" className="rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-10 overflow-x-auto">
           <table className="w-full text-xs font-mono" aria-describedby="benchmark-table-caption">
             <caption id="benchmark-table-caption" className="text-left px-4 pt-4 pb-2 text-content-muted">
               All metrics, seed 42. Bold = best learned model per row.
@@ -94,7 +94,7 @@ export const BenchmarkResults: React.FC = () => {
                 const learned = MODEL_IDS.filter(i => i !== 'baseline').map(i => m.values[i]);
                 const b = m.higherIsBetter ? Math.max(...learned) : Math.min(...learned);
                 return (
-                  <tr key={m.key} className="border-b border-surface-border/50 last:border-0">
+                  <tr key={m.key} className="border-b border-surface-border/50 last:border-0 hover:bg-surface-elevated/50 transition-colors">
                     <td className="px-4 py-2 text-content-primary whitespace-nowrap">{m.metric}</td>
                     {MODEL_IDS.map(id => (
                       <td key={id} className={`px-3 py-2 text-right whitespace-nowrap font-num ${m.values[id] === b && id !== 'baseline' ? 'font-bold text-accent-primary' : 'text-content-primary'}`}>
@@ -108,13 +108,13 @@ export const BenchmarkResults: React.FC = () => {
           </table>
         </div>
 
-        <div className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm">
+        <div id="confusion-matrix" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Confusion matrix at threshold 0.5</h3>
             <div className="flex flex-wrap gap-1.5">
               {MODEL_IDS.map(id => (
                 <button key={id} type="button" onClick={() => setCmModel(id)} aria-pressed={cmModel === id}
-                  className={`px-2.5 py-1 rounded-md text-xs font-mono border transition-colors ${cmModel === id ? 'bg-accent-primary text-white border-accent-primary' : 'border-surface-border text-content-muted hover:text-content-primary'}`}>
+                  className={`px-2.5 py-1 rounded-md text-xs font-mono border transition-colors ${cmModel === id ? 'bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary border-accent-primary' : 'border-surface-border text-content-muted hover:bg-surface-elevated hover:text-content-primary'}`}>
                   {MODEL_NAMES[id]}
                 </button>
               ))}

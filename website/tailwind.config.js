@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+const withAlpha = (v) => `color-mix(in srgb, var(${v}) calc(<alpha-value> * 100%), transparent)`;
+
 export default {
   content: [
     "./index.html",
@@ -31,24 +33,26 @@ export default {
         champagne: '#E9D9B8',
         cream: '#F3EDE1',
 
-        // Semantic CSS variable tokens
+        // Semantic CSS variable tokens. color-mix keeps Tailwind opacity modifiers
+        // (e.g. bg-surface-card/60) working with theme variables.
         surface: {
-          bg: 'var(--color-bg)',
-          card: 'var(--color-surface)',
-          elevated: 'var(--color-surface-elevated)',
-          border: 'var(--color-border)',
+          bg: withAlpha('--color-bg'),
+          card: withAlpha('--color-surface'),
+          elevated: withAlpha('--color-surface-elevated'),
+          border: withAlpha('--color-border'),
         },
         content: {
-          primary: 'var(--color-text-primary)',
-          secondary: 'var(--color-text-secondary)',
-          muted: 'var(--color-text-muted)',
+          primary: withAlpha('--color-text-primary'),
+          secondary: withAlpha('--color-text-secondary'),
+          muted: withAlpha('--color-text-muted'),
         },
         accent: {
-          primary: 'var(--color-accent-primary)',
-          hover: 'var(--color-accent-hover)',
+          primary: withAlpha('--color-accent-primary'),
+          hover: withAlpha('--color-accent-hover'),
           soft: 'var(--color-accent-soft)',
           border: 'var(--color-accent-border)',
-        }
+        },
+        'on-accent': withAlpha('--color-on-accent'),
       },
       fontFamily: {
         serif: ['Newsreader', 'Georgia', 'Cambria', 'serif'],
