@@ -27,13 +27,22 @@ export const Footer: React.FC = () => {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://www.unb.ca/cic/datasets/nsl.html"
+              href="https://www.kaggle.com/datasets/hassan06/nslkdd/data"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-card border border-surface-border hover:text-content-primary transition-colors"
             >
               <Database className="w-3.5 h-3.5" />
-              <span>NSL-KDD Dataset</span>
+              <span>Dataset (Kaggle)</span>
+            </a>
+            <a
+              href="https://www.unb.ca/cic/datasets/nsl.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-card border border-surface-border hover:text-content-primary transition-colors"
+              title="Original source; the download is no longer available there"
+            >
+              <span>Original source (UNB)</span>
             </a>
             <a
               href="https://github.com/vedantb7/instrusion_detection"

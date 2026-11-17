@@ -20,10 +20,12 @@ export const TOC: TocItem[] = [
   { id: 'benchmark', label: 'Benchmark results', desc: 'Threshold-free and @0.5 metrics', children: [
     { id: 'metric-explorer', label: 'Metric explorer' },
     { id: 'metrics-table', label: 'All metrics table' },
+    { id: 'actual-vs-predicted', label: 'Actual vs predicted' },
     { id: 'confusion-matrix', label: 'Confusion matrices' },
   ] },
   { id: 'operating', label: 'Operating points', desc: 'Detection at a fixed false-alarm budget', children: [
     { id: 'roc-explorer', label: 'Interactive ROC explorer' },
+    { id: 'live-confusion', label: 'Live confusion matrix' },
     { id: 'matched-fpr', label: 'Matched test FPR' },
     { id: 'deployable-thresholds', label: 'Deployable thresholds' },
   ] },
@@ -32,10 +34,13 @@ export const TOC: TocItem[] = [
     { id: 'category-seen-unseen', label: 'Seen vs unseen per category' },
   ] },
   { id: 'generalization', label: 'Generalization gap', desc: 'Seen → unseen attack types', children: [
-    { id: 'auc-gap', label: 'AUC: seen vs unseen' },
+    { id: 'auc-gap', label: 'Known vs unseen AUC' },
     { id: 'recall-gap', label: 'Recall @0.5 with CIs' },
   ] },
-  { id: 'explorer', label: 'Unseen attack explorer', desc: 'All 17 unseen types, per model', children: [{ id: 'explorer-table', label: 'Searchable table' }] },
+  { id: 'explorer', label: 'Unseen attack explorer', desc: 'All 17 unseen types, per model', children: [
+    { id: 'explorer-table', label: 'Searchable table' },
+    { id: 'missed-records', label: 'Missed-record inspector' },
+  ] },
   { id: 'errors', label: 'Error analysis', desc: 'Failures every model shares', children: [{ id: 'shared-failures', label: 'Shared blind spots' }] },
   { id: 'robustness', label: 'Robustness', desc: 'Seeds and capacity sweeps', children: [
     { id: 'seed-variation', label: 'Variation across 5 seeds' },
@@ -47,7 +52,14 @@ export const TOC: TocItem[] = [
     { id: 'compare-tests', label: 'Tests & seed wins' },
   ] },
   { id: 'statistics', label: 'Statistical tests', desc: 'Paired bootstrap, McNemar, Holm', children: [{ id: 'test-results', label: 'Test results' }] },
+  { id: 'tradeoffs', label: 'Compute vs performance', desc: 'Deployment trade-offs', children: [
+    { id: 'tradeoff-chart', label: 'Interactive trade-off chart' },
+    { id: 'tradeoff-table', label: 'Cost & quality table' },
+    { id: 'test-system', label: 'Test system specs' },
+    { id: 'deployment-guide', label: 'Which model when' },
+  ] },
   { id: 'limitations', label: 'Conclusions', desc: 'What is and is not supported', children: [
+    { id: 'answer', label: 'Answer to the question' },
     { id: 'supported', label: 'Supported' },
     { id: 'not-supported', label: 'Not supported' },
     { id: 'limitations-list', label: 'Limitations' },
@@ -190,8 +202,11 @@ export const SideNav: React.FC = () => {
           <TocList active={active} />
         </nav>
         <div className="mt-5 pt-4 mx-2.5 border-t border-surface-border space-y-2 text-[12px]">
-          <a href="https://www.unb.ca/cic/datasets/nsl.html" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
-            <Database className="w-3.5 h-3.5" /> NSL-KDD dataset
+          <a href="https://www.kaggle.com/datasets/hassan06/nslkdd/data" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
+            <Database className="w-3.5 h-3.5" /> NSL-KDD dataset (Kaggle)
+          </a>
+          <a href="https://www.unb.ca/cic/datasets/nsl.html" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 pl-[22px] text-content-muted hover:text-content-primary" title="The original download is no longer available there">
+            Original source (UNB)
           </a>
           <a href="https://github.com/vedantb7/instrusion_detection" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
             <Github className="w-3.5 h-3.5" /> Code & notebooks

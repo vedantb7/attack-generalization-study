@@ -29,16 +29,29 @@ export const DatasetPipeline: React.FC = () => {
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-mono">
             <a
-              href="https://www.unb.ca/cic/datasets/nsl.html"
+              href="https://www.kaggle.com/datasets/hassan06/nslkdd/data"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent-primary text-[color:var(--color-on-accent)] hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary border border-accent-primary transition-colors"
             >
-              <span>NSL-KDD dataset (Canadian Institute for Cybersecurity, UNB)</span>
+              <span>Download: NSL-KDD on Kaggle</span>
               <ExternalLink className="w-3 h-3" />
             </a>
-            <span className="text-content-muted">Files used: KDDTrain+ and KDDTest+ (official split, unmodified)</span>
+            <a
+              href="https://www.unb.ca/cic/datasets/nsl.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-accent-primary text-accent-primary hover:bg-surface-elevated transition-colors"
+              title="The original download is no longer available from this page"
+            >
+              <span>Original source: Canadian Institute for Cybersecurity (UNB)</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
           </div>
+          <p className="mt-2 text-xs font-mono text-content-muted">
+            The original UNB page no longer offers the download, so the files are linked from a Kaggle mirror. Files used: KDDTrain+ and KDDTest+
+            (official split, unmodified).
+          </p>
         </div>
 
         {/* Dataset Breakdown Cards */}

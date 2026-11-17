@@ -37,7 +37,7 @@ export const OperatingPoints: React.FC = () => {
               Unseen-attack recall when each model's threshold is set so that at most 1, 2 or 5% of test normals are flagged. Used for comparison
               only, since the threshold is read off the test ROC curve.
             </p>
-            <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label="Unseen recall at 1, 2 and 5 percent test FPR per model">
+            <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-2xl h-auto" role="img" aria-label="Unseen recall at 1, 2 and 5 percent test FPR per model">
               {[0, 25, 50, 75, 100].map(t => (
                 <g key={t}>
                   <line x1="60" x2={W - 40} y1={py(t)} y2={py(t)} stroke="var(--chart-grid)" />

@@ -1,0 +1,5 @@
+model,tuning_minutes_seed42,tuning_minutes_all_seeds,final_fit_seconds,batch_us_per_flow,batch_us_iqr,single_flow_ms,single_flow_ms_iqr,model_size_kb,unseen_auc,known_cv_auc
+Logistic Regression,4.15,12.58,2.984,1.37,"[1.28, 2.18]",3.45,"[3.1, 3.85]",4.2,0.883139,0.9923664735094969
+Decision Tree,0.94,4.42,1.545,0.97,"[0.95, 1.04]",3.33,"[3.13, 3.63]",5.1,0.733611,0.9987756149729998
+Random Forest,6.82,42.17,3.983,5.3,"[4.5, 5.91]",45.96,"[39.78, 50.06]",2920.2,0.941684,0.9999912968049154
+XGBoost,4.13,21.17,2.005,2.41,"[1.99, 3.35]",17.98,"[5.08, 22.14]",92.2,0.946587,0.9998034731272256

@@ -19,13 +19,14 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt      # or requirements-lock.txt for exact versions
 
-# 3. Run every notebook in order (01 -> 10); each saves its own outputs
+# 3. Run every notebook in order (01 -> 11); each saves its own outputs
 export PYTHONHASHSEED=42
 for nb in notebooks/*.ipynb; do
   jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 "$nb" || break
 done
 # 02 builds folds + preprocessor, 03-07 train 5 models x 5 seeds,
-# 08 compares them, 09 sweeps capacity, 10 regenerates this website's data
+# 08 compares them, 09 sweeps capacity, 10 adds known-attack CV and
+# FPR at 95% recall, 11 regenerates this website's data
 
 # 4. Run the tests (27)
 pytest -q tests`;

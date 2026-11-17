@@ -12,6 +12,7 @@ import { UnseenAttackExplorer } from './components/UnseenAttackExplorer';
 import { ErrorAnalysis } from './components/ErrorAnalysis';
 import { Robustness } from './components/Robustness';
 import { HeadToHead } from './components/HeadToHead';
+import { Tradeoffs } from './components/Tradeoffs';
 import { StatisticalAnalysis } from './components/StatisticalAnalysis';
 import { LimitationsConclusions } from './components/LimitationsConclusions';
 import { Reproducibility } from './components/Reproducibility';
@@ -88,6 +89,7 @@ export const App: React.FC = () => {
           <Robustness />
           <HeadToHead />
           <StatisticalAnalysis />
+          <Tradeoffs />
           <LimitationsConclusions />
           <Reproducibility />
         </main>

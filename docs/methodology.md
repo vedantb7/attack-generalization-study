@@ -3,7 +3,7 @@
 **Project:** Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection  
 **Course:** ES 335: Machine Learning (IIT Gandhinagar)  
 **Modules:** [`src/data_loader.py`](../src/data_loader.py), [`src/preprocessing.py`](../src/preprocessing.py)  
-**Notebooks (single source of truth, run in order 01 → 10):** [`01_data_exploration`](../notebooks/01_data_exploration.ipynb), [`02_preprocessing`](../notebooks/02_preprocessing.ipynb), [`03_majority_baseline`](../notebooks/03_majority_baseline.ipynb), [`04_logistic_regression`](../notebooks/04_logistic_regression.ipynb), [`05_decision_tree`](../notebooks/05_decision_tree.ipynb), [`06_random_forest`](../notebooks/06_random_forest.ipynb), [`07_xgboost`](../notebooks/07_xgboost.ipynb), [`08_evaluation_comparison`](../notebooks/08_evaluation_comparison.ipynb), [`09_capacity_analysis`](../notebooks/09_capacity_analysis.ipynb), [`10_website_data`](../notebooks/10_website_data.ipynb)  
+**Notebooks (single source of truth, run in order 01 → 11):** [`01_data_exploration`](../notebooks/01_data_exploration.ipynb), [`02_preprocessing`](../notebooks/02_preprocessing.ipynb), [`03_majority_baseline`](../notebooks/03_majority_baseline.ipynb), [`04_logistic_regression`](../notebooks/04_logistic_regression.ipynb), [`05_decision_tree`](../notebooks/05_decision_tree.ipynb), [`06_random_forest`](../notebooks/06_random_forest.ipynb), [`07_xgboost`](../notebooks/07_xgboost.ipynb), [`08_evaluation_comparison`](../notebooks/08_evaluation_comparison.ipynb), [`09_capacity_analysis`](../notebooks/09_capacity_analysis.ipynb), [`10_additional_evaluation`](../notebooks/10_additional_evaluation.ipynb), [`11_website_data`](../notebooks/11_website_data.ipynb)  
 **Helpers:** [`src/controlled_framework.py`](../src/controlled_framework.py); settings in [`config.yaml`](../config.yaml)  
 
 ---
@@ -66,6 +66,8 @@ When `add_derived_targets=True` (default):
 ---
 
 ## 4. Feature Extraction & Preprocessing (`src/preprocessing.py`)
+
+Full feature inventory, per-feature statistics and the reasoning behind every feature-engineering decision: [`features.md`](features.md).
 
 ### Input Feature Isolation
 - Model training inputs $X$ strictly consist of the 41 original predictor features (`FEATURE_COLUMNS = COLUMN_NAMES[:41]`).
@@ -224,6 +226,34 @@ Fold 0 holds out `neptune` (70% of training attacks), which explains most of the
 ### 9.5 Deployable thresholds
 Thresholds set on out-of-fold training normals for 1 / 2 / 5% FPR give test FPRs of 6.7–8.0% (LR), 3.0–6.0% (DT), 9.9–13.5% (RF) and 3.3–10.5% (XGBoost) (`results/tables/deployable_operating_points.md`). Test normals score higher than training normals, so training-calibrated FPR targets do not transfer.
 
+### 9.5b Known vs unseen attacks (proposal definition, notebook 10)
+
+*Known* = stratified 5-fold CV on `KDDTrain+` (every attack type seen in training), using each model's seed-42 tuned hyperparameters in evaluation-only fold models; the final models and test results are unchanged. *Unseen* = the 17 test-only attack types against the test normals.
+
+| Model | ROC-AUC known → unseen | Recall @1% FPR known → unseen | FPR needed for 95% recall: known → unseen |
+|---|---|---|---|
+| Logistic Regression | 0.992 → 0.883 | 93.7% → 5.2% | 2.0% → 22.9% |
+| Decision Tree | 0.999 → 0.734 | 97.8% → 6.7% | 0.4% → 100% |
+| Random Forest | 1.000 → 0.942 | 100.0% → 7.2% | 0.0% → 12.5% |
+| XGBoost | 1.000 → 0.947 | 99.8% → 5.2% | 0.0% → 19.2% |
+
+Every model is near-perfect on known attacks. The ensembles keep the most ranking quality on unseen types (AUC gap 0.05–0.06 vs 0.11 for LR and 0.27 for the Decision Tree), but at a strict 1% FPR all models fall from over 93% to under 8% recall. On all test attacks, catching 95% needs an FPR of 11.5% (RF), 19.4% (XGBoost), 60.8% (LR) or 99.8% (DT). Tables: `results/tables/known_vs_unseen_gap.md`, `results/tables/fpr_at_95_recall.md`.
+
+### 9.5c Compute vs performance (notebook 10)
+
+Measured on the saved models (no retraining). Latency includes the preprocessing step; values are medians with the interquartile range over 5 interleaved rounds (3 batch runs over all 22,543 test flows and 100 single-flow calls per model per round). Absolute times are hardware-specific; the ratios are the point.
+
+**Test system:** 13th Gen Intel Core i7-1355U (10 cores: 2 performance + 8 efficient, 12 threads, up to 5.0 GHz), 15.2 GB usable RAM, no GPU (CPU only), Fedora Linux 44 (kernel 6.19.10), Python 3.11.18, scikit-learn 1.9.1, XGBoost 3.2.0, NumPy 2.4.6, pandas 3.1.1. LR and the Decision Tree score single-threaded; Random Forest and XGBoost use all 12 threads (`n_jobs=-1`). Training and tuning times are from the same machine.
+
+| Model | Single-flow latency | Batch latency / flow | Model size | Tuning time (5 seeds) | Unseen AUC (5 seeds) | Known AUC (CV) |
+|---|---|---|---|---|---|---|
+| Logistic Regression | 3.5 ms (3.1–3.9) | 1.4 µs (1.3–2.2) | 4 KB | 13 min | 0.883 | 0.992 |
+| Decision Tree | 3.3 ms (3.1–3.6) | 1.0 µs (1.0–1.0) | 5 KB | 4 min | 0.746 | 0.999 |
+| XGBoost | 18.0 ms (5.1–22.1) | 2.4 µs (2.0–3.4) | 92 KB | 21 min | 0.943 | 1.000 |
+| Random Forest | 46.0 ms (39.8–50.1) | 5.3 µs (4.5–5.9) | 2.9 MB | 42 min | 0.941 | 1.000 |
+
+XGBoost's single-flow time varies most between runs because it scores on all threads of a CPU that mixes performance and efficiency cores. Deep models (NN, RNN) were not trained: they were outside this project's compute budget.
+
 ### 9.6 Capacity sweeps (notebook 09; test numbers descriptive only)
 - **LR, `C` 1e-3 → 100:** unseen-vs-normal AUC falls monotonically 0.881 → 0.710.
 - **Decision Tree, `max_depth` 1 → None:** ≈0.79 for depth 1–3, peak 0.83 at depth 6, 0.72 fully grown.
@@ -232,6 +262,7 @@ Thresholds set on out-of-fold training normals for 1 / 2 / 5% FPR give test FPRs
 - Spearman correlation between training-only novelty CV AUC and test unseen AUC across sweep points: LR 0.94, XGBoost 0.54, DT −0.04, RF −0.43.
 
 ### 9.7 What the results support
+- **Answer to the research question: not always.** Simpler models do not detect unseen attacks better than ensembles, but they are the right choice when inference cost decides (live, latency- or memory-constrained detection): LR and the Decision Tree score a flow about 1.5–6× faster than XGBoost and 12–15× faster than Random Forest, and are 20–700× smaller, at a cost of 0.06–0.20 in unseen-attack AUC (i7-1355U laptop CPU, no GPU; §9.5c).
 - **Across families, the ensembles rank unseen attacks best.** RF and XGBoost beat LR and the Decision Tree on unseen-vs-normal AUC in every seed and in paired tests. The hypothesis that simpler models generalise better is **not supported** across families.
 - **Within single-model families, regularisation helps.** Strong L2 for LR and moderate depth for trees give better unseen-vs-normal AUC than weak regularisation or full depth; the ensembles are insensitive to depth.
 - **Operating point matters.** At 1–2% FPR all models detect few unseen attacks, and model rankings at 0.5 or at 2% FPR differ from the AUC ranking.
@@ -257,7 +288,7 @@ Test results were never used to select hyperparameters or thresholds within any 
 
 ## 11. Reproduction
 
-Run the notebooks in order (01 → 10) in Jupyter, or headless:
+Run the notebooks in order (01 → 11) in Jupyter, or headless:
 
 ```bash
 export PYTHONHASHSEED=42
@@ -267,4 +298,4 @@ done
 pytest -q tests
 ```
 
-Outputs: `models/` (fitted pipelines, seed 42), `scalars/` (preprocessor, feature names, label mapping), `results/{splits,tuning,metrics,predictions,tables,figures,eda}/` (other seeds under `*/seeds/`). All shared settings live in `config.yaml`; model-specific search spaces and fixed parameters live in notebooks 04–07. Notebook 10 regenerates the website's data file (`website/src/data/researchData.ts`) from `results/`.
+Outputs: `models/` (fitted pipelines, seed 42), `scalars/` (preprocessor, feature names, label mapping), `results/{splits,tuning,metrics,predictions,tables,figures,eda}/` (other seeds under `*/seeds/`). All shared settings live in `config.yaml`; model-specific search spaces and fixed parameters live in notebooks 04–07. Notebook 10 adds the known-attack CV, FPR at 95% recall and representative missed records; notebook 11 regenerates the website's data file (`website/src/data/researchData.ts`) from `results/`.

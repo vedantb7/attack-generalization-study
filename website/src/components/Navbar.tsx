@@ -38,9 +38,8 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <a
-            href="https://www.unb.ca/cic/datasets/nsl.html"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#dataset"
+            title="Dataset sources: Kaggle mirror and original UNB page"
             className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-content-muted hover:text-content-primary hover:bg-surface-elevated transition-colors"
           >
             <Database className="w-3.5 h-3.5" />

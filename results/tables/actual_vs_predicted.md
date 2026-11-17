@@ -1,0 +1,98 @@
+| model | operating_point | group | group_size | actual_attacks | predicted_attacks |
+|---|---|---|---|---|---|
+| Logistic Regression | threshold_0.5 | Normal | 9710 | 0 | 703 |
+| Logistic Regression | threshold_0.5 | DoS | 7458 | 7458 | 5672 |
+| Logistic Regression | threshold_0.5 | Probe | 2421 | 2421 | 1855 |
+| Logistic Regression | threshold_0.5 | R2L | 2887 | 2887 | 64 |
+| Logistic Regression | threshold_0.5 | U2R | 67 | 67 | 13 |
+| Logistic Regression | threshold_0.5 | Unseen types | 3750 | 3750 | 1108 |
+| Logistic Regression | fpr_1pct | Normal | 9710 | 0 | 97 |
+| Logistic Regression | fpr_1pct | DoS | 7458 | 7458 | 4518 |
+| Logistic Regression | fpr_1pct | Probe | 2421 | 2421 | 942 |
+| Logistic Regression | fpr_1pct | R2L | 2887 | 2887 | 0 |
+| Logistic Regression | fpr_1pct | U2R | 67 | 67 | 1 |
+| Logistic Regression | fpr_1pct | Unseen types | 3750 | 3750 | 196 |
+| Logistic Regression | fpr_2pct | Normal | 9710 | 0 | 194 |
+| Logistic Regression | fpr_2pct | DoS | 7458 | 7458 | 4585 |
+| Logistic Regression | fpr_2pct | Probe | 2421 | 2421 | 1002 |
+| Logistic Regression | fpr_2pct | R2L | 2887 | 2887 | 0 |
+| Logistic Regression | fpr_2pct | U2R | 67 | 67 | 1 |
+| Logistic Regression | fpr_2pct | Unseen types | 3750 | 3750 | 202 |
+| Logistic Regression | fpr_5pct | Normal | 9710 | 0 | 485 |
+| Logistic Regression | fpr_5pct | DoS | 7458 | 7458 | 4863 |
+| Logistic Regression | fpr_5pct | Probe | 2421 | 2421 | 1190 |
+| Logistic Regression | fpr_5pct | R2L | 2887 | 2887 | 1 |
+| Logistic Regression | fpr_5pct | U2R | 67 | 67 | 2 |
+| Logistic Regression | fpr_5pct | Unseen types | 3750 | 3750 | 270 |
+| Decision Tree | threshold_0.5 | Normal | 9710 | 0 | 290 |
+| Decision Tree | threshold_0.5 | DoS | 7458 | 7458 | 5798 |
+| Decision Tree | threshold_0.5 | Probe | 2421 | 2421 | 2223 |
+| Decision Tree | threshold_0.5 | R2L | 2887 | 2887 | 150 |
+| Decision Tree | threshold_0.5 | U2R | 67 | 67 | 5 |
+| Decision Tree | threshold_0.5 | Unseen types | 3750 | 3750 | 1311 |
+| Decision Tree | fpr_1pct | Normal | 9710 | 0 | 42 |
+| Decision Tree | fpr_1pct | DoS | 7458 | 7458 | 5680 |
+| Decision Tree | fpr_1pct | Probe | 2421 | 2421 | 638 |
+| Decision Tree | fpr_1pct | R2L | 2887 | 2887 | 1 |
+| Decision Tree | fpr_1pct | U2R | 67 | 67 | 0 |
+| Decision Tree | fpr_1pct | Unseen types | 3750 | 3750 | 250 |
+| Decision Tree | fpr_2pct | Normal | 9710 | 0 | 177 |
+| Decision Tree | fpr_2pct | DoS | 7458 | 7458 | 5708 |
+| Decision Tree | fpr_2pct | Probe | 2421 | 2421 | 1268 |
+| Decision Tree | fpr_2pct | R2L | 2887 | 2887 | 48 |
+| Decision Tree | fpr_2pct | U2R | 67 | 67 | 0 |
+| Decision Tree | fpr_2pct | Unseen types | 3750 | 3750 | 547 |
+| Decision Tree | fpr_5pct | Normal | 9710 | 0 | 431 |
+| Decision Tree | fpr_5pct | DoS | 7458 | 7458 | 5804 |
+| Decision Tree | fpr_5pct | Probe | 2421 | 2421 | 2225 |
+| Decision Tree | fpr_5pct | R2L | 2887 | 2887 | 1026 |
+| Decision Tree | fpr_5pct | U2R | 67 | 67 | 44 |
+| Decision Tree | fpr_5pct | Unseen types | 3750 | 3750 | 1336 |
+| Random Forest | threshold_0.5 | Normal | 9710 | 0 | 264 |
+| Random Forest | threshold_0.5 | DoS | 7458 | 7458 | 5923 |
+| Random Forest | threshold_0.5 | Probe | 2421 | 2421 | 1819 |
+| Random Forest | threshold_0.5 | R2L | 2887 | 2887 | 149 |
+| Random Forest | threshold_0.5 | U2R | 67 | 67 | 7 |
+| Random Forest | threshold_0.5 | Unseen types | 3750 | 3750 | 923 |
+| Random Forest | fpr_1pct | Normal | 9710 | 0 | 90 |
+| Random Forest | fpr_1pct | DoS | 7458 | 7458 | 4961 |
+| Random Forest | fpr_1pct | Probe | 2421 | 2421 | 979 |
+| Random Forest | fpr_1pct | R2L | 2887 | 2887 | 0 |
+| Random Forest | fpr_1pct | U2R | 67 | 67 | 0 |
+| Random Forest | fpr_1pct | Unseen types | 3750 | 3750 | 269 |
+| Random Forest | fpr_2pct | Normal | 9710 | 0 | 194 |
+| Random Forest | fpr_2pct | DoS | 7458 | 7458 | 5303 |
+| Random Forest | fpr_2pct | Probe | 2421 | 2421 | 1307 |
+| Random Forest | fpr_2pct | R2L | 2887 | 2887 | 0 |
+| Random Forest | fpr_2pct | U2R | 67 | 67 | 0 |
+| Random Forest | fpr_2pct | Unseen types | 3750 | 3750 | 349 |
+| Random Forest | fpr_5pct | Normal | 9710 | 0 | 418 |
+| Random Forest | fpr_5pct | DoS | 7458 | 7458 | 6759 |
+| Random Forest | fpr_5pct | Probe | 2421 | 2421 | 2375 |
+| Random Forest | fpr_5pct | R2L | 2887 | 2887 | 603 |
+| Random Forest | fpr_5pct | U2R | 67 | 67 | 35 |
+| Random Forest | fpr_5pct | Unseen types | 3750 | 3750 | 2375 |
+| XGBoost | threshold_0.5 | Normal | 9710 | 0 | 250 |
+| XGBoost | threshold_0.5 | DoS | 7458 | 7458 | 5885 |
+| XGBoost | threshold_0.5 | Probe | 2421 | 2421 | 1981 |
+| XGBoost | threshold_0.5 | R2L | 2887 | 2887 | 294 |
+| XGBoost | threshold_0.5 | U2R | 67 | 67 | 6 |
+| XGBoost | threshold_0.5 | Unseen types | 3750 | 3750 | 1062 |
+| XGBoost | fpr_1pct | Normal | 9710 | 0 | 94 |
+| XGBoost | fpr_1pct | DoS | 7458 | 7458 | 5010 |
+| XGBoost | fpr_1pct | Probe | 2421 | 2421 | 766 |
+| XGBoost | fpr_1pct | R2L | 2887 | 2887 | 0 |
+| XGBoost | fpr_1pct | U2R | 67 | 67 | 0 |
+| XGBoost | fpr_1pct | Unseen types | 3750 | 3750 | 193 |
+| XGBoost | fpr_2pct | Normal | 9710 | 0 | 194 |
+| XGBoost | fpr_2pct | DoS | 7458 | 7458 | 5450 |
+| XGBoost | fpr_2pct | Probe | 2421 | 2421 | 1309 |
+| XGBoost | fpr_2pct | R2L | 2887 | 2887 | 0 |
+| XGBoost | fpr_2pct | U2R | 67 | 67 | 0 |
+| XGBoost | fpr_2pct | Unseen types | 3750 | 3750 | 298 |
+| XGBoost | fpr_5pct | Normal | 9710 | 0 | 485 |
+| XGBoost | fpr_5pct | DoS | 7458 | 7458 | 7085 |
+| XGBoost | fpr_5pct | Probe | 2421 | 2421 | 2403 |
+| XGBoost | fpr_5pct | R2L | 2887 | 2887 | 1371 |
+| XGBoost | fpr_5pct | U2R | 67 | 67 | 40 |
+| XGBoost | fpr_5pct | Unseen types | 3750 | 3750 | 3081 |
