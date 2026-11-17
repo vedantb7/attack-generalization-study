@@ -1,9 +1,81 @@
 import React, { useMemo, useState } from 'react';
 import { Search, Telescope, ArrowUpDown } from 'lucide-react';
-import { UNSEEN_ATTACKS, UnseenAttackRecord, LEARNED_IDS, MODEL_NAMES, LearnedId } from '../data/researchData';
+import { UNSEEN_ATTACKS, UnseenAttackRecord, LEARNED_IDS, MODEL_NAMES, LearnedId, MISSED_RECORDS } from '../data/researchData';
 import { MODEL_COLOR, MODEL_ABBR } from './modelStyle';
 
 type SortField = 'count' | 'name' | 'recall';
+
+const SHOW_FEATURES: { key: string; label: string }[] = [
+  { key: 'protocol_type', label: 'proto' }, { key: 'service', label: 'service' }, { key: 'flag', label: 'flag' },
+  { key: 'duration', label: 'duration' }, { key: 'src_bytes', label: 'src_bytes' }, { key: 'dst_bytes', label: 'dst_bytes' },
+  { key: 'count', label: 'count' }, { key: 'srv_count', label: 'srv_count' }, { key: 'serror_rate', label: 'serror' },
+  { key: 'same_srv_rate', label: 'same_srv' }, { key: 'dst_host_count', label: 'dh_count' }, { key: 'dst_host_srv_count', label: 'dh_srv_count' },
+];
+
+const fmtFeature = (v: string | number | undefined): string => {
+  if (v === undefined) return '—';
+  if (typeof v === 'number') return Number.isInteger(v) ? v.toLocaleString() : v.toFixed(2);
+  return v;
+};
+
+const MissedRecords: React.FC<{ attack: string }> = ({ attack }) => {
+  const rows = MISSED_RECORDS.records.filter(r => r.attack === attack);
+  const ref = MISSED_RECORDS.normalReference;
+  return (
+    <div id="missed-records" className="mt-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover overflow-x-auto">
+      <div className="px-4 pt-4 pb-2">
+        <h3 className="font-serif font-semibold text-base text-content-primary">Missed-record inspector · {attack}</h3>
+        <p className="text-xs text-content-muted mt-1">
+          Representative test flows of this type, preferring those missed by the most models (threshold 0.5), next to typical normal traffic
+          (median / most common value). P(attack) above 0.5 counts as detected.
+        </p>
+      </div>
+      {rows.length === 0 ? (
+        <p className="px-4 pb-4 text-xs text-content-muted">No sample stored for this attack type.</p>
+      ) : (
+        <table className="w-full text-[11px] font-mono">
+          <thead>
+            <tr className="border-y border-surface-border text-content-muted">
+              <th className="text-left px-3 py-2 font-medium whitespace-nowrap">flow</th>
+              {LEARNED_IDS.map(id => (
+                <th key={id} className="text-right px-2 py-2 font-medium whitespace-nowrap" title={`P(attack) from ${MODEL_NAMES[id]}`}>
+                  <span className="inline-block w-2 h-2 rounded-full mr-1" style={{ background: MODEL_COLOR[id] }} />P({MODEL_ABBR[id]})
+                </th>
+              ))}
+              {SHOW_FEATURES.map(f => <th key={f.key} className="text-right px-2 py-2 font-medium whitespace-nowrap border-l-0">{f.label}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-surface-border/50 bg-surface-elevated/40 text-content-muted italic">
+              <td className="px-3 py-2 whitespace-nowrap">typical normal</td>
+              {LEARNED_IDS.map(id => <td key={id} className="px-2 py-2 text-right">—</td>)}
+              {SHOW_FEATURES.map(f => <td key={f.key} className="px-2 py-2 text-right whitespace-nowrap">{fmtFeature(ref[f.key])}</td>)}
+            </tr>
+            {rows.map(r => (
+              <tr key={r.testRow} className="border-b border-surface-border/50 last:border-0 hover:bg-surface-elevated/50 transition-colors">
+                <td className="px-3 py-2 whitespace-nowrap text-content-primary">
+                  #{r.testRow} <span className="text-content-muted">· missed by {r.missedBy}/{LEARNED_IDS.length}</span>
+                </td>
+                {LEARNED_IDS.map(id => {
+                  const pr = r.prob[id];
+                  const hit = pr > 0.5;
+                  return (
+                    <td key={id} className="px-2 py-2 text-right whitespace-nowrap">
+                      <span className={`px-1.5 py-0.5 rounded ${hit ? 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300 font-semibold' : 'text-content-muted'}`}>
+                        {pr.toFixed(2)}
+                      </span>
+                    </td>
+                  );
+                })}
+                {SHOW_FEATURES.map(f => <td key={f.key} className="px-2 py-2 text-right whitespace-nowrap text-content-primary">{fmtFeature(r.features[f.key])}</td>)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+};
 
 export const UnseenAttackExplorer: React.FC = () => {
   const [category, setCategory] = useState<string>('All');
@@ -143,8 +215,13 @@ export const UnseenAttackExplorer: React.FC = () => {
             <p className="text-[11px] text-content-muted mt-4">
               {active.count < 20 ? 'Fewer than 20 flows: treat these rates as anecdotal.' : 'Rates at threshold 0.5; matched-FPR results are in the Operating points section.'}
             </p>
+            <a href="#missed-records" className="group mt-2 inline-flex items-center gap-1 text-[11px] font-mono text-accent-primary hover:underline">
+              Inspect missed flows <span className="nudge">→</span>
+            </a>
           </div>
         </div>
+
+        <MissedRecords attack={active.name} />
       </div>
     </section>
   );

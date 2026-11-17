@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TrendingDown } from 'lucide-react';
-import { GENERALIZATION_DATA as G, LEARNED_IDS, MODEL_NAMES, LearnedId } from '../data/researchData';
+import { GENERALIZATION_DATA as G, KNOWN_CV, LEARNED_IDS, MODEL_NAMES, LearnedId } from '../data/researchData';
 import { MODEL_COLOR } from './modelStyle';
 
 export const GeneralizationGap: React.FC = () => {
@@ -10,6 +10,9 @@ export const GeneralizationGap: React.FC = () => {
   const aucSeen = G.aucSeen as Record<LearnedId, number>;
   const aucUnseen = G.aucUnseen as Record<LearnedId, number>;
   const [hover, setHover] = useState<LearnedId | null>(null);
+  const [mode, setMode] = useState<'cv' | 'seen'>('cv');
+  const knownAuc = (id: LearnedId) => (mode === 'cv' ? KNOWN_CV[id].rocAuc : aucSeen[id]);
+  const knownLabel = mode === 'cv' ? 'known (CV on KDDTrain+)' : 'seen types in KDDTest+';
 
   return (
     <section id="generalization" className="py-16 md:py-24 border-b border-surface-border">
@@ -30,8 +33,22 @@ export const GeneralizationGap: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div id="auc-gap" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
-            <h3 className="font-serif font-semibold text-lg text-content-primary">Ranking quality: AUC vs normal traffic</h3>
-            <p className="text-xs text-content-muted mt-1 mb-4">Hollow = seen attacks, filled = unseen attacks (seed 42). Threshold-free.</p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <h3 className="font-serif font-semibold text-lg text-content-primary">Known vs unseen: ROC-AUC</h3>
+              <div className="flex gap-1" role="radiogroup" aria-label="Definition of known performance">
+                {([['cv', 'Known: CV on KDDTrain+'], ['seen', 'Known: seen types in test']] as const).map(([k, label]) => (
+                  <button key={k} type="button" role="radio" aria-checked={mode === k} onClick={() => setMode(k)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-mono border ${mode === k ? 'bg-accent-primary text-[color:var(--color-on-accent)] border-accent-primary hover:bg-surface-elevated hover:text-accent-primary hover:border-accent-primary' : 'border-surface-border text-content-muted hover:bg-surface-elevated hover:text-content-primary'}`}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-xs text-content-muted mt-2 mb-4">
+              Hollow = {knownLabel}, filled = unseen attack types vs test normals (seed 42). {mode === 'cv'
+                ? 'This is the gap as the proposal defined it: stratified 5-fold CV on KDDTrain+ (every attack type seen in training) against the 17 test-only types.'
+                : 'Here "known" means the attack types that also occur in training, scored on the test set.'}
+            </p>
             <div className="relative" onMouseLeave={() => setHover(null)}>
             <svg viewBox="0 0 400 210" className="w-full h-auto" role="img" aria-label="Seen and unseen AUC per model">
               {[0.7, 0.8, 0.9, 1.0].map(t => (
@@ -46,11 +63,11 @@ export const GeneralizationGap: React.FC = () => {
                   <g key={id} opacity={hover && hover !== id ? 0.3 : 1} style={{ transition: 'opacity 150ms' }}>
                     <rect x="0" y={y - 18} width="400" height="38" fill="transparent" onMouseEnter={() => setHover(id)} />
                     <text x="142" y={y + 4} textAnchor="end" className="text-[11px] font-mono fill-content-primary">{MODEL_NAMES[id]}</text>
-                    <line x1={x(aucUnseen[id])} x2={x(aucSeen[id])} y1={y} y2={y} stroke={MODEL_COLOR[id]} strokeWidth="2" />
-                    <circle cx={x(aucSeen[id])} cy={y} r="5" fill="var(--color-surface)" stroke={MODEL_COLOR[id]} strokeWidth="2" />
+                    <line x1={x(aucUnseen[id])} x2={x(knownAuc(id))} y1={y} y2={y} stroke={MODEL_COLOR[id]} strokeWidth="2" style={{ transition: 'all 250ms' }} />
+                    <circle cx={x(knownAuc(id))} cy={y} r="5" fill="var(--color-surface)" stroke={MODEL_COLOR[id]} strokeWidth="2" style={{ transition: 'cx 250ms' }} />
                     <circle cx={x(aucUnseen[id])} cy={y} r="5" fill={MODEL_COLOR[id]} />
                     <text x={x(aucUnseen[id])} y={y + 17} textAnchor="middle" className="text-[9px] font-mono fill-content-muted">
-                      −{(aucSeen[id] - aucUnseen[id]).toFixed(3)}
+                      −{(knownAuc(id) - aucUnseen[id]).toFixed(3)}
                     </text>
                   </g>
                 );
@@ -59,15 +76,17 @@ export const GeneralizationGap: React.FC = () => {
             {hover && (
               <div className="chart-tip" style={{ left: '40%', top: `${((30 + LEARNED_IDS.indexOf(hover) * 42 + 22) / 210) * 100}%` }}>
                 <div className="font-semibold text-content-primary">{MODEL_NAMES[hover]}</div>
-                <div>seen vs normal {aucSeen[hover].toFixed(4)}</div>
+                <div>{knownLabel} {knownAuc(hover).toFixed(4)}</div>
                 <div>unseen vs normal {aucUnseen[hover].toFixed(4)}</div>
-                <div className="text-content-muted">drop {(aucSeen[hover] - aucUnseen[hover]).toFixed(4)}</div>
+                <div className="text-content-muted">gap {(knownAuc(hover) - aucUnseen[hover]).toFixed(4)}</div>
+                {mode === 'cv' && <div className="text-content-muted">CV fold SD {KNOWN_CV[hover].rocAucFoldStd.toFixed(4)}</div>}
               </div>
             )}
             </div>
             <p className="text-[11px] text-content-muted mt-2">
-              LR barely drops ({aucSeen.lr.toFixed(3)} → {aucUnseen.lr.toFixed(3)}) because its seen-attack AUC is already the lowest. The ensembles
-              drop more but stay highest on unseen attacks. The Decision Tree drops most.
+              {mode === 'cv'
+                ? `Every model is near-perfect on known attacks (CV AUC ${Math.min(...LEARNED_IDS.map(i => KNOWN_CV[i].rocAuc)).toFixed(3)}–${Math.max(...LEARNED_IDS.map(i => KNOWN_CV[i].rocAuc)).toFixed(3)}) and loses ranking quality on unseen types. The ensembles lose least in absolute terms and stay highest; the Decision Tree loses most.`
+                : `LR barely drops (${aucSeen.lr.toFixed(3)} → ${aucUnseen.lr.toFixed(3)}) because its seen-attack AUC is already the lowest. The ensembles drop more but stay highest on unseen attacks. The Decision Tree drops most.`}
             </p>
           </div>
 

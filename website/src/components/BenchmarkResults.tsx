@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BarChart3 } from 'lucide-react';
 import { OVERALL_METRICS, CONFUSION_MATRICES, MODEL_IDS, MODEL_NAMES, ModelId } from '../data/researchData';
 import { MODEL_COLOR } from './modelStyle';
+import { ActualVsPredicted } from './ActualVsPredicted';
 
 export const BenchmarkResults: React.FC = () => {
   const [metricKey, setMetricKey] = useState<string>('auc_unseen');
@@ -107,6 +108,8 @@ export const BenchmarkResults: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        <ActualVsPredicted />
 
         <div id="confusion-matrix" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">

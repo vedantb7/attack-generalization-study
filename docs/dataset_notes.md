@@ -1,6 +1,7 @@
 # NSL-KDD Dataset Notes
 
 **Files:** `dataset/raw/KDDTrain+.csv` (125,973 rows), `dataset/raw/KDDTest+.csv` (22,543 rows).
+**Source:** original release by the Canadian Institute for Cybersecurity, UNB (https://www.unb.ca/cic/datasets/nsl.html; download no longer available there); files obtained from the Kaggle mirror https://www.kaggle.com/datasets/hassan06/nslkdd/data.
 **Loader:** [`src/data_loader.py`](../src/data_loader.py) reads the headerless official files and assigns the canonical 43 column names.
 **EDA notebook:** [`notebooks/01_data_exploration.ipynb`](../notebooks/01_data_exploration.ipynb)
 **Sources:** Tavallaee et al., *A Detailed Analysis of the KDD CUP 99 Data Set* (CISDA 2009), which defines NSL-KDD. Stolfo et al., *KDD Cup 1999 task description* (feature definitions). Lee & Stolfo (2000), *A framework for constructing features and models for intrusion detection systems*.

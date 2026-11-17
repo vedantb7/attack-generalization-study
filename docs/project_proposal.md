@@ -86,6 +86,6 @@ Results from `notebooks/08_evaluation_comparison.ipynb` and `notebooks/09_capaci
 | Hypothesis | Outcome | Evidence (KDDTest+, 5 seeds unless noted) |
 |---|---|---|
 | **H1 · Memorization penalty** | **Partly supported** | The ensembles are best on seen attacks (seen-vs-normal AUC: RF 0.975, XGBoost 0.963, DT 0.947, LR 0.885; seed 42) and lose more ranking quality on unseen attacks than LR (AUC drop 0.033 / 0.016 vs 0.002). But they still rank unseen attacks best in absolute terms (unseen-vs-normal AUC: RF 0.941, XGBoost 0.943, LR 0.883, DT 0.746), so the drop is not a collapse. |
-| **H2 · Regularization benefit** | **Supported within LR, not across families** | Stronger $L_2$ raises LR's unseen-vs-normal AUC from 0.71 (`C`=100) to 0.88 (`C`=0.001), and a depth-4–6 tree beats a fully grown one. Regularised LR still ranks unseen attacks worse than either ensemble in every seed. |
+| **H2 · Regularization benefit** | **Supported within LR, not across families; simpler models win on compute** | Stronger $L_2$ raises LR's unseen-vs-normal AUC from 0.71 (`C`=100) to 0.88 (`C`=0.001), and a depth-4–6 tree beats a fully grown one. Regularised LR still ranks unseen attacks worse than either ensemble in every seed. |
 | **H3 · Distribution-inversion sensitivity** | **Supported** | The majority baseline reaches 43.1% accuracy with zero attack recall. Model rankings at threshold 0.5 differ from rankings by AUC or at matched FPR, and thresholds calibrated on training normals overshoot the target FPR on test, by up to 10× (RF: 9.9% for a 1% target). |
 
