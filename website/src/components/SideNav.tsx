@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowUp, Database, Github } from 'lucide-react';
+import { ArrowUp, Github } from 'lucide-react';
 
 export interface TocItem {
   id: string;
@@ -14,6 +14,7 @@ export const TOC: TocItem[] = [
   { id: 'question', label: 'Research question', desc: 'Memorization vs generalization', children: [{ id: 'hypotheses', label: 'Hypotheses & outcomes' }] },
   { id: 'dataset', label: 'Dataset & pipeline', desc: 'NSL-KDD, 122 features, leakage rules', children: [
     { id: 'dataset-split', label: 'Train/test split & features' },
+    { id: 'prediction-time', label: 'Prediction-time information' },
     { id: 'feature-justifications', label: 'Feature justifications' },
     { id: 'pipeline-steps', label: 'Five-step pipeline' },
   ] },
@@ -66,7 +67,10 @@ export const TOC: TocItem[] = [
   ] },
   { id: 'reproduce', label: 'Reproduce', desc: 'Commands and artifacts', children: [
     { id: 'reproduce-commands', label: 'Run the notebooks' },
+    { id: 'data-handling', label: 'Data handling' },
+    { id: 'contributions', label: 'Contributions' },
   ] },
+  { id: 'references', label: 'References', desc: 'Dataset and cited works' },
 ];
 
 const ALL_IDS = TOC.flatMap(t => [t.id, ...(t.children ?? []).map(c => c.id)]);
@@ -201,12 +205,6 @@ export const SideNav: React.FC = () => {
           <TocList active={active} />
         </nav>
         <div className="mt-5 pt-4 mx-2.5 border-t border-surface-border space-y-2 text-[12px]">
-          <a href="https://www.kaggle.com/datasets/hassan06/nslkdd/data" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
-            <Database className="w-3.5 h-3.5" /> NSL-KDD dataset (Kaggle)
-          </a>
-          <a href="https://www.unb.ca/cic/datasets/nsl.html" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 pl-[22px] text-content-muted hover:text-content-primary" title="The original download is no longer available there">
-            Original source (UNB)
-          </a>
           <a href="https://github.com/vedantb7/attack-generalization-study" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
             <Github className="w-3.5 h-3.5" /> Code & notebooks
           </a>

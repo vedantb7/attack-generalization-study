@@ -125,6 +125,26 @@ export const DatasetPipeline: React.FC = () => {
                 Column 43 (<code className="font-mono text-[11px]">difficulty_level</code>) represents the post-hoc consensus classification accuracy of 21 machine learning learners trained on the original KDD Cup data. Including it as an input predictor would constitute severe target leakage. Our pipeline rigorously strips <code className="font-mono text-[11px]">difficulty_level</code> from every feature matrix.
               </div>
             </div>
+
+            <div id="prediction-time" className="mt-4 p-4 rounded-lg bg-surface-elevated/50 border border-surface-border text-xs text-content-muted leading-relaxed space-y-2">
+              <strong className="font-semibold block text-content-primary">What a detector knows at prediction time</strong>
+              <p>
+                The unit of prediction is one connection record, scored once the connection has ended: <strong className="text-content-primary">basic</strong> features such as{' '}
+                <code className="font-mono text-[11px]">duration</code> and <code className="font-mono text-[11px]">src_bytes</code> are only final when the connection closes.
+              </p>
+              <p>
+                <strong className="text-content-primary">Content</strong> features (<code className="font-mono text-[11px]">hot</code>, <code className="font-mono text-[11px]">num_failed_logins</code>,{' '}
+                <code className="font-mono text-[11px]">root_shell</code>, …) require inspecting the packet payload, which is not possible for encrypted traffic or header-only flow logs.
+              </p>
+              <p>
+                <strong className="text-content-primary">Time-window</strong> features (connections to the same host or service in the last 2 seconds) and{' '}
+                <strong className="text-content-primary">host-window</strong> features (the last 100 connections to the same host) come pre-computed in NSL-KDD. A live system would have to
+                maintain these counters itself, and they depend on surrounding traffic.
+              </p>
+              <p>
+                So the results describe a detector that has the full record of each finished connection, not one that flags traffic packet by packet.
+              </p>
+            </div>
           </div>
 
           {/* Right: 41 Features Taxonomy Selector */}
@@ -186,28 +206,11 @@ export const DatasetPipeline: React.FC = () => {
 
         {/* Feature Engineering Justifications & Documentation Callout */}
         <div id="feature-justifications" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-12 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
-            <div>
-              <div className="flex items-center gap-2 text-xs font-mono font-semibold tracking-wider text-accent-primary uppercase mb-1">
-                <FileText className="w-3.5 h-3.5" />
-                <span>Feature Engineering Justifications</span>
-              </div>
-              <h3 className="font-serif font-semibold text-lg sm:text-xl text-content-primary">
-                Why These 41 Features? Controlled Preprocessing Choices
-              </h3>
-            </div>
-
-            <a
-              href="https://github.com/vedantb7/attack-generalization-study/blob/main/docs/features.md"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-accent-soft text-accent-primary border border-accent-border hover:bg-accent-primary hover:text-[color:var(--color-on-accent)] transition-colors shrink-0"
-              title="Read full features justification in docs/features.md"
-            >
+          <div className="border-b border-surface-border pb-4">
+            <div className="flex items-center gap-2 text-xs font-mono font-semibold tracking-wider text-accent-primary uppercase">
               <FileText className="w-3.5 h-3.5" />
-              <span>Read docs/features.md</span>
-              <ExternalLink className="w-3 h-3" />
-            </a>
+              <span>Feature Engineering Justifications</span>
+            </div>
           </div>
 
           <p className="text-xs sm:text-sm text-content-muted leading-relaxed font-light">

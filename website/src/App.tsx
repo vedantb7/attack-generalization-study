@@ -16,6 +16,7 @@ import { Tradeoffs } from './components/Tradeoffs';
 import { StatisticalAnalysis } from './components/StatisticalAnalysis';
 import { LimitationsConclusions } from './components/LimitationsConclusions';
 import { Reproducibility } from './components/Reproducibility';
+import { References } from './components/References';
 import { Footer } from './components/Footer';
 import { SideNav } from './components/SideNav';
 
@@ -92,6 +93,7 @@ export const App: React.FC = () => {
           <Tradeoffs />
           <LimitationsConclusions />
           <Reproducibility />
+          <References />
         </main>
         <SideNav />
       </div>

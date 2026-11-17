@@ -237,7 +237,7 @@ attack-generalization-study/
 │   ├── features.md                # 41 feature justifications & caveman definitions
 │   ├── methodology.md             # Formal research design, leakage guards, protocol history
 │   ├── project_proposal.md        # Original study motivation & preliminary hypotheses
-│   └── references.md              # Academic bibliography & citations
+│   └── references.md              # References (dataset, McNemar, Holm)
 │
 ├── website/                       # React 18 + Vite + Tailwind CSS interactive research portal
 │   ├── src/                       # Components, charts, layout, and researchData.ts
@@ -355,7 +355,7 @@ For comprehensive technical and methodological details, consult the specialized 
 - **[`docs/methodology.md`](docs/methodology.md)**: Full formal research methodology, mathematical definitions of all metrics, leakage guards, fold generation equations, and the complete protocol revision log.
 - **[`docs/dataset_notes.md`](docs/dataset_notes.md)**: Raw NSL-KDD schema definitions, column data types, observation boundaries, and domain literature notes.
 - **[`docs/project_proposal.md`](docs/project_proposal.md)**: Original project proposal, preliminary hypotheses, and initial research objectives.
-- **[`docs/references.md`](docs/references.md)**: Complete academic bibliography citing primary literature (Tavallaee et al., Lee & Stolfo, Breiman, Chen & Guestrin, Akiba et al., Edwards, Holm).
+- **[`docs/references.md`](docs/references.md)**: References: Tavallaee et al. (2009), the NSL-KDD dataset (UNB original source and Kaggle mirror), McNemar (1947) and Holm (1979).
 
 ---
 

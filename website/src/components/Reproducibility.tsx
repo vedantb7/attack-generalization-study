@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Terminal, Copy, Check, ExternalLink } from 'lucide-react';
 
+const CONTRIBUTIONS: { name: string; parts: string[] }[] = [
+  { name: 'Vedant Bondekar', parts: ['Preprocessing', 'Majority baseline', 'Random Forest', 'Website'] },
+  { name: 'Dhruv Meshram', parts: ['Exploratory data analysis', 'Logistic Regression', 'Decision Tree', 'XGBoost', 'Evaluation'] },
+];
+
 export const Reproducibility: React.FC = () => {
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -14,22 +19,24 @@ export const Reproducibility: React.FC = () => {
 git clone https://github.com/vedantb7/attack-generalization-study.git
 cd attack-generalization-study
 
-# 2. Set up the environment
-python3 -m venv .venv
+# 2. Set up the environment (results were produced with Python 3.11)
+python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt      # or requirements-lock.txt for exact versions
+pip install -r requirements-lock.txt
+
+# The NSL-KDD files ship with the repo in dataset/raw/ (KDDTrain+.csv, KDDTest+.csv)
 
 # 3. Run every notebook in order (01 -> 11); each saves its own outputs
 export PYTHONHASHSEED=42
 for nb in notebooks/*.ipynb; do
   jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 "$nb" || break
 done
-# 02 builds folds + preprocessor, 03-07 train 5 models x 5 seeds,
-# 08 compares them, 09 sweeps capacity, 10 adds known-attack CV and
-# FPR at 95% recall, 11 regenerates this website's data
 
 # 4. Run the tests (27)
-pytest -q tests`;
+pytest -q tests
+
+# 5. Run this website locally
+cd website && npm ci && npm run dev`;
 
   return (
     <section id="reproduce" className="py-16 md:py-24 border-b border-surface-border">
@@ -86,6 +93,16 @@ pytest -q tests`;
           </div>
         </div>
 
+        {/* Data handling */}
+        <div id="data-handling" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-8 space-y-2">
+          <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary">Data Handling</h3>
+          <p className="text-xs sm:text-sm text-content-muted leading-relaxed font-light">
+            NSL-KDD is a public research benchmark built from simulated network traffic (DARPA 1998). It contains no personal data, and the copy in{' '}
+            <code className="font-mono text-[11px]">dataset/raw/</code> is redistributed unchanged from its public sources. The pipeline needs no accounts, API keys or credentials,
+            and none are stored in the repository.
+          </p>
+        </div>
+
         {/* Academic Transparency & AI Disclosure */}
         <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-3">
@@ -105,6 +122,18 @@ pytest -q tests`;
           <p className="text-xs sm:text-sm text-content-muted leading-relaxed font-light">
             This project was conducted for <strong className="text-content-primary">ES 335: Machine Learning (Semester 5) at IIT Gandhinagar</strong> by <strong className="text-content-primary">Vedant Bondekar and Dhruv Meshram</strong>.
           </p>
+          <div id="contributions" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {CONTRIBUTIONS.map(c => (
+              <div key={c.name} className="p-4 rounded-lg bg-surface-elevated/40 border border-surface-border">
+                <div className="text-sm font-semibold text-content-primary mb-2">{c.name}</div>
+                <ul className="flex flex-wrap gap-1.5">
+                  {c.parts.map(p => (
+                    <li key={p} className="px-2 py-0.5 rounded-md text-[11px] font-mono bg-surface-card border border-surface-border text-content-muted">{p}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
           <div className="p-4 rounded-lg bg-surface-elevated/50 border border-surface-border text-xs text-content-muted leading-relaxed">
             <strong className="text-content-primary">Academic AI Transparency:</strong> Large Language Models (LLMs) were utilized as technical engineering assistants for code formatting, documentation synthesis, and UI scaffolding. All experimental hypotheses, data pipelines, model training runs, and statistical validations were independently audited and verified against authoritative serialized artifacts.
           </div>
