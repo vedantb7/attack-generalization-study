@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Database, AlertTriangle, ExternalLink, FileText, CheckCircle2 } from 'lucide-react';
 import { DATASET_SPECIFICATION } from '../data/researchData';
 
 export const DatasetPipeline: React.FC = () => {
@@ -181,6 +181,115 @@ export const DatasetPipeline: React.FC = () => {
             <div className="text-[11px] font-mono text-content-muted pt-3 border-t border-surface-border">
               Common 122-feature representation shared by all models.
             </div>
+          </div>
+        </div>
+
+        {/* Feature Engineering Justifications & Documentation Callout */}
+        <div id="feature-justifications" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-12 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-4">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono font-semibold tracking-wider text-accent-primary uppercase mb-1">
+                <FileText className="w-3.5 h-3.5" />
+                <span>Feature Engineering Justifications</span>
+              </div>
+              <h3 className="font-serif font-semibold text-lg sm:text-xl text-content-primary">
+                Why These 41 Features? Controlled Preprocessing Choices
+              </h3>
+            </div>
+
+            <a
+              href="https://github.com/vedantb7/attack-generalization-study/blob/main/docs/features.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono font-semibold bg-accent-soft text-accent-primary border border-accent-border hover:bg-accent-primary hover:text-[color:var(--color-on-accent)] transition-colors shrink-0"
+              title="Read full features justification in docs/features.md"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Read docs/features.md</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          </div>
+
+          <p className="text-xs sm:text-sm text-content-muted leading-relaxed font-light">
+            Every model receives the <strong>exact same 122-column input representation</strong> (38 standardized numeric features and 84 one-hot encoded categorical columns). There is no per-model feature engineering and no feature selection, so empirical differences between model families isolate structural inductive biases rather than input disparities.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+            <div className="p-3.5 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-1.5">
+              <strong className="text-content-primary font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                <span>1. Preserve All 41 Predictors</span>
+              </strong>
+              <p className="text-content-muted leading-relaxed">
+                Near-constant flags (<code className="font-mono text-[10px]">root_shell</code>, <code className="font-mono text-[10px]">num_failed_logins</code>, <code className="font-mono text-[10px]">su_attempted</code>) are retained as crucial signals for rare R2L and U2R attacks.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-1.5">
+              <strong className="text-content-primary font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                <span>2. Strict Leakage Elimination</span>
+              </strong>
+              <p className="text-content-muted leading-relaxed">
+                <code className="font-mono text-[10px]">difficulty_level</code> alone reaches ROC-AUC 0.763. It and target labels are strictly barred from the feature matrix with programmatic guards.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-1.5">
+              <strong className="text-content-primary font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                <span>3. Uncompressed One-Hot Encoding</span>
+              </strong>
+              <p className="text-content-muted leading-relaxed">
+                All 70 network services receive their own column without grouping into an "infrequent" bin, ensuring low-frequency, attack-specific port signatures remain intact.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-1.5">
+              <strong className="text-content-primary font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                <span>4. Uniform Scaling Without Log1p</span>
+              </strong>
+              <p className="text-content-muted leading-relaxed">
+                Applying <code className="font-mono text-[10px]">log1p</code> to byte tails was removed from earlier pipelines because it gave linear models an unfair private representation compared to trees.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-1.5">
+              <strong className="text-content-primary font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                <span>5. Retain Redundant Clusters</span>
+              </strong>
+              <p className="text-content-muted leading-relaxed">
+                10 pairs have |r| &gt; 0.95 (e.g. the 4 SYN-error features). We rely on L2 regularization and tree splitting rather than arbitrary pruning that risks dropping critical nuances.
+              </p>
+            </div>
+
+            <div className="p-3.5 rounded-lg bg-surface-elevated/40 border border-surface-border space-y-1.5">
+              <strong className="text-content-primary font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent-primary shrink-0" />
+                <span>6. No Resampling or Outlier Clipping</span>
+              </strong>
+              <p className="text-content-muted leading-relaxed">
+                Training data is 46.5% attack. Extreme byte/packet tails represent genuine physical attack phenomena (e.g. volumetric floods), not corrupt sensor noise.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-3.5 rounded-lg bg-surface-elevated/60 border border-surface-border text-xs text-content-muted flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span>
+              For more info about features, univariate KS shifts, and raw column dictionaries,{' '}
+              <strong className="text-content-primary">refer to the dedicated documentation</strong>:
+            </span>
+            <a
+              href="https://github.com/vedantb7/attack-generalization-study/blob/main/docs/features.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary underline hover:text-accent-hover font-mono font-medium inline-flex items-center gap-1 shrink-0"
+            >
+              <span>docs/features.md</span>
+              <ExternalLink className="w-3 h-3 inline" />
+            </a>
           </div>
         </div>
 

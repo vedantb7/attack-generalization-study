@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 import { TocList, useActiveSection } from './SideNav';
-import { Github, Menu, X, ShieldAlert, Database } from 'lucide-react';
+import { Github, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   theme: 'burgundy' | 'navy';
@@ -22,12 +22,9 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-surface-bg/90 border-b border-surface-border">
       <div className="px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-        <a href="#overview" className="flex items-center gap-2.5 group min-w-0">
-          <div className="w-8 h-8 rounded-md bg-accent-soft border border-accent-border flex items-center justify-center text-accent-primary shrink-0">
-            <ShieldAlert className="w-4 h-4" />
-          </div>
+        <a href="#overview" className="flex items-center group min-w-0">
           <div className="flex flex-col min-w-0">
-            <span className="font-serif font-semibold text-sm tracking-tight text-content-primary leading-tight truncate group-hover:text-accent-primary transition-colors">
+            <span className="font-serif font-semibold text-sm sm:text-base tracking-tight text-content-primary leading-tight truncate group-hover:text-accent-primary transition-colors">
               Unseen-Attack Generalization in NIDS
             </span>
             <span className="font-mono text-[10px] text-content-muted tracking-wide leading-tight truncate">
@@ -38,15 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
 
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <a
-            href="#dataset"
-            title="Dataset sources: Kaggle mirror and original UNB page"
-            className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-content-muted hover:text-content-primary hover:bg-surface-elevated transition-colors"
-          >
-            <Database className="w-3.5 h-3.5" />
-            <span>Dataset</span>
-          </a>
-          <a
-            href="https://github.com/vedantb7/instrusion_detection"
+            href="https://github.com/vedantb7/attack-generalization-study"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs text-content-muted hover:text-content-primary hover:bg-surface-elevated transition-colors"

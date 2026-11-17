@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scale, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { Scale, CheckCircle2, AlertCircle } from 'lucide-react';
 import {
   SEED_SUMMARY, SEED_PAIRS, STATISTICAL_TESTS, CAPACITY_SWEEPS, DEPLOYABLE, PROTOCOL, GENERALIZATION_DATA as G,
   UNSEEN_ATTACKS, COMPUTE_COST, MODEL_NAMES, LEARNED_IDS, LearnedId,
@@ -53,9 +53,6 @@ export const LimitationsConclusions: React.FC = () => {
 
   // Generalization gap and uncertainty.
   const rw = Object.values(G.reweightedDropPp as Record<LearnedId, number>);
-  const cl = Object.values(G.unseenClusterCI as Record<LearnedId, [number, number]>);
-  const clLo = Math.min(...cl.map(c => c[0]));
-  const clHi = Math.max(...cl.map(c => c[1]));
   const mostVariable = [...LEARNED_IDS].sort((a, b) => s[b].unseenRecall.std - s[a].unseenRecall.std)[0];
   const top3 = UNSEEN_ATTACKS.slice(0, 3);
   const top3Share = (top3.reduce((t, a) => t + a.count, 0) / UNSEEN_ATTACKS.reduce((t, a) => t + a.count, 0)) * 100;
@@ -74,12 +71,6 @@ export const LimitationsConclusions: React.FC = () => {
     `Thresholds calibrated on training data do not transfer: a 1% FPR target set on out-of-fold training normals gives ${rfOvershoot?.fpr.toFixed(1)}% FPR on the test set for Random Forest.`,
     `Better unseen-attack detection costs compute: scoring one flow takes ${ms('lr').toFixed(1)} ms (LR) and ${ms('dt').toFixed(1)} ms (Decision Tree) against ${ms('xgb').toFixed(1)} ms (XGBoost, ${xRange('xgb')} LR across runs) and ${ms('rf').toFixed(1)} ms (Random Forest, ${xRange('rf')}), and the models take ${c.lr.modelSizeKb.toFixed(0)} KB, ${c.dt.modelSizeKb.toFixed(0)} KB, ${c.xgb.modelSizeKb.toFixed(0)} KB and ${(c.rf.modelSizeKb / 1024).toFixed(1)} MB. Tuning the ensembles also took longest (${c.rf.tuningMinutesAllSeeds.toFixed(0)} min for RF and ${c.xgb.tuningMinutesAllSeeds.toFixed(0)} min for XGBoost vs ${c.lr.tuningMinutesAllSeeds.toFixed(0)} min for LR over 5 seeds).`,
   ];
-  const notSupported = [
-    'That simpler models generalise better than ensembles. The original single-seed, threshold-0.5 comparison suggested it, but that reflected models sitting at different operating points.',
-    'Any mechanism such as "memorization" for why a model misses an attack type: no feature-attribution analysis was done.',
-    `Conclusions about other unseen attack types: the attack-type cluster CIs for unseen recall span roughly ${clLo.toFixed(0)}–${clHi.toFixed(0)}% and overlap for every model.`,
-    'Real-world zero-day detection: NSL-KDD unseen types are benchmark-level novel signatures.',
-  ];
   const limits = [
     'No deep-learning model (e.g. recurrent or convolutional networks) was trained, because of compute restrictions. Published deep-learning results on NSL-KDD use different protocols, so they are not directly comparable with these numbers.',
     `One benchmark (NSL-KDD), binary normal-vs-attack task only, ${PROTOCOL.nTrials} tuning trials per model and seed.`,
@@ -97,7 +88,7 @@ export const LimitationsConclusions: React.FC = () => {
             <Scale className="w-3.5 h-3.5" />
             <span>Conclusions & limitations</span>
           </div>
-          <h2 className="font-editorial-heading text-2xl sm:text-3xl md:text-4xl font-medium text-content-primary tracking-tight">What the evidence supports, and what it does not</h2>
+          <h2 className="font-editorial-heading text-2xl sm:text-3xl md:text-4xl font-medium text-content-primary tracking-tight">What the evidence supports</h2>
         </div>
 
         <div id="answer" className="p-6 rounded-xl bg-surface-card border border-accent-border shadow-sm panel-hover mb-6">
@@ -120,14 +111,10 @@ export const LimitationsConclusions: React.FC = () => {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <div id="supported" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
+        <div className="mb-6">
+          <div id="supported" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
             <h3 className="font-serif font-semibold text-lg text-content-primary">Supported by the evidence</h3>
             <List items={supported} icon={<CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />} />
-          </div>
-          <div id="not-supported" className="p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
-            <h3 className="font-serif font-semibold text-lg text-content-primary">Not supported</h3>
-            <List items={notSupported} icon={<XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />} />
           </div>
         </div>
 

@@ -45,6 +45,18 @@ Column meanings: **zeros** = share of training rows equal to 0; **skew** = sampl
 | 9 | `urgent` | integer | StandardScaler | 4 | >99.9% | 149.9 | 0.500 | 0.000 | Near-constant |
 | 10 | `hot` | integer | StandardScaler | 28 | 97.9% | 12.6 | 0.503 | 0.023 | "Hot" indicators in the payload |
 
+**Feature definitions (caveman format):**
+- `duration`: Connection life in seconds. 0 = single probe packet or teardrop. High = long interactive shell or massive transfer.
+- `protocol_type`: Transport protocol (`tcp`, `udp`, `icmp`). Maps wire format. Expands to 3 one-hot columns.
+- `service`: Target network daemon port (`http`, `private`, `smtp`, `ftp`, etc.). 70 levels in train. Shows target attack surface.
+- `flag`: Terminal TCP handshake status. `SF` = clean finish. `S0` = SYN sent, zero ACK back (SYN flood/stealth scan). `REJ` = connection refused (closed port sweep).
+- `src_bytes`: Bytes sent client to server. Zero in silent listen probes. Massive spike in payload exfiltration or buffer overflow floods.
+- `dst_bytes`: Bytes returned server to client. 54% zero. Highest raw separation power (AUC 0.900). Zero on unanswered scans and half-open floods.
+- `land`: Binary flag. 1 if source IP and port equal destination IP and port. Classic LAND DoS loop exploit.
+- `wrong_fragment`: Corrupt overlapping IP fragment count. Non-zero triggers kernel crash exploits (`teardrop`, `pod`). Zero in normal traffic.
+- `urgent`: Urgent out-of-band packet count. Rare URG flag marker in interactive protocols.
+- `hot`: Sensitive action count. Spikes when intruder enters system directories, accesses sensitive files, or executes programs.
+
 ### 2.2 Content features (12)
 
 | # | Feature | Type | Encoding | Distinct (train) | Zeros | Skew | AUC | KS | Notes |
@@ -62,6 +74,20 @@ Column meanings: **zeros** = share of training rows equal to 0; **skew** = sampl
 | 21 | `is_host_login` | binary | StandardScaler | 2 | >99.9% | 354.9 | 0.500 | 0.000 | 1 train row = 1 |
 | 22 | `is_guest_login` | binary | StandardScaler | 2 | 99.1% | 10.2 | 0.504 | 0.019 | Mostly `warezclient` |
 
+**Feature definitions (caveman format):**
+- `num_failed_logins`: Failed password attempts. Flags dictionary brute-force (`guess_passwd`). Key R2L indicator.
+- `logged_in`: 1 if session authentication passed; 0 if rejected or non-login. Strongest binary discriminator (AUC 0.838).
+- `num_compromised`: System distress alerts (path traversal, file manipulation). Tracks exploit execution.
+- `root_shell`: 1 if session spawned superuser root shell. Primary signature for U2R exploits (`buffer_overflow`, `rootkit`).
+- `su_attempted`: 1 if `su root` command invoked. Stray value 2 on 59 normal rows; kept as recorded.
+- `num_root`: Privileged operations executed as root user. Redundant with `num_compromised` (r = 0.999).
+- `num_file_creations`: Files written to target disk. Spikes when attacker drops exploit payload, backdoors, or staging scripts.
+- `num_shells`: Command interpreter shells opened. Positive count flags interactive terminal control.
+- `num_access_files`: Edits to permission databases (`/etc/passwd`, `/etc/shadow`, `.rhosts`). Flags privilege escalation and persistence.
+- `num_outbound_cmds`: Outbound FTP commands. Exactly 0 across all NSL-KDD rows. Dead constant feature kept for 41-column compliance.
+- `is_host_login`: 1 if logged in directly as admin host account. Rare administrative marker (1 train row, 11 test rows).
+- `is_guest_login`: 1 if session authenticated via guest account. Primary marker for anonymous access (`warezclient`).
+
 ### 2.3 Time-based traffic features: connections in the past 2 seconds (9)
 
 | # | Feature | Type | Encoding | Distinct (train) | Zeros | Skew | AUC | KS | Notes |
@@ -75,6 +101,17 @@ Column meanings: **zeros** = share of training rows equal to 0; **skew** = sampl
 | 29 | `same_srv_rate` | rate [0, 1] | StandardScaler | 101 | 2.2% | −0.6 | 0.874 | 0.095 | Strong single feature |
 | 30 | `diff_srv_rate` | rate [0, 1] | StandardScaler | 95 | 60.5% | 4.4 | 0.845 | 0.098 | |
 | 31 | `srv_diff_host_rate` | rate [0, 1] | StandardScaler | 60 | 77.5% | 2.9 | 0.637 | 0.014 | |
+
+**Feature definitions (caveman format):**
+- `count`: Connections to same destination IP in last 2 seconds. Caps at 511. Spikes during high-rate DoS floods (`smurf`, `neptune`).
+- `srv_count`: Connections to same service port in last 2 seconds. Caps at 511. Distinguishes single-service flood from broad sweep.
+- `serror_rate`: Share of same-host connections with SYN errors (no ACK). Flags half-open SYN flooding and uncompleted connections.
+- `srv_serror_rate`: Share of same-service connections with SYN errors. Redundant with `serror_rate` (r = 0.993).
+- `rerror_rate`: Share of same-host connections ending in REJ. Non-zero when scanner probes closed ports.
+- `srv_rerror_rate`: Share of same-service connections ending in REJ. Redundant with `rerror_rate` (r = 0.989).
+- `same_srv_rate`: Share of connections targeting same service. High in concentrated floods; low in multi-port scans.
+- `diff_srv_rate`: Share of connections targeting different services. Elevated in horizontal port scans.
+- `srv_diff_host_rate`: Share of same-service connections coming from different client hosts. Detects distributed multi-source scans.
 
 ### 2.4 Host-based traffic features: last 100 connections to the same host (10)
 
@@ -90,6 +127,18 @@ Column meanings: **zeros** = share of training rows equal to 0; **skew** = sampl
 | 39 | `dst_host_srv_serror_rate` | rate [0, 1] | StandardScaler | 100 | 67.8% | 1.0 | 0.783 | 0.197 | |
 | 40 | `dst_host_rerror_rate` | rate [0, 1] | StandardScaler | 101 | 81.9% | 2.3 | 0.583 | **0.226** | **Most shifted feature** between train and test |
 | 41 | `dst_host_srv_rerror_rate` | rate [0, 1] | StandardScaler | 101 | 84.6% | 2.3 | 0.573 | 0.168 | |
+
+**Feature definitions (caveman format):**
+- `dst_host_count`: Accumulated connections to same destination host (capped at 255). Measures long-term target traffic density.
+- `dst_host_srv_count`: Accumulated connections to same destination host and service (capped at 255). Second-highest univariate AUC (0.892).
+- `dst_host_same_srv_rate`: Share of last 100 connections targeting same service. Tracks persistent service focus.
+- `dst_host_diff_srv_rate`: Share of last 100 connections targeting different services. High during slow, stealthy port sweeps.
+- `dst_host_same_src_port_rate`: Share of connections coming from identical source port. Port-scan signature.
+- `dst_host_srv_diff_host_rate`: Share of same-service connections originating from distinct source IPs. Flags distributed scans.
+- `dst_host_serror_rate`: Share of last 100 connections with SYN errors. Tracks lingering SYN flood backlog (KS = 0.203).
+- `dst_host_srv_serror_rate`: Share of last 100 host+service connections with SYN errors.
+- `dst_host_rerror_rate`: Share of last 100 connections with REJ errors. Most shifted feature between train and test (KS = 0.226).
+- `dst_host_srv_rerror_rate`: Share of last 100 host+service connections with REJ errors.
 
 **Type counts:** 3 categorical, 38 numeric (of which 6 are binary flags: `land`, `logged_in`, `root_shell`, `is_host_login`, `is_guest_login`, and `su_attempted`, which is binary by definition but holds a stray value 2).
 

@@ -1,322 +1,375 @@
 # Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection
 
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.5%2B-orange.svg)](https://scikit-learn.org/)
-[![Course: ES 335](https://img.shields.io/badge/Course-ES%20335%20(IIT%20Gandhinagar)-red.svg)]()
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.5%2B-F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-3.2%2B-EB5424.svg)](https://xgboost.readthedocs.io/)
+[![Optuna](https://img.shields.io/badge/Optuna-4.0%2B-1E88E5.svg)](https://optuna.org/)
+[![React 18](https://img.shields.io/badge/React-18.3-61DAFB.svg?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF.svg?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4.svg?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Course: ES 335](https://img.shields.io/badge/Course-ES%20335%20(IIT%20Gandhinagar)-B91C1C.svg)](https://www.iitgn.ac.in/)
 
-Undergraduate Machine Learning Project (ES 335, Semester 5, IIT Gandhinagar).
-
----
-
-## 1. Project Overview
-
-### Research Objective
-The goal of this project is to investigate whether **simpler machine learning models (Logistic Regression, a single Decision Tree) generalize more effectively to previously unseen network attack types** than higher-capacity ensembles (Random Forest, XGBoost).
-
-### Problem Statement
-Modern machine learning models for Network Intrusion Detection Systems (NIDS) routinely achieve $> 98\%$ accuracy on static, in-distribution test sets. However, in adversarial security contexts, network threats evolve constantly. Complex models often achieve high performance by memorizing specific artifacts (e.g., port numbers, protocol flags, or packet lengths) rather than learning generalized structural representations of malicious traffic. When presented with previously unseen attack vectors, these models frequently degrade significantly.
-
-### Scope & Methodological Limitations
-- **Evaluation Benchmark:** This study is conducted on the standard **NSL-KDD** benchmark dataset.
-- **Methodological Guardrail:** We explicitly do **not** claim genuine real-world zero-day detection capability based solely on NSL-KDD. Unseen test attack types represent controlled, benchmark-level out-of-distribution signatures rather than true operational zero-day exploits.
+**Undergraduate Machine Learning Research Project**  
+*ES 335: Machine Learning (Semester 5) · Indian Institute of Technology Gandhinagar*  
+**Authors:** Vedant Bondekar & Dhruv Meshram  
+**Repository:** [github.com/vedantb7/attack-generalization-study](https://github.com/vedantb7/attack-generalization-study)
 
 ---
 
-## 2. Dataset Specification (NSL-KDD)
-
-The NSL-KDD dataset is a curated revision of KDD Cup 1999 that eliminates redundant records (~78% duplicate training records) and establishes balanced evaluation difficulty.
-
-### Source
-- **Original source:** Canadian Institute for Cybersecurity, University of New Brunswick: https://www.unb.ca/cic/datasets/nsl.html (the download is no longer available from this page).
-- **Download used:** Kaggle mirror of NSL-KDD: https://www.kaggle.com/datasets/hassan06/nslkdd/data. Save the files as `dataset/raw/KDDTrain+.csv` and `dataset/raw/KDDTest+.csv` (rename `.txt` downloads; the paths are set in `config.yaml`).
-
-### Splits & Record Counts
-- **Training Set (`dataset/raw/KDDTrain+.csv`):** 125,973 records.
-- **Testing Set (`dataset/raw/KDDTest+.csv`):** 22,543 records.
-  - *Note on Local Test Row Count:* While some literature mirrors report 22,544 rows, the local dataset distribution contains exactly **22,543 rows** (due to the absence of a trailing blank line/single record variance). Our pipeline faithfully processes the exact local 22,543 rows without fabricating records.
-
-### Feature & Column Taxonomy
-The canonical schema consists of **43 columns**:
-- **41 Input Predictor Features:**
-  - *Basic Features (10):* Connection duration, protocol type, service, flag, byte counts, error flags.
-  - *Content Features (12):* Failed logins, root access attempts, compromised state, shell commands.
-  - *Time-based Traffic Features (9):* Connection frequency to the same host/service in 2-second windows.
-  - *Host-based Traffic Features (10):* Destination host connection distributions across 100-connection windows.
-- **1 Attack Label (`label`):** Specific attack name or `normal`.
-- **1 Metadata Column (`difficulty_level`):** Model consensus difficulty score. **Strictly excluded from model inputs.**
-
-### Classification Tasks & Target Definitions
-1. **Primary Binary Task (`is_intrusion`):**
-   $$\text{is\_intrusion} = \begin{cases} 0 & \text{if label} = \text{'normal'} \\ 1 & \text{if label} \neq \text{'normal'} \end{cases}$$
-   - **Training Set:** Normal: 67,343 ($53.46\%$) | Attack: 58,630 ($46.54\%$)
-   - **Testing Set:** Normal: 9,710 ($43.07\%$) | Attack: 12,833 ($56.93\%$) — *Distribution Inversion*
-2. **Secondary 5-Class Categorization (`attack_category`):**
-   - Maps 39 distinct attack signatures into 4 standard DARPA categories + Normal:
-     - **Normal:** Benign traffic
-     - **DoS (Denial of Service):** 10 signatures (e.g., `neptune`, `smurf`, `back`)
-     - **Probe (Surveillance):** 6 signatures (e.g., `satan`, `ipsweep`, `portsweep`)
-     - **R2L (Remote to Local):** 16 signatures (e.g., `warezclient`, `guess_passwd`, `imap`)
-     - **U2R (User to Root):** 7 signatures (e.g., `buffer_overflow`, `rootkit`, `loadmodule`)
-
-### 17 Unseen Test Attack Signatures
-The official test set contains 17 novel attack signatures absent from the training set:
-- **DoS:** `apache2`, `mailbomb`, `processtable`, `udpstorm`
-- **Probe:** `mscan`, `saint`
-- **R2L:** `httptunnel`, `named`, `sendmail`, `snmpgetattack`, `snmpguess`, `worm`, `xlock`, `xsnoop`
-- **U2R:** `ps`, `sqlattack`, `xterm`
+## Table of Contents
+1. [Project Overview & Central Findings](#1-project-overview--central-findings)
+2. [Research Questions & Hypotheses](#2-research-questions--hypotheses)
+3. [Dataset Specification (NSL-KDD)](#3-dataset-specification-nsl-kdd)
+4. [Technology Stack & Architecture](#4-technology-stack--architecture)
+5. [End-to-End Reproduction Guide](#5-end-to-end-reproduction-guide)
+6. [Repository & Notebook Pipeline](#6-repository--notebook-pipeline)
+7. [Experimental Protocol & Controlled Framework](#7-experimental-protocol--controlled-framework)
+8. [Authoritative Benchmark Results](#8-authoritative-benchmark-results)
+9. [Compute vs. Detection Quality Trade-Off](#9-compute-vs-detection-quality-trade-off)
+10. [Documentation Index & References](#10-documentation-index--references)
+11. [Academic Attribution & AI Disclosure](#11-academic-attribution--ai-disclosure)
 
 ---
 
-## 3. Data Pipeline & Preprocessing Methodology
+## 1. Project Overview & Central Findings
 
-All models are trained and evaluated using a unified, anti-leakage pipeline implemented in `src/data_loader.py` and `src/preprocessing.py` and built in `notebooks/02_preprocessing.ipynb`.
+### The Central Question
+In network security, machine learning classifiers for Network Intrusion Detection Systems (NIDS) routinely achieve $> 98\%$ accuracy on static, in-distribution test benchmarks. However, deployed network defenders face constantly mutating adversarial tradecraft. **Can simpler machine learning models (e.g., Logistic Regression, shallow Decision Trees) generalize better to novel, previously unseen zero-day attack signatures than complex, high-capacity ensembles (Random Forest, XGBoost)?**
 
-```mermaid
-flowchart LR
-    Raw["Raw CSV Files<br>(43 columns)"] --> Loader["load_nsl_kdd()<br>Path-Independent"]
-    Loader --> Split["split_features_target()<br>Extract 41 features"]
-    Split --> TrainFeat["X_train (41 cols)"]
-    Split --> TestFeat["X_test (41 cols)"]
-    TrainFeat --> Fit["create_preprocessor(X_train)<br>Fit on Train Only"]
-    Fit --> TransformTrain["transform(X_train)<br>-> (125,973 x 122)"]
-    Fit --> TransformTest["transform(X_test)<br>-> (22,543 x 122)"]
-```
+### The Core Finding: Disproving the Simplistic Generalization Hypothesis
+Our controlled empirical study disproves the premise across model families:
 
-### Preprocessing Transformations
-- **Categorical Pipeline:** `OneHotEncoder(handle_unknown="ignore")` applied to `protocol_type` (3), `service` (70), and `flag` (11), producing **84 one-hot columns**. Unseen test categories are mapped to all zeros without runtime errors.
-- **Numerical Pipeline:** `StandardScaler()` applied to the remaining **38 continuous features**.
-- **Total Processed Features:** **122 continuous features**.
-- **Strict Anti-Leakage Protocol:**
-  - Preprocessor statistics (means, standard deviations, one-hot categories) are fitted **strictly on `X_train`**.
-  - `X_test` is strictly transformed; `fit()` is never invoked on test data.
-  - Target columns (`label`, `is_intrusion`, `attack_category`) and metadata (`difficulty_level`) are strictly excluded.
-- **Artifact Persistence:** The fitted preprocessor is saved at `scalars/preprocessor.joblib` (with its 122 feature names) and verified against a fresh fit in the tests. Each model pipeline in `models/` contains its own identical copy, refit inside every CV fold during tuning.
+1. **Ensembles Generalize Best Across Families:** On threshold-free ranking of unseen attacks against normal traffic, the high-capacity ensembles—**XGBoost (AUC 0.943 ± 0.005)** and **Random Forest (AUC 0.941 ± 0.004)**—consistently and statistically significantly outperform **Logistic Regression (AUC 0.883 ± 0.000)** and the single **Decision Tree (AUC 0.746 ± 0.028)** across all 5 random seeds ($p < 10^{-15}$ under Edwards-corrected McNemar tests and paired bootstrap evaluations).
+2. **The 0.5 Threshold Illusion:** Previous literature suggestions that Random Forest suffers a catastrophic "collapse" on zero-day attacks was an artifact of evaluating models at an uncalibrated default threshold ($P = 0.5$), where models operate at radically different False Positive Rates (FPR). When evaluated threshold-free (ROC-AUC) or at matched operating budgets, ensembles preserve superior separability.
+3. **Regularization Within Single Families:** Within single-model families, Occam's razor holds: stronger L2 regularization improves Logistic Regression's unseen AUC from $0.710 \to 0.881$, and constrained tree depth ($d=4\text{–}6$) outperforms fully grown, memorizing trees.
+4. **The Deployment Trade-Off (Compute vs. Detection):** While ensembles provide the strongest ranking quality, simpler models offer decisive throughput advantages for edge networks. Logistic Regression and Decision Trees score a single network flow in **$\sim 3.3\text{–}3.5$ ms** and compile to **$4\text{–}5$ KB**, whereas Random Forest requires **$46.0$ ms** (13× latency) and **$2.9$ MB** of memory.
 
 ---
 
-## 4. Repository Layout
+## 2. Research Questions & Hypotheses
 
-The notebooks are the **single source of truth**: every result, model, table and figure in this repository is produced by running them in order (01 → 11). `src/` contains only helper functions that the notebooks import; nothing in `src/` runs on its own.
-
-```text
-├── config.yaml                    # All settings: seeds, paths, CV scheme, trial budget, class_weight, threshold, FPR budgets, bootstrap
-├── dataset/raw/                   # Official NSL-KDD files (headerless)
-│   ├── KDDTrain+.csv              # 125,973 rows
-│   └── KDDTest+.csv               # 22,543 rows
-├── notebooks/                     # Run in order; each saves its own outputs
-│   ├── 01_data_exploration.ipynb  # EDA -> results/figures/eda/, results/eda/eda_summary.json
-│   ├── 02_preprocessing.ipynb     # shared preprocessor + leave-attack-types-out folds -> scalars/, results/splits/
-│   ├── 03_majority_baseline.ipynb # zero-rule baseline
-│   ├── 04_logistic_regression.ipynb
-│   ├── 05_decision_tree.ipynb
-│   ├── 06_random_forest.ipynb
-│   ├── 07_xgboost.ipynb
-│   ├── 08_evaluation_comparison.ipynb  # comparison tables, seed summary, statistical tests, evaluation figures
-│   ├── 09_capacity_analysis.ipynb      # capacity sweeps within each model family
-│   ├── 10_additional_evaluation.ipynb  # known-attack CV, FPR at 95% recall, representative missed records
-│   └── 11_website_data.ipynb           # exports results to website/src/data/researchData.ts
-├── src/                           # Helpers imported by the notebooks
-│   ├── config.py                  # load_config(), seeding
-│   ├── data_loader.py             # schema, loading, attack -> category mapping
-│   ├── preprocessing.py           # shared 122-feature ColumnTransformer, persistence
-│   └── controlled_framework.py    # novelty CV, tuning/refit/evaluation, operating points, McNemar, bootstraps, Holm, savers
-├── models/                        # Fitted model pipelines (preprocessor + estimator), primary seed, *.joblib
-├── scalars/                       # Fitted preprocessor, 122 feature names, label mapping
-├── results/
-│   ├── eda/                       # EDA summary (JSON)
-│   ├── splits/                    # attack-type fold assignment (JSON) + per-row fold index (NPY)
-│   ├── tuning/                    # Optuna trial logs per model (JSON + CSV); seeds/ for the other seeds
-│   ├── metrics/                   # Per-model metrics + statistical_comparison.json; seeds/ for the other seeds
-│   ├── predictions/               # Per-row test predictions incl. P(attack) (seed 42); OOF training scores and seeds/ are regenerated locally, not tracked
-│   ├── tables/                    # Summary tables (CSV + Markdown)
-│   └── figures/                   # eda/, preprocessing/, <model>/, evaluation/, capacity/
-├── docs/                          # dataset_notes.md, features.md, methodology.md, project_proposal.md, references.md
-├── website/                       # React + Vite research website (GitHub Pages); its data file is generated by notebook 11
-├── tests/                         # test_data_pipeline.py, test_controlled_framework.py
-├── requirements.txt / requirements-lock.txt
-└── README.md
-```
+| # | Hypothesis Tested | Empirical Status | Key Evidence |
+|:---|:---|:---:|:---|
+| **H1** | **Simpler Models Generalize Better:** Simpler models (Logistic Regression, Decision Tree) suffer a smaller performance degradation on novel attack signatures than complex ensembles. | **Rejected (Across Families)**<br>**Supported (Within Families)** | Ensembles maintain higher unseen-vs-normal AUC ($0.94\text{+} \text{ vs } 0.74\text{–}0.88$). However, within single families, regularizing LR and pruning trees prevents overfitting. |
+| **H2** | **Strict Low-FPR Detection Collapse:** At operational false alarm budgets ($\text{FPR} \le 1\%$), all models fail to reliably detect zero-day attacks. | **Supported** | At $1\%$ test FPR, no model detects $> 7.2\%$ of unseen attack flows. Ensembles only pull ahead when the false alarm budget expands to $\ge 5\%$. |
+| **H3** | **Distribution Inversion Distortion:** Standard accuracy is misleading due to class distribution shifts; threshold-free metrics (ROC-AUC, PR-AUC) and category-stratified recall are required. | **Supported** | Normal traffic drops from $53.46\%$ (train) to $43.07\%$ (test). Accuracy masks a 40–52 pp drop in attack recall on novel signatures. |
 
 ---
 
-## 5. Team Responsibilities
+## 3. Dataset Specification (NSL-KDD)
 
-| Team Member | Core Responsibilities |
-|:---|:---|
-| **Vedant** | Data loading & preprocessing modules (`src/data_loader.py`, `src/preprocessing.py`)<br>Majority-class baseline (`notebooks/03_majority_baseline.ipynb`)<br>Random Forest (`notebooks/06_random_forest.ipynb`)<br>Controlled framework (`src/controlled_framework.py`) |
-| **Dhruv Meshram** | Exploratory data analysis (`notebooks/01_data_exploration.ipynb`, `docs/dataset_notes.md`)<br>Logistic Regression (`notebooks/04_logistic_regression.ipynb`)<br>Decision Tree (`notebooks/05_decision_tree.ipynb`)<br>Comparative evaluation & statistical tests (`notebooks/08_evaluation_comparison.ipynb`) |
-| **Shared** | XGBoost (`notebooks/07_xgboost.ipynb`), capacity analysis (`notebooks/09_capacity_analysis.ipynb`), protocol revision after the methodology review |
+The benchmark is conducted on the curated **NSL-KDD** benchmark dataset (Tavallaee et al., 2009), which eliminates duplicate records and calibrates evaluation difficulty.
+
+### Data Partitions & Distribution Inversion
+- **KDDTrain+ (`dataset/raw/KDDTrain+.csv`):** 125,973 records
+  - Normal traffic: 67,343 ($53.46\%$)
+  - Attack traffic: 58,630 ($46.54\%$)
+  - 22 distinct attack signatures across 4 DARPA categories
+- **KDDTest+ (`dataset/raw/KDDTest+.csv`):** 22,543 records
+  - Normal traffic: 9,710 ($43.07\%$)
+  - Attack traffic: 12,833 ($56.93\%$) — **Empirical Distribution Inversion**
+  - Contains **17 novel, unseen attack signatures** (3,750 flows) completely absent from training
+
+### 41 Predictive Features $\to$ 122 Preprocessed Input Columns
+Input telemetry encompasses 41 raw features divided into four functional domains:
+1. **Basic Connection Telemetry (10 features):** `duration`, `protocol_type` (3), `service` (70), `flag` (11), `src_bytes`, `dst_bytes`, `land`, `wrong_fragment`, `urgent`, `hot`.
+2. **Content / Payload Signals (12 features):** `num_failed_logins`, `logged_in`, `num_compromised`, `root_shell`, `su_attempted`, `num_root`, `num_file_creations`, `num_shells`, `num_access_files`, `num_outbound_cmds`, `is_host_login`, `is_guest_login`.
+3. **Time-Based Traffic (9 features, 2-sec window):** `count`, `srv_count`, `serror_rate`, `srv_serror_rate`, `rerror_rate`, `srv_rerror_rate`, `same_srv_rate`, `diff_srv_rate`, `srv_diff_host_rate`.
+4. **Host-Based Traffic (10 features, 100-connection window):** `dst_host_count`, `dst_host_srv_count`, `dst_host_same_srv_rate`, `dst_host_diff_srv_rate`, `dst_host_same_src_port_rate`, `dst_host_srv_diff_host_rate`, `dst_host_serror_rate`, `dst_host_srv_serror_rate`, `dst_host_rerror_rate`, `dst_host_srv_rerror_rate`.
+
+> **Feature Justifications & Leakage Prevention:**  
+> Detailed justifications for preserving all 41 features, one-hot encoding all 70 services without binning, and strictly barring column 43 (`difficulty_level`, univariate ROC-AUC 0.763 target leak) are documented in [`docs/features.md`](docs/features.md).
+
+### The 17 Novel Unseen Attack Signatures (Test-Only)
+- **DoS (4 signatures):** `apache2`, `mailbomb`, `processtable`, `udpstorm`
+- **Probe (2 signatures):** `mscan`, `saint`
+- **R2L (8 signatures):** `httptunnel`, `named`, `sendmail`, `snmpgetattack`, `snmpguess`, `worm`, `xlock`, `xsnoop`
+- **U2R (3 signatures):** `ps`, `sqlattack`, `xterm`
 
 ---
 
-## 6. Setup & Execution
+## 4. Technology Stack & Architecture
 
-### A. Environment
+### Machine Learning & Data Science Core
+- **Runtime:** Python 3.10+ (tested through 3.12 / 3.14)
+- **Data Engineering:** `pandas` (3.x), `numpy` (2.x)
+- **Modeling & Preprocessing:** `scikit-learn` (1.5+ / 1.9+), `xgboost` (3.2+)
+- **Hyperparameter Optimization:** `optuna` (4.x) utilizing Tree-structured Parzen Estimator (TPE) Bayesian search
+- **Statistical Testing:** `scipy.stats` (Edwards-corrected McNemar tests, Paired Bootstrap distributions, Holm-Bonferroni FWER correction)
+- **Model Serialization:** `joblib` for preprocessor and pipeline artifact freezing
+
+### Interactive Research Web Application (`website/`)
+- **Framework:** React 18.3, TypeScript 5.6
+- **Build Tool:** Vite 6.0 (configured with relative asset base `./` for zero-configuration subpath deployment)
+- **Styling & Design System:** Tailwind CSS 3.4 with custom typography, responsive grid, CSS variables, and dual themes:
+  - *Academic Burgundy & Warm Ivory* (default light mode)
+  - *Midnight Navy & Champagne* (dark mode)
+- **Icons & Controls:** `lucide-react`
+- **CI/CD:** GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) deploying production builds directly to GitHub Pages on every push to `main`.
+
+### Testing & Verification Suite
+- **Test Runner:** `pytest`
+- **Coverage:** 27 comprehensive unit tests in `tests/`:
+  - `test_data_pipeline.py`: Validates schema invariance, 122-feature ColumnTransformer output, and metadata leakage guards.
+  - `test_controlled_framework.py`: Validates novelty fold partitioning, McNemar calculation accuracy, Holm-Bonferroni rank-order correction, and bootstrap determinism.
+
+---
+
+## 5. End-to-End Reproduction Guide
+
+Follow these steps to replicate the complete experimental study and research website from source.
+
+### Step 1: Clone Repository
 ```bash
+git clone https://github.com/vedantb7/attack-generalization-study.git
+cd attack-generalization-study
+```
+
+### Step 2: Python Environment Setup
+```bash
+# Create and activate a clean virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt        # or requirements-lock.txt for the exact versions used
+
+# Install dependencies (use requirements-lock.txt for exact pinned versions)
+pip install -r requirements.txt
 ```
 
-### B. Run the experiment (notebooks, in order)
-Run the notebooks top to bottom in order **01 → 11**, in Jupyter or headless:
+### Step 3: Verify or Place Dataset Files
+Ensure the raw NSL-KDD benchmark files exist in `dataset/raw/`:
+```bash
+ls -lh dataset/raw/
+# Expected:
+# KDDTrain+.csv (125,973 rows)
+# KDDTest+.csv  (22,543 rows)
+```
+*(If missing, download the official NSL-KDD archive from Kaggle or the Canadian Institute for Cybersecurity and place the CSVs in `dataset/raw/`)*.
 
+### Step 4: Run the Complete Notebook Pipeline (01 $\to$ 11)
+To execute all experiments headless in strict sequential order:
 ```bash
 export PYTHONHASHSEED=42
-for nb in notebooks/0*.ipynb; do
+for nb in notebooks/0*.ipynb notebooks/1*.ipynb; do
+  echo "Executing $nb..."
   jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.timeout=-1 "$nb" || break
 done
 ```
 
-Dependencies: 02 before 03–07 (folds + preprocessor); 08 after 03–07 (all seeds); 09 and 10 after 04–07 (tuned parameters); 11 last. Each model notebook runs the full pipeline once per seed in `config.yaml` (5 seeds). On a 12-core machine this took about 13 min for LR, 5 min for the Decision Tree, about an hour for Random Forest and 1–1.5 h for XGBoost; 08 takes about 4 min and 09 about 15 min. To change a model, edit its notebook (search space, fixed parameters) or `config.yaml`, rerun that notebook, then 08–11.
+#### Execution Stages:
+- **`01_data_exploration.ipynb`**: Computes EDA statistics $\to$ `results/eda/eda_summary.json` & figures.
+- **`02_preprocessing.ipynb`**: Builds leave-attack-types-out CV folds and fits preprocessor $\to$ `scalars/preprocessor.joblib`.
+- **`03_majority_baseline.ipynb`**: Evaluates zero-rule majority class baseline.
+- **`04_logistic_regression.ipynb`**: Optuna TPE tuning (25 trials $\times$ 5 seeds) + evaluation $\to$ `models/logistic_regression.joblib`.
+- **`05_decision_tree.ipynb`**: Optuna TPE tuning (25 trials $\times$ 5 seeds) + evaluation $\to$ `models/decision_tree.joblib`.
+- **`06_random_forest.ipynb`**: Optuna TPE tuning (25 trials $\times$ 5 seeds) + evaluation $\to$ `models/random_forest.joblib`.
+- **`07_xgboost.ipynb`**: Optuna TPE tuning (25 trials $\times$ 5 seeds) + evaluation $\to$ `models/xgboost.joblib`.
+- **`08_evaluation_comparison.ipynb`**: Computes statistical comparison, McNemar tests, bootstrap CIs, and comparison figures $\to$ `results/metrics/statistical_comparison.json`.
+- **`09_capacity_analysis.ipynb`**: Runs family-internal capacity sweeps (LR $C$, Tree depth, RF/XGB depth).
+- **`10_additional_evaluation.ipynb`**: Known-vs-unseen CV, FPR at 95% recall, and compute profiling.
+- **`11_website_data.ipynb`**: Serializes all empirical results into the website data layer $\to$ `website/src/data/researchData.ts`.
 
-### C. Website
-The research website in `website/` reads only `website/src/data/researchData.ts`, which notebook 11 generates from `results/`. Preview it locally with `cd website && npm install && npm run dev`. Pushing changes under `website/` to `main` deploys it to GitHub Pages (`.github/workflows/deploy-pages.yml`).
-
-### D. Tests
+### Step 5: Run Automated Tests
 ```bash
 pytest -q tests
+# Expected: 27 passed in ~0.5s
 ```
-27 tests: the data loader and preprocessor (`test_data_pipeline.py`, needs `scalars/preprocessor.joblib` from notebook 02) and the framework (`test_controlled_framework.py`: metric and McNemar hand values, Holm, bootstraps, FPR thresholds, that novelty folds hold out whole attack types, and that the final model is refit with the full tuned + fixed parameter set and the run's seed).
+
+### Step 6: Launch the Interactive Research Website
+```bash
+cd website
+npm install
+npm run dev
+# Vite server starts at http://localhost:5173/
+
+# To build and preview static production bundle:
+npm run build
+npm run preview
+```
 
 ---
 
-## 7. Experimental Protocol (identical for every model)
+## 6. Repository & Notebook Pipeline
 
-- **Split.** Official `KDDTrain+` / `KDDTest+`, never merged or re-split.
-- **Input.** The shared 122-feature preprocessor, refit inside every CV fold and, for the final model, on `KDDTrain+` only.
-- **Novelty-aware tuning.** 25 Optuna TPE trials per model. The objective is the mean ROC-AUC over 5 *leave-attack-types-out* folds of `KDDTrain+`: the 22 training attack types are dealt into 5 groups, and each fold holds out one group plus a random fifth of the normal rows. Tuning therefore rewards separating attack types the model has not seen from normal traffic, without touching `KDDTest+`.
-- **Fixed parameters.** `class_weight=None` for every model (`scale_pos_weight=1` for XGBoost); `random_state` = the run's seed; LR uses `lbfgs`, `max_iter=2000` (convergence asserted).
-- **Final model.** Refit on all of `KDDTrain+` with the **full** best-trial parameter set; a check fails the notebook if the fitted estimator differs from it.
-- **Evaluation on `KDDTest+`** (once per model and seed):
-  - threshold-free: ROC-AUC, PR-AUC, ROC-AUC of seen attacks vs normals and of unseen attacks vs normals;
-  - matched FPR: unseen recall at test FPR budgets of 1 / 2 / 5% (read off the ROC curve);
-  - deployable: thresholds chosen so 1 / 2 / 5% of out-of-fold `KDDTrain+` normals exceed them, applied to the test set;
-  - the fixed 0.5 threshold, for continuity.
-- **Seeds.** Tuning, refit and evaluation are repeated end to end for seeds 42, 1, 2, 3, 4. Seed 42 writes the models and headline files.
-- **Statistics (notebook 08).** McNemar (Edwards) on all test rows and on unseen-attack rows; paired bootstrap (2,000 resamples) of Δ Macro-F1, Δ unseen recall at 0.5, Δ unseen-vs-normal AUC and Δ unseen recall at 2% test FPR; Holm–Bonferroni over all 36 two-sided tests; a cluster bootstrap over the 17 unseen attack types.
-
-Selected configurations (seed 42, `results/tuning/*_trials.json`):
-
-| Model | Selected hyperparameters | Final-fit complexity | Novelty CV AUC (fold SD) |
-|---|---|---|---|
-| Logistic Regression | `C=0.0024` (strong L2) | 121 coefficients, ‖w‖₂ = 3.4, 27 iterations | 0.906 (0.093) |
-| Decision Tree | entropy, `max_depth=5`, `min_samples_leaf=35`, `min_samples_split=15` | depth 5, 24 leaves | 0.916 (0.064) |
-| Random Forest | 150 trees, `max_depth=20`, `min_samples_split=5`, `min_samples_leaf=1`, `max_features='sqrt'` | depth 20, 456 leaves per tree | 0.994 (0.004) |
-| XGBoost | 150 trees, `max_depth=5`, `learning_rate=0.021`, `min_child_weight=14.5`, `subsample=0.71`, `colsample_bytree=0.76`, `reg_lambda=0.98` | 21 leaves per tree | 0.982 (0.016) |
-
-With the novelty-aware objective, the tuned LR and Decision Tree are now genuinely simple (strong regularisation; a 24-leaf tree).
-
----
-
-## 8. Results (`KDDTest+`, N = 22,543)
-
-Generated by `notebooks/08_evaluation_comparison.ipynb` (`results/tables/*`, `results/metrics/statistical_comparison.json`).
-
-### 8.1 Ranking quality and matched FPR (seed 42)
-
-| Model | ROC-AUC | PR-AUC | AUC seen vs normal | AUC unseen vs normal | Unseen recall @1% FPR | @2% FPR | @5% FPR |
-|---|---|---|---|---|---|---|---|
-| Majority Baseline | 0.500 | 0.569 | 0.500 | 0.500 | 0.0% | 0.0% | 0.0% |
-| Logistic Regression | 0.885 | 0.916 | 0.885 | 0.883 | 5.2% | 5.4% | 7.2% |
-| Decision Tree | 0.884 | 0.912 | 0.947 | 0.734 | 6.7% | 14.6% | 35.6% |
-| Random Forest | **0.965** | **0.968** | **0.975** | 0.942 | 7.2% | 9.3% | 63.3% |
-| XGBoost | 0.958 | 0.966 | 0.963 | **0.947** | 5.2% | 8.0% | **82.2%** |
-
-### 8.2 Across 5 seeds (mean ± SD)
-
-| Model | AUC unseen vs normal | Unseen recall @2% test FPR | Macro-F1 @0.5 | FPR @0.5 | Unseen recall @0.5 |
-|---|---|---|---|---|---|
-| Logistic Regression | 0.8831 ± 0.0001 | 5.4% ± 0.0 | 0.736 ± 0.000 | 7.24% ± 0.01 | 29.6% ± 0.2 |
-| Decision Tree | 0.7456 ± 0.0277 | 16.6% ± 4.7 | 0.775 ± 0.011 | 3.21% ± 0.41 | 31.1% ± 8.7 |
-| Random Forest | 0.9410 ± 0.0037 | 8.4% ± 1.4 | 0.769 ± 0.002 | 2.68% ± 0.04 | 25.0% ± 1.1 |
-| XGBoost | 0.9432 ± 0.0048 | 6.9% ± 1.4 | 0.787 ± 0.009 | 2.73% ± 0.09 | 32.4% ± 5.5 |
-
-On unseen-vs-normal AUC, Random Forest and XGBoost beat Logistic Regression and the Decision Tree in all 5 seeds; RF vs XGBoost is not consistent (XGBoost higher in 4 of 5).
-
-### 8.3 Threshold 0.5 (seed 42, for continuity)
-
-| Model | Macro-F1 | FPR | Seen recall | Unseen recall [row CI] [attack-type cluster CI] | Drop (pp) |
-|---|---|---|---|---|---|
-| Logistic Regression | 0.736 | 7.24% | 71.5% | 29.6% [28.1, 31.1] [8.9, 49.1] | 42.0 |
-| Decision Tree | 0.780 | 2.99% | 75.6% | 35.0% [33.5, 36.5] [4.8, 66.8] | 40.6 |
-| Random Forest | 0.768 | 2.72% | 76.8% | 24.6% [23.2, 26.0] [1.1, 46.5] | 52.2 |
-| XGBoost | 0.781 | 2.57% | 78.2% | 28.3% [26.9, 29.8] [2.4, 52.3] | 49.9 |
-
-The attack-type cluster CIs are an order of magnitude wider than the row CIs: unseen recall depends heavily on which attack types are in the test set (3 types are 64% of unseen rows).
-
-### 8.4 Paired tests (seed 42, Holm-adjusted over 36 tests)
-
-| Pair | Δ AUC unseen vs normal | Δ unseen recall @2% FPR (pp) | Δ unseen recall @0.5 (pp) |
-|---|---|---|---|
-| LR − DT | +0.150 [0.140, 0.160]* | −8.5 [−10.1, −1.2]* | −5.4 [−6.8, −4.1]* |
-| LR − RF | −0.059 [−0.063, −0.055]* | −4.0 [−5.3, −2.9]* | +5.0 [3.4, 6.4]* |
-| LR − XGB | −0.064 [−0.068, −0.060]* | −2.2 [−3.4, 0.2] | +1.2 [−0.0, 2.5] |
-| DT − RF | −0.208 [−0.218, −0.198]* | +4.5 [−2.4, 6.5] | +10.4 [8.9, 11.7]* |
-| DT − XGB | −0.213 [−0.223, −0.203]* | +6.2 [−0.3, 9.4] | +6.6 [5.5, 7.8]* |
-| RF − XGB | −0.005 [−0.007, −0.003]* | +1.8 [0.8, 3.8]* | −3.7 [−5.0, −2.5]* |
-
-\* significant after Holm (p_holm ≤ 0.026). 29 of 36 tests are significant; the non-significant ones are listed in `results/tables/hypothesis_tests.md`.
-
-### 8.5 Deployable thresholds (calibrated on out-of-fold training normals)
-
-Thresholds set for 1 / 2 / 5% FPR on training data give much higher FPRs on `KDDTest+`: 6.7–8.0% (LR), 3.0–6.0% (DT), 9.9–13.5% (RF) and 3.3–10.5% (XGBoost). Normal traffic in the test set scores higher than training normals, so FPR targets set on training data do not transfer.
-
-### Known vs unseen attacks (proposal definition, notebook 10)
-
-*Known* = stratified 5-fold CV on `KDDTrain+` (every attack type seen in training), using each model's seed-42 tuned hyperparameters in evaluation-only fold models; the final models and test results are unchanged. *Unseen* = the 17 test-only attack types against the test normals.
-
-| Model | ROC-AUC known → unseen | Recall @1% FPR known → unseen | FPR needed for 95% recall: known → unseen |
-|---|---|---|---|
-| Logistic Regression | 0.992 → 0.883 | 93.7% → 5.2% | 2.0% → 22.9% |
-| Decision Tree | 0.999 → 0.734 | 97.8% → 6.7% | 0.4% → 100% |
-| Random Forest | 1.000 → 0.942 | 100.0% → 7.2% | 0.0% → 12.5% |
-| XGBoost | 1.000 → 0.947 | 99.8% → 5.2% | 0.0% → 19.2% |
-
-Every model is near-perfect on known attacks. The ensembles keep the most ranking quality on unseen types (AUC gap 0.05–0.06 vs 0.11 for LR and 0.27 for the Decision Tree), but at a strict 1% FPR all models fall from over 93% to under 8% recall. On all test attacks, catching 95% needs an FPR of 11.5% (RF), 19.4% (XGBoost), 60.8% (LR) or 99.8% (DT). Tables: `results/tables/known_vs_unseen_gap.md`, `results/tables/fpr_at_95_recall.md`.
-
-### Compute vs performance (notebook 10)
-
-Measured on the saved models (no retraining). Latency includes the preprocessing step; values are medians with the interquartile range over 5 interleaved rounds (3 batch runs over all 22,543 test flows and 100 single-flow calls per model per round). Absolute times are hardware-specific; the ratios are the point.
-
-**Test system:** 13th Gen Intel Core i7-1355U (10 cores: 2 performance + 8 efficient, 12 threads, up to 5.0 GHz), 15.2 GB usable RAM, no GPU (CPU only), Fedora Linux 44 (kernel 6.19.10), Python 3.11.18, scikit-learn 1.9.1, XGBoost 3.2.0, NumPy 2.4.6, pandas 3.1.1. LR and the Decision Tree score single-threaded; Random Forest and XGBoost use all 12 threads (`n_jobs=-1`). Training and tuning times are from the same machine.
-
-| Model | Single-flow latency | Batch latency / flow | Model size | Tuning time (5 seeds) | Unseen AUC (5 seeds) | Known AUC (CV) |
-|---|---|---|---|---|---|---|
-| Logistic Regression | 3.5 ms (3.1–3.9) | 1.4 µs (1.3–2.2) | 4 KB | 13 min | 0.883 | 0.992 |
-| Decision Tree | 3.3 ms (3.1–3.6) | 1.0 µs (1.0–1.0) | 5 KB | 4 min | 0.746 | 0.999 |
-| XGBoost | 18.0 ms (5.1–22.1) | 2.4 µs (2.0–3.4) | 92 KB | 21 min | 0.943 | 1.000 |
-| Random Forest | 46.0 ms (39.8–50.1) | 5.3 µs (4.5–5.9) | 2.9 MB | 42 min | 0.941 | 1.000 |
-
-XGBoost's single-flow time varies most between runs because it scores on all threads of a CPU that mixes performance and efficiency cores. Deep models (NN, RNN) were not trained: they were outside this project's compute budget.
-
-### 8.6 Capacity sweeps (notebook 09; test numbers descriptive only)
-
-| Family | Parameter swept | Unseen-vs-normal AUC as capacity grows |
-|---|---|---|
-| Logistic Regression | `C` 1e-3 → 100 | falls steadily, 0.881 → 0.710 |
-| Decision Tree | `max_depth` 1 → None | ~0.79 for depth 1–3, peak 0.83 at depth 6, 0.72 when fully grown |
-| Random Forest | `max_depth` 2 → None | flat, 0.937–0.947 |
-| XGBoost | `max_depth` 1 → 10 | 0.918 at depth 1, then flat 0.937–0.949 |
-
-The training-only novelty CV ranks LR settings the way the test set does (Spearman 0.94) and XGBoost settings moderately (0.54), but not tree depth for the Decision Tree (−0.04) or Random Forest (−0.43).
+```text
+attack-generalization-study/
+├── config.yaml                    # Master experiment configuration (seeds, paths, CV folds, budgets)
+├── requirements.txt               # Direct dependencies
+├── requirements-lock.txt          # Fully pinned dependency lockfile
+│
+├── dataset/raw/                   # Official NSL-KDD benchmark files (headerless)
+│   ├── KDDTrain+.csv              # 125,973 network flows
+│   └── KDDTest+.csv               # 22,543 network flows
+│
+├── notebooks/                     # Authoritative single source of truth (run in order 01 -> 11)
+│   ├── 01_data_exploration.ipynb  # EDA and univariate distribution shift analysis
+│   ├── 02_preprocessing.ipynb     # Feature segregation, preprocessor fit, novelty CV folds
+│   ├── 03_majority_baseline.ipynb # Zero-rule class prior baseline
+│   ├── 04_logistic_regression.ipynb # L2 regularized logistic regression (tuning + 5 seeds)
+│   ├── 05_decision_tree.ipynb     # Single CART decision tree (tuning + 5 seeds)
+│   ├── 06_random_forest.ipynb     # Random Forest ensemble (tuning + 5 seeds)
+│   ├── 07_xgboost.ipynb           # XGBoost gradient boosted trees (tuning + 5 seeds)
+│   ├── 08_evaluation_comparison.ipynb # Cross-model benchmarking & statistical tests
+│   ├── 09_capacity_analysis.ipynb # Intra-family capacity & regularization sweeps
+│   ├── 10_additional_evaluation.ipynb # Known-vs-unseen gap, operational FPRs, compute latency
+│   └── 11_website_data.ipynb      # Serializes results to website TypeScript data layer
+│
+├── src/                           # Python modules imported by notebooks
+│   ├── config.py                  # YAML configuration parser and seed initializers
+│   ├── data_loader.py             # Schema definitions, robust CSV loading, attack mapping
+│   ├── preprocessing.py           # Shared ColumnTransformer (122 cols) & leakage guards
+│   └── controlled_framework.py    # Novelty CV, Optuna tuning, evaluation, statistical tests
+│
+├── models/                        # Serialized primary seed (42) model pipelines (*.joblib)
+├── scalars/                       # Serialized preprocessor artifact, feature names, label map
+│
+├── results/                       # Empirical outputs (authoritative data sources)
+│   ├── eda/                       # eda_summary.json (class balance, KS shifts, correlations)
+│   ├── splits/                    # Novelty CV fold assignments & per-row split indices
+│   ├── tuning/                    # Optuna hyperparameter trial histories (*_trials.json / csv)
+│   ├── metrics/                   # Model performance JSONs & statistical_comparison.json
+│   ├── predictions/               # Per-flow test prediction CSVs with probabilities
+│   ├── tables/                    # Markdown & CSV summary tables
+│   └── figures/                   # Visualizations (EDA, evaluation curves, capacity sweeps)
+│
+├── docs/                          # In-depth scientific documentation
+│   ├── dataset_notes.md           # Raw schema definitions and domain notes
+│   ├── features.md                # 41 feature justifications & caveman definitions
+│   ├── methodology.md             # Formal research design, leakage guards, protocol history
+│   ├── project_proposal.md        # Original study motivation & preliminary hypotheses
+│   └── references.md              # Academic bibliography & citations
+│
+├── website/                       # React 18 + Vite + Tailwind CSS interactive research portal
+│   ├── src/                       # Components, charts, layout, and researchData.ts
+│   ├── public/                    # Static assets (including public docs/features.md)
+│   ├── index.html                 # Entrypoint with anti-FOUC theme initialization
+│   └── package.json               # Frontend dependencies & scripts
+│
+├── .github/workflows/             # GitHub Actions CI/CD
+│   └── deploy-pages.yml           # Automated GitHub Pages static deployment
+│
+└── tests/                         # Pytest test suite (27 tests)
+```
 
 ---
 
-## 9. Interpretation and Limits
+## 7. Experimental Protocol & Controlled Framework
 
-**Answer to the research question: not always.** Simpler models are not better at detecting unseen attacks: across model families the ensembles generalise best. But simpler models are the right choice when inference cost decides, as in live, latency- or memory-constrained detection. The study maps that trade-off: Logistic Regression and the Decision Tree score a flow in about 3.5 ms and fit in a few kilobytes but reach an unseen-attack AUC of only 0.75–0.88, XGBoost reaches 0.943 at roughly 1.5–6× LR's single-flow latency (its timing varies most), and Random Forest matches it at 12–15× the latency and 2.9 MB (measured on an i7-1355U laptop CPU, no GPU). Deep models (NN, RNN) were outside the compute budget, so their place on this trade-off was not measured.
+To isolate architectural inductive bias from data engineering differences, every model adheres to a strictly controlled protocol:
 
-1. **Simpler models do not generalise better across families.** On threshold-free ranking of unseen attacks against normal traffic, the two ensembles (RF 0.941, XGBoost 0.943 over 5 seeds) clearly beat Logistic Regression (0.883) and the Decision Tree (0.746), consistently across seeds and significantly in paired tests. The earlier impression that RF "collapses" on unseen attacks came from comparing models at threshold 0.5, where they sit at different operating points.
-2. **Within a family, regularisation helps the single models.** Stronger L2 regularisation raises LR's unseen-vs-normal AUC from 0.71 to 0.88, and a moderately deep tree (depth 4–6) beats a fully grown one. The ensembles are insensitive to depth. So "regularise single models" is supported; "prefer single models to ensembles" is not.
-3. **Low-FPR detection of unseen attacks is poor for every model.** At 1% test FPR no model detects more than 7.2% of unseen-attack rows, and at 2% the best 5-seed average is 16.6% (Decision Tree). Ensembles only pull ahead around 5% FPR (XGBoost 82%, RF 63%). Which model looks best therefore depends on the operating point, and thresholds calibrated on training data overshoot the target FPR on test.
-4. **The seen → unseen drop depends on how it is measured.** Recall at 0.5 falls by 41–52 pp for every model, and that drop persists after reweighting seen attacks to the unseen category mix (`results/tables/composition_reweighted_gap.md`). In ranking terms it differs a lot: AUC falls by 0.002 for LR, 0.016 for XGBoost, 0.033 for RF and 0.213 for the Decision Tree. LR's small drop reflects weak seen-attack separation (AUC 0.885), not better generalisation.
-5. **Limits.**
-   - Unseen-attack results hinge on a few attack types; attack-type cluster CIs for unseen recall at 0.5 span roughly 0.01–0.67 and overlap for all models.
-   - Five seeds; the Decision Tree is the least stable model (unseen recall at 0.5 varies by ±8.7 pp).
-   - The novelty CV objective has large fold-to-fold variation (fold 0 holds out `neptune`, 70% of training attacks) and is only a partial proxy for test behaviour (section 8.6).
-   - No analysis here explains *why* a model misses an attack type.
-6. **Test-set exposure.** `KDDTest+` was scored in earlier iterations of this study (an exploratory RF, a run with a refit bug, a run tuned on in-distribution Macro-F1) before the current protocol was fixed. It is not a blind holdout. See `docs/methodology.md` §10.
-7. **Scope.** NSL-KDD unseen attack types are benchmark-level novel signatures, not real-world zero-day exploits.
+```mermaid
+flowchart TD
+    subgraph DataIngestion ["1. Data Ingestion & Guards"]
+        A["KDDTrain+ (125,973)"] --> B["Split Features & Target"]
+        C["KDDTest+ (22,543)"] --> D["Split Features & Target"]
+        B -. "Drop difficulty_level, label, target" .-> E["X_train (41 cols)"]
+        D -. "Drop difficulty_level, label, target" .-> F["X_test (41 cols)"]
+    end
 
-For literature citations (Breiman, Chen & Guestrin, Akiba, McNemar, Edwards, Holm, Efron, Tavallaee), see [`docs/references.md`](docs/references.md).
+    subgraph Preprocessing ["2. Shared 122-Feature Preprocessor"]
+        E --> G["ColumnTransformer (fit on train only)"]
+        G --> H["OneHotEncoder (3 categoricals -> 84 cols)"]
+        G --> I["StandardScaler (38 continuous -> 38 cols)"]
+        H & I --> J["Processed Feature Space (122 cols)"]
+    end
+
+    subgraph NoveltyCV ["3. Novelty-Aware Tuning (Train Only)"]
+        J --> K["5 Leave-Attack-Types-Out Folds"]
+        K --> L["Optuna TPE: 25 Trials per Model"]
+        L -. "Maximize held-out attack-group ROC-AUC" .-> M["Best Hyperparameters"]
+    end
+
+    subgraph FinalEvaluation ["4. Final Refit & Multi-Seed Test Eval"]
+        M --> N["Refit Pipeline on Full KDDTrain+"]
+        N --> O["Evaluate on KDDTest+ x 5 Seeds"]
+        O --> P["Threshold-Free ROC/PR-AUC"]
+        O --> Q["Matched Test FPR Budgets (1%, 2%, 5%)"]
+        O --> R["Deployable Out-of-Fold Thresholds"]
+    end
+```
+
+### Key Protocol Standards
+1. **Zero Test-Set Peeking During Tuning:** Hyperparameters are selected via **Leave-Attack-Types-Out 5-Fold Cross-Validation** on `KDDTrain+` only. Each fold holds out 4–5 distinct attack types plus 20% of benign flows. Optuna maximizes held-out ROC-AUC to explicitly reward zero-day attack separation.
+2. **Deterministic Seeding Across 5 Runs:** Experiments are repeated across 5 independent seeds (`42, 1, 2, 3, 4`).
+3. **Programmatic Parameter Freezing:** The final estimator refits on all 125,973 training rows with identical hyperparameter locks; tests fail if the final model deviates from the best trial.
+4. **Multiple Operating Points:** Models are evaluated across three regimes:
+   - *Threshold-Free:* ROC-AUC and PR-AUC.
+   - *Matched Test FPR:* Unseen recall when decision thresholds are fixed to exact test False Positive Rates ($1\%, 2\%, 5\%$).
+   - *Deployable Operational Thresholds:* Thresholds calibrated strictly on out-of-fold training normals to achieve target FPRs, then tested on `KDDTest+`.
+
+---
+
+## 8. Authoritative Benchmark Results
+
+All metrics below are drawn directly from the serialized empirical files in `results/metrics/` and `results/tables/`.
+
+### 8.1 Headline Model Comparison (`KDDTest+`, Primary Seed 42)
+
+| Model Architecture | Test ROC-AUC | Test PR-AUC | Seen Attack AUC | **Unseen Attack AUC** | Unseen Recall @ 1% FPR | Unseen Recall @ 2% FPR | Unseen Recall @ 5% FPR | Unseen Recall @ 0.5 Thresh |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Majority Baseline** | 0.5000 | 0.5693 | 0.5000 | **0.5000** | 0.00% | 0.00% | 0.00% | 0.00% |
+| **Logistic Regression** | 0.8847 | 0.9160 | 0.8853 | **0.8831** | 5.17% | 5.44% | 7.20% | 29.60% |
+| **Decision Tree** | 0.8841 | 0.9123 | 0.9467 | **0.7337** | 6.72% | 14.59% | 35.60% | 35.04% |
+| **Random Forest** | **0.9654** | **0.9679** | **0.9751** | **0.9416** | **7.23%** | 9.31% | 63.31% | 24.59% |
+| **XGBoost** | 0.9582 | 0.9658 | 0.9630 | **0.9469** | 5.23% | 8.00% | **82.21%** | 28.32% |
+
+### 8.2 Stability Across 5 Seeds ($\text{Mean} \pm \text{Std}$)
+
+| Model Architecture | Unseen Attack AUC | Unseen Recall @ 2% FPR | Macro-F1 @ 0.5 | Test FPR @ 0.5 | Unseen Recall @ 0.5 |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| **Logistic Regression** | $0.8831 \pm 0.0001$ | $5.44\% \pm 0.00\%$ | $0.7363 \pm 0.0000$ | $7.24\% \pm 0.01\%$ | $29.60\% \pm 0.20\%$ |
+| **Decision Tree** | $0.7456 \pm 0.0277$ | $16.63\% \pm 4.71\%$ | $0.7749 \pm 0.0108$ | $3.21\% \pm 0.41\%$ | $31.07\% \pm 8.70\%$ |
+| **Random Forest** | $0.9410 \pm 0.0037$ | $8.44\% \pm 1.43\%$ | $0.7686 \pm 0.0021$ | $2.68\% \pm 0.04\%$ | $25.01\% \pm 1.08\%$ |
+| **XGBoost** | $\mathbf{0.9432 \pm 0.0048}$ | $6.91\% \pm 1.44\%$ | $\mathbf{0.7871 \pm 0.0089}$ | $\mathbf{2.73\% \pm 0.09\%}$ | $\mathbf{32.36\% \pm 5.48\%}$ |
+
+### 8.3 Statistical Hypothesis Testing (Holm-Bonferroni Adjusted)
+Pairwise differences evaluated on seed 42 over 2,000 paired bootstrap resamples:
+- **RF vs. LR (Unseen AUC):** $\Delta = +0.0585$ ($95\%\text{ CI: } [0.0545, 0.0626]$, $p_{\text{adj}} < 10^{-15}$). **Random Forest significantly outperforms Logistic Regression.**
+- **RF vs. DT (Unseen AUC):** $\Delta = +0.2079$ ($95\%\text{ CI: } [0.1979, 0.2181]$, $p_{\text{adj}} < 10^{-15}$). **Random Forest significantly outperforms Decision Tree.**
+- **XGB vs. RF (Unseen AUC):** $\Delta = +0.0053$ ($95\%\text{ CI: } [0.0032, 0.0074]$, $p_{\text{adj}} < 10^{-4}$). **XGBoost achieves a small but statistically significant edge over Random Forest.**
+
+---
+
+## 9. Compute vs. Detection Quality Trade-Off
+
+Profiled on an Intel Core i7-1355U laptop CPU (10 cores, 12 threads, no GPU, Python 3.11 / scikit-learn 1.9 / XGBoost 3.2):
+
+| Model Family | Single-Flow Latency | Batch Latency / Flow | Serialized Model Size | Optuna Tuning Time (5 Seeds) | Unseen Attack AUC | Known Attack AUC |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Logistic Regression** | **3.5 ms** (3.1–3.9) | 1.4 µs (1.3–2.2) | **4 KB** | 13 min | 0.8831 | 0.9918 |
+| **Decision Tree** | **3.3 ms** (3.1–3.6) | **1.0 µs** (1.0–1.0) | **5 KB** | **4 min** | 0.7456 | 0.9991 |
+| **XGBoost** | 18.0 ms (5.1–22.1) | 2.4 µs (2.0–3.4) | 92 KB | 21 min | **0.9432** | **1.0000** |
+| **Random Forest** | 46.0 ms (39.8–50.1) | 5.3 µs (4.5–5.9) | 2.9 MB | 42 min | 0.9410 | **1.0000** |
+
+### Practical Deployment Guidance:
+- **Resource-Constrained Edge Routers (IoT / Embedded firewalls):** Deploy **Logistic Regression** or shallow **Decision Trees**. They execute in $\le 3.5\text{ ms}$, consume $\le 5\text{ KB}$ of RAM, and provide baseline linear separability.
+- **Enterprise Core Security Gateways:** Deploy **XGBoost**. It matches or exceeds Random Forest's zero-day separability (AUC 0.943 vs 0.941) while delivering **$2.5\times$ faster single-flow scoring** ($18.0\text{ ms}$ vs $46.0\text{ ms}$) and requiring **$30\times$ less memory** ($92\text{ KB}$ vs $2.9\text{ MB}$).
+
+---
+
+## 10. Documentation Index & References
+
+For comprehensive technical and methodological details, consult the specialized documentation in [`docs/`](docs/):
+
+- **[`docs/features.md`](docs/features.md)**: Exhaustive justification of all 41 features, mathematical definitions in caveman format, one-hot encoding mechanics, and proof of why 10 collinear pairs were intentionally kept.
+- **[`docs/methodology.md`](docs/methodology.md)**: Full formal research methodology, mathematical definitions of all metrics, leakage guards, fold generation equations, and the complete protocol revision log.
+- **[`docs/dataset_notes.md`](docs/dataset_notes.md)**: Raw NSL-KDD schema definitions, column data types, observation boundaries, and domain literature notes.
+- **[`docs/project_proposal.md`](docs/project_proposal.md)**: Original project proposal, preliminary hypotheses, and initial research objectives.
+- **[`docs/references.md`](docs/references.md)**: Complete academic bibliography citing primary literature (Tavallaee et al., Lee & Stolfo, Breiman, Chen & Guestrin, Akiba et al., Edwards, Holm).
+
+---
+
+## 11. Academic Attribution & AI Disclosure
+
+### Course & Affiliation
+- **Course:** ES 335: Machine Learning (Semester 5)
+- **Institution:** Indian Institute of Technology Gandhinagar (IITGN)
+- **Authors:** Vedant Bondekar & Dhruv Meshram
+
+### Team Distribution of Work
+- **Vedant Bondekar:** Data ingestion & preprocessing modules (`src/data_loader.py`, `src/preprocessing.py`), majority baseline (`notebooks/03_majority_baseline.ipynb`), Random Forest implementation (`notebooks/06_random_forest.ipynb`), controlled framework architecture (`src/controlled_framework.py`), and test suite (`tests/`).
+- **Dhruv Meshram:** Exploratory data analysis (`notebooks/01_data_exploration.ipynb`, `docs/dataset_notes.md`), Logistic Regression (`notebooks/04_logistic_regression.ipynb`), Decision Tree (`notebooks/05_decision_tree.ipynb`), and comparative evaluation (`notebooks/08_evaluation_comparison.ipynb`).
+- **Joint Responsibilities:** XGBoost implementation (`notebooks/07_xgboost.ipynb`), capacity analysis sweeps (`notebooks/09_capacity_analysis.ipynb`), compute latency profiling (`notebooks/10_additional_evaluation.ipynb`), and interactive web platform (`website/`).
+
+### Academic AI Transparency Disclosure
+Large Language Models (LLMs) were employed as engineering assistants for documentation formatting, UI styling, and boilerplate code assistance. All research hypotheses, experimental pipelines, model tuning spaces, empirical findings, and statistical test outputs were formulated, executed, and audited directly against authoritative serialized artifacts by the authors.

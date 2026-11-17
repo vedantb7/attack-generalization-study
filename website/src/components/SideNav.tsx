@@ -14,6 +14,7 @@ export const TOC: TocItem[] = [
   { id: 'question', label: 'Research question', desc: 'Memorization vs generalization', children: [{ id: 'hypotheses', label: 'Hypotheses & outcomes' }] },
   { id: 'dataset', label: 'Dataset & pipeline', desc: 'NSL-KDD, 122 features, leakage rules', children: [
     { id: 'dataset-split', label: 'Train/test split & features' },
+    { id: 'feature-justifications', label: 'Feature justifications' },
     { id: 'pipeline-steps', label: 'Five-step pipeline' },
   ] },
   { id: 'models', label: 'Models', desc: 'Five models, one protocol', children: [{ id: 'model-details', label: 'Hyperparameters & complexity' }] },
@@ -58,15 +59,13 @@ export const TOC: TocItem[] = [
     { id: 'test-system', label: 'Test system specs' },
     { id: 'deployment-guide', label: 'Which model when' },
   ] },
-  { id: 'limitations', label: 'Conclusions', desc: 'What is and is not supported', children: [
+  { id: 'limitations', label: 'Conclusions', desc: 'What the evidence supports', children: [
     { id: 'answer', label: 'Answer to the question' },
     { id: 'supported', label: 'Supported' },
-    { id: 'not-supported', label: 'Not supported' },
     { id: 'limitations-list', label: 'Limitations' },
   ] },
-  { id: 'reproduce', label: 'Reproduce', desc: 'Commands, artifacts, citation', children: [
+  { id: 'reproduce', label: 'Reproduce', desc: 'Commands and artifacts', children: [
     { id: 'reproduce-commands', label: 'Run the notebooks' },
-    { id: 'citation', label: 'Cite this work' },
   ] },
 ];
 
@@ -208,7 +207,7 @@ export const SideNav: React.FC = () => {
           <a href="https://www.unb.ca/cic/datasets/nsl.html" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 pl-[22px] text-content-muted hover:text-content-primary" title="The original download is no longer available there">
             Original source (UNB)
           </a>
-          <a href="https://github.com/vedantb7/instrusion_detection" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
+          <a href="https://github.com/vedantb7/attack-generalization-study" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-content-muted hover:text-content-primary">
             <Github className="w-3.5 h-3.5" /> Code & notebooks
           </a>
           <a href="#overview" className="flex items-center gap-2 text-content-muted hover:text-content-primary">

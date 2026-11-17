@@ -11,8 +11,8 @@ export const Reproducibility: React.FC = () => {
   };
 
   const REPRODUCE_BASH = `# 1. Clone the repository
-git clone https://github.com/vedantb7/instrusion_detection.git
-cd instrusion_detection
+git clone https://github.com/vedantb7/attack-generalization-study.git
+cd attack-generalization-study
 
 # 2. Set up the environment
 python3 -m venv .venv
@@ -30,14 +30,6 @@ done
 
 # 4. Run the tests (27)
 pytest -q tests`;
-
-  const BIBTEX_CITATION = `@misc{bondekar2026signature,
-  title={Signature Memorization vs. Unseen Attack Generalization in Network Intrusion Detection},
-  author={Bondekar, Vedant and Meshram, Dhruv},
-  year={2026},
-  howpublished={Undergraduate Machine Learning Project, ES 335, IIT Gandhinagar},
-  url={https://github.com/vedantb7/instrusion_detection}
-}`;
 
   return (
     <section id="reproduce" className="py-16 md:py-24 border-b border-surface-border">
@@ -57,7 +49,7 @@ pytest -q tests`;
         </div>
 
         {/* Reproduce Terminal Commands Box */}
-        <div id="reproduce-commands" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-12 space-y-4">
+        <div id="reproduce-commands" className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-surface-border pb-3">
             <div className="flex items-center gap-2">
               <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary">
@@ -94,54 +86,27 @@ pytest -q tests`;
           </div>
         </div>
 
-        {/* BibTeX Citation Box & Academic AI Disclosure */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* BibTeX Citation */}
-          <div id="citation" className="lg:col-span-7 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
-            <div className="flex items-center justify-between border-b border-surface-border pb-3">
-              <div className="flex items-center gap-2">
-                <h3 className="font-serif font-semibold text-base text-content-primary">
-                  Academic Citation (BibTeX)
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => copyToClipboard(BIBTEX_CITATION, 'bibtex')}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono text-content-muted hover:text-content-primary bg-surface-elevated border border-surface-border transition-colors"
-              >
-                {copied === 'bibtex' ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-                <span>{copied === 'bibtex' ? 'Copied' : 'Copy BibTeX'}</span>
-              </button>
-            </div>
-
-            <pre className="p-3.5 rounded-lg bg-surface-elevated text-xs font-mono text-content-primary overflow-x-auto leading-relaxed border border-surface-border">
-              <code>{BIBTEX_CITATION}</code>
-            </pre>
-          </div>
-
-          {/* Academic Transparency & AI Disclosure */}
-          <div className="lg:col-span-5 p-6 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4 flex flex-col justify-between">
-            <div className="space-y-3">
-              <h3 className="font-serif font-semibold text-base text-content-primary border-b border-surface-border pb-3">
-                Project Attribution & AI-Assistance Disclosure
-              </h3>
-              <p className="text-xs text-content-muted leading-relaxed font-light">
-                This project was conducted for <strong className="text-content-primary">ES 335: Machine Learning (Semester 5) at IIT Gandhinagar</strong> by <strong className="text-content-primary">Vedant Bondekar and Dhruv Meshram</strong>.
-              </p>
-              <div className="p-3 rounded-lg bg-surface-elevated/50 border border-surface-border text-xs text-content-muted leading-relaxed">
-                <strong>Academic AI Transparency:</strong> Large Language Models (LLMs) were utilized as technical engineering assistants for code formatting, documentation synthesis, and UI scaffolding. All experimental hypotheses, data pipelines, model training runs, and statistical validations were independently audited and verified against authoritative serialized artifacts.
-              </div>
-            </div>
-
+        {/* Academic Transparency & AI Disclosure */}
+        <div className="p-6 md:p-8 rounded-xl bg-surface-card border border-surface-border shadow-sm panel-hover space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-border pb-3">
+            <h3 className="font-serif font-semibold text-base sm:text-lg text-content-primary">
+              Project Attribution & AI-Assistance Disclosure
+            </h3>
             <a
-              href="https://github.com/vedantb7/instrusion_detection"
+              href="https://github.com/vedantb7/attack-generalization-study"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-mono font-semibold bg-surface-elevated hover:bg-surface-border text-content-primary border border-surface-border transition-colors mt-2"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-surface-elevated hover:bg-surface-border text-content-primary border border-surface-border transition-colors self-start sm:self-auto shrink-0"
             >
               <span>Browse Full GitHub Repository</span>
               <ExternalLink className="w-3.5 h-3.5 text-content-muted" />
             </a>
+          </div>
+          <p className="text-xs sm:text-sm text-content-muted leading-relaxed font-light">
+            This project was conducted for <strong className="text-content-primary">ES 335: Machine Learning (Semester 5) at IIT Gandhinagar</strong> by <strong className="text-content-primary">Vedant Bondekar and Dhruv Meshram</strong>.
+          </p>
+          <div className="p-4 rounded-lg bg-surface-elevated/50 border border-surface-border text-xs text-content-muted leading-relaxed">
+            <strong className="text-content-primary">Academic AI Transparency:</strong> Large Language Models (LLMs) were utilized as technical engineering assistants for code formatting, documentation synthesis, and UI scaffolding. All experimental hypotheses, data pipelines, model training runs, and statistical validations were independently audited and verified against authoritative serialized artifacts.
           </div>
         </div>
       </div>
